@@ -76,6 +76,7 @@ Stack, run commands and demo script: `memory-bank/techContext.md`, `memory-bank/
 - `node trader/executor.mjs --pair BTC-USDT --usdt 15 --tp-pct 0.5 --sl-pct 0.3` — one manual seal → order → reveal → OCO cycle (testing only; before `sicilBaslangic`).
 - `nohup trader/calistir.sh &` / `nohup denetci/calistir.sh &` — production runners: `caffeinate -ims` + auto-restart. Stop: `touch logs/DUR` (trader) or `logs/DUR-DENETCI`, then `pkill -TERM -f "node trader/ajan.mjs"` / `"node denetci/denetci.mjs"`.
 - `node denetci/denetci.mjs [--tek-tur] [--kuru] [--aralik 15]` — LLM-free auditor: matches every fill after `sicilBaslangic` to seals, net PnL from sealed fills only, thesis scoring + Brier, writes `reports/<upToTs>.json` and `attest`. `--kuru` = no chain writes.
-- Tests: `node --test denetci/denetci.test.mjs` (10 matching/PnL tests).
+- `nohup node panel/sunucu.mjs &` — Turkish panel on http://127.0.0.1:8787 (read-only; `POST /api/kural` = rule-to-numbers DEMO via Gemini, server-side key, code-enforced ranges, no deploy).
+- Tests: `node --test denetci/denetci.test.mjs trader/kurtarma.test.mjs panel/kural-gosterim.test.mjs` (10 + 6 + 8).
 - Contracts: `cd contracts && forge test` (29 tests; `ffi` runs `agents/shared/commit.mjs`).
 - Logs: `agents/logs/*.jsonl` (gitignored).

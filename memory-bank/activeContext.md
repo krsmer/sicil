@@ -16,7 +16,7 @@ Panel: http://127.0.0.1:8787 · Kasa `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8
 
 **Kurallar (canlı süre boyunca):** Demo hesapta **elle işlem yok** (sahnedeki canlı yakalama hariç). Denetçi raporları saatte bir (~:24'te) kendisi commit+push eder; o dakikalarda kodlama oturumunda git işlemi yapma (denetçi `index.lock` görürse o saati atlar).
 
-**Sıradaki (öncelik sırasıyla):** LLM AL/PAS dağılımını izle (aşağıda) → ERC-8004 Validation (panelden sonraya bırakılmıştı) → README kanıt tablosu → 17:00 kod dondurma, prova, yedek video → teslim öncesi git geçmişi gizli bilgi taraması, sonra repo public.
+**Sıradaki (Arif'in sırası):** 15:00 tez sayısı kontrolü → README kanıt tablosu iskeleti → ?onizleme modları → WorkshopHub kaydı (`report`) → 17:00 kod dondurma → prova + yedek video → teslim öncesi git geçmişi gizli bilgi taraması, sonra repo public. (ERC-8004 Validation ve LLM AL/PAS izleme bekliyor.)
 
 ## Gözlem: LLM kararlarının dağılımı (K-16 izleme)
 
@@ -49,6 +49,7 @@ Kapanan kararlar `decisionLog.md`'de: K-11 (news yok, global piyasa verisi), K-1
 
 ## Son değişiklikler
 
+- **14:45:** "Kuralını yaz" GÖSTERİM ekranı (panel): Türkçe kural → Gemini (sadece panel sunucusunda, `agents/panel/kural-gosterim.mjs`; anahtar tarayıcıya gitmez, yanıtlarda anahtar olmadığı test edildi) → **kod** aralık kontrolü (Arif onayladı: BTC/ETH; işlem başı 5–50; günlük zarar 10–200 ve ≥ işlem başı; bekleme/pencere sistem kuralı) → onay kartı veya ret nedenleri. Gerçek deploy yok. 8 birim testi + 4 canlı deneme (2 kabul, 2 ret). demoScript'e gösterim + "her kullanıcıya kendi kasası" vizyonu eklendi. İlk tez sonucu: mühür #2 **tutmadı** (süre doldu).
 - **14:30:** Panele "Kurallar (zincirde, değiştirilemez)" kartı: kullanıcının Türkçe kuralı + kontrattan canlı okunan 5 değer (kullanıcıdan gelen 3'ü / sistem kuralı 2'si ayrı etiketli), deploy tx ve Snowtrace Read Contract linki (tarayıcıda açılıp doğrulandı; Snowtrace'te kaynak kod da görünüyor). Sadece `agents/panel/index.html` değişti. demoScript'e kuralın deploy'da kontrata nasıl yazıldığı eklendi. "Kuralını yaz" ekranı: sadece her şey bitip vakit kalırsa, gerçek deploy yapmayan gösterim olarak.
 - **13:49–14:03:** Fren provası başarılı: panel → MetaMask `pause()` (13:49) → ajan 14:00 turunu atladı → sahip `unpause()` (14:03). Ajan 14:15 turundan itibaren normal.
 - **13:45:** Düzeltme (Arif): fren hesabı Core değil, **Brave'deki MetaMask (Account 1)**; adres ve kontrat aynı. K-14, systemPatterns, techContext, demoScript ve panel düzeltildi; panel MetaMask'i EIP-6963 `io.metamask` ile seçer, Brave Wallet'ı otomatik seçmez. `assets/mimari.png` hâlâ "Core cüzdan" yazıyor (görsel; sunumdan önce düzeltilmeli).

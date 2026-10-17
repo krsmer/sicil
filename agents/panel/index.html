@@ -141,6 +141,18 @@
   .kural .k.sistem { color: var(--soluk); border: 1px solid var(--cizgi); }
   .kural-alt { margin-top: 14px; font-size: 13px; color: var(--soluk); }
   @media (max-width: 1100px) { .kurallar { grid-template-columns: 1fr; } .kural-soz { border-right: 0; border-bottom: 1px solid var(--cizgi); } .kural-satirlar { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+  /* kuralını yaz (gösterim) */
+  .gosterim { border: 1.5px dashed var(--soluk); padding: 18px 24px; margin: 0 0 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .gosterim .etiket { font: 600 11px/1.2 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--soluk); }
+  .gosterim .rozet-gosterim { display: inline-block; font: 700 11px/1 var(--sans); letter-spacing: .14em; color: var(--altin); border: 1.5px solid var(--altin); padding: 4px 6px; margin-left: 8px; }
+  .gosterim textarea { width: 100%; min-height: 76px; margin-top: 10px; font: 400 17px/1.4 var(--serif); padding: 10px 12px; background: rgba(255,255,255,.55); border: 1px solid var(--cizgi); color: var(--murekkep); resize: vertical; }
+  .gosterim button { margin-top: 10px; font: 600 14px/1 var(--sans); letter-spacing: .08em; padding: 11px 16px; background: var(--murekkep); color: var(--kagit); border: 0; cursor: pointer; }
+  .gosterim button:disabled { opacity: .5; cursor: wait; }
+  .onay { border: 2px solid var(--defter); background: rgba(220,235,223,.5); padding: 14px 16px; }
+  .onay.ret { border-color: var(--muhur); background: rgba(244,220,214,.5); }
+  .onay h4 { margin: 0 0 8px; font: 700 18px var(--serif); }
+  .onay ul { margin: 6px 0 0; padding-left: 18px; }
+  @media (max-width: 1100px) { .gosterim { grid-template-columns: 1fr; } }
   .eslesmeyen { border: 2px solid var(--muhur); background: var(--muhur-acik); padding: 12px 16px; margin: 10px 0; }
   footer { margin-top: 40px; font: 12px/1.7 var(--mono); color: var(--soluk); border-top: 1px solid var(--cizgi); padding-top: 12px; }
 
@@ -177,6 +189,16 @@
       <div class="kural-satirlar" id="kural-satirlar"></div>
       <div class="kural-alt" id="kural-alt"></div>
     </div>
+  </section>
+
+  <section class="gosterim" aria-label="Kuralını yaz (gösterim)">
+    <div>
+      <div class="etiket">Kuralını yaz <span class="rozet-gosterim">GÖSTERİM</span></div>
+      <textarea id="kural-metin" maxlength="500" placeholder="Örn: Sadece ETH, işlem başı 10 USDT, günde en fazla 30 USDT zarar"></textarea>
+      <button id="kural-btn">Yapay zekâ sayılara çevirsin</button>
+      <div class="kucuk soluk" style="margin-top:8px">Yapay zekâ cümleyi sayılara çevirir; kabul ya da ret kararını kod verir: pariteler sadece BTC-USDT / ETH-USDT, işlem başı 5–50 USDT, günlük zarar 10–200 USDT ve işlem başından küçük olamaz. Bekleme ve açıklama penceresi sistem kuralıdır. <b>Gerçek kontrat kurulmaz.</b></div>
+    </div>
+    <div id="kural-sonuc"><div class="bos">Onay kartı burada görünecek.</div></div>
   </section>
 
   <div id="eslesmeyenler"></div>
@@ -400,6 +422,30 @@ $("fren-btn").addEventListener("click", async () => {
   } catch (e) {
     $("fren-btn").disabled = !!son?.zincir?.durduruldu;
     frenYaz(e.code === 4001 ? "İşlem cüzdanda reddedildi." : `Hata: ${esc(e.message ?? e)}`, "eksi");
+  }
+});
+
+// ---- Kuralını yaz (gösterim): yapay zekâ sunucuda çalışır, anahtar tarayıcıya gelmez ----
+$("kural-btn").addEventListener("click", async () => {
+  const metin = $("kural-metin").value.trim();
+  const btn = $("kural-btn");
+  btn.disabled = true; btn.textContent = "Çevriliyor…";
+  try {
+    const r = await (await fetch("/api/kural", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ metin }) })).json();
+    if (r.gecerli) {
+      const c = r.kontrat;
+      $("kural-sonuc").innerHTML = `<div class="onay"><h4>Kuralını şöyle anladım</h4>
+        <ul><li>Pariteler: <b>${c.pariteler.map(esc).join(", ")}</b></li><li>İşlem başı en fazla: <b>${sayi(c.maxTutarCent / 100, 0)} USDT</b></li><li>Günlük zarar limiti: <b>${sayi(c.maxGunlukZararCent / 100, 0)} USDT</b> (aşılırsa otomatik fren)</li><li class="soluk">Sistem kuralı: iki mühür arası ${c.beklemeSn} sn · açıklama penceresi ${c.aciklamaPenceresiSn / 3600} saat</li></ul>
+        <div class="mono kucuk" style="margin-top:10px">constructor(…, ${esc(JSON.stringify(c.pariteler))}, ${c.maxTutarCent}, ${c.beklemeSn}, ${c.maxGunlukZararCent}, ${c.aciklamaPenceresiSn})</div>
+        <div class="kucuk" style="margin-top:8px"><b>Gösterim:</b> yeni bir kasa kurulurken bu değerler kontrata yazılır ve bir daha değiştirilemez. Şu an gerçek kurulum yapılmadı; çalışan kasanın kuralları yukarıdaki karttakilerdir.</div></div>`;
+    } else {
+      $("kural-sonuc").innerHTML = `<div class="onay ret"><h4>Bu kural kabul edilemez</h4><ul>${(r.hatalar ?? ["bilinmeyen hata"]).map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
+        <div class="kucuk soluk" style="margin-top:8px">Ret kararını yapay zekâ değil kod verdi. Gösterim: gerçek kurulum yok.</div></div>`;
+    }
+  } catch (e) {
+    $("kural-sonuc").innerHTML = `<div class="onay ret"><h4>Hata</h4>${esc(e.message)}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = "Yapay zekâ sayılara çevirsin";
   }
 });
 

@@ -5,6 +5,11 @@
 import { createServer } from "node:http";
 import { existsSync, readFileSync, statSync, openSync, readSync, closeSync } from "node:fs";
 import { KASA_ABI, SICIL_KASASI, publicClient, readKasa } from "../shared/chain.mjs";
+import { kuralCevir } from "./kural-gosterim.mjs";
+
+// .env (GEMINI_API_KEY) sadece sunucuda okunur; tarayıcıya hiçbir yanıtta gitmez
+const ENV = new URL("../../.env", import.meta.url);
+if (existsSync(ENV)) process.loadEnvFile(ENV);
 
 const PORT = Number(process.env.PANEL_PORT ?? 8787);
 const LOGS = new URL("../logs/", import.meta.url);
@@ -99,6 +104,7 @@ async function durum() {
 }
 
 let onbellek = { ms: 0, veri: null };
+let sonKuralMs = 0;
 createServer(async (req, res) => {
   try {
     if (req.url === "/" || req.url === "/index.html") {
@@ -109,6 +115,18 @@ createServer(async (req, res) => {
       if (Date.now() - onbellek.ms > 3000) onbellek = { ms: Date.now(), veri: await durum() };
       res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
       return res.end(JSON.stringify(onbellek.veri));
+    }
+    if (req.url === "/api/kural" && req.method === "POST") {
+      // Gösterim: Türkçe kural → Gemini → KOD aralık kontrolü. Gerçek deploy yok.
+      if (Date.now() - sonKuralMs < 3000) { res.writeHead(429, { "content-type": "application/json" }); return res.end(JSON.stringify({ hata: "Çok sık istek; 3 sn bekleyin." })); }
+      sonKuralMs = Date.now();
+      let govde = "";
+      for await (const parca of req) { govde += parca; if (govde.length > 4000) break; }
+      let metin = "";
+      try { metin = String(JSON.parse(govde).metin ?? ""); } catch { /* boş */ }
+      const sonuc = await kuralCevir(metin);
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+      return res.end(JSON.stringify(sonuc));
     }
     res.writeHead(404).end("yok");
   } catch (e) {

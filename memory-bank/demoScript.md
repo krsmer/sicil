@@ -23,6 +23,10 @@ Neden ilk dakika bu kadar önemli: Jüri ilk dakikada "bir zincire kayıt projes
 
 **Kurallar kartı (5:00–6:00 sahnesinin girişi):** Kullanıcının Türkçe kuralındaki üç sayı (sadece BTC ve ETH, işlem başı 20 USDT, günde en fazla 50 USDT zarar) kasanın kurulum işleminde ([deploy tx `0x75eeb4ca…b0c`](https://testnet.snowtrace.io/tx/0x75eeb4ca34f9e39153e4af4c17222fce75255cad96fe12ac3bb31845a3e75b0c)) constructor argümanı olarak `pariteler`, `maxTutarCent = 2000`, `maxGunlukZararCent = 5000` değerleriyle kontrata yazıldı ve `immutable` olduğu için bir daha değiştirilemez; bugün Türkçe cümleyi sayılara ekip çevirdi, ürün akışında bunu LLM yapıp kullanıcıya onay kartıyla gösterecek (dürüstçe söyle).
 
+**"Kuralını yaz" gösterimi (kurallar kartından hemen sonra, ~30 sn):** Panelde jüriden bir kural iste (ör. "Sadece ETH, işlem başı 10 USDT, günde en fazla 30 USDT zarar"); yapay zekâ (Gemini, sunucuda) cümleyi sayılara çevirir, **kabul/ret kararını kod verir** (pariteler BTC/ETH, işlem başı 5–50, günlük zarar 10–200 ve ≥ işlem başı), onay kartında constructor argümanları görünür. Kartta "GÖSTERİM" yazar: gerçek kontrat kurulmaz. Kaldıraçlı ya da aralık dışı bir kural da dene; ret nedenleri listelenir.
+
+**Vizyon (bugün yapılmadı, açıkça söyle):** Ürün akışında onaylanan her kural için kullanıcıya **kendi kasası** kurulur: yeni bir `SicilKasasi`, kullanıcının limitleriyle, değiştirilemez. "Kuralı kullanıcı koyar, ama bir kez koyar; sonradan değiştirilebilseydi sicil yalan söyleyebilirdi." Bugün tek kasa var; gösterim ekranı gerçek kurulum yapmıyor.
+
 **Alternatif:** Ana ajanın sicilinin temiz kalması istenirse canlı yakalama ikinci bir hesapta yapılır (ayrı API anahtarı + ayrı agentId). Zaman kalırsa. Varsayılan plan ana hesap: kalıcı kırmızı, iddianın en güçlü kanıtı.
 
 **Yedek:** TR demo'da uygulamadan elle işlem yapılamıyorsa, mühür atmadan emir gönderen küçük bir script aynı etkiyi verir ("dolandırıcı script'i").
