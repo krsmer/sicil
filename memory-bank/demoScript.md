@@ -21,6 +21,8 @@ Neden ilk dakika bu kadar önemli: Jüri ilk dakikada "bir zincire kayıt projes
 | 7:00–8:30 | Mimari ve vizyon | Mimari diyagramı (`assets/mimari.png`) | "Yapay zekâyı muhakeme gereken yere, kuralı güven gereken yere koyduk." ERC-8004'ün üç kaydı, "OKX TR Ajan Pazarı" vizyonu |
 | 8:30–10:00 | Kapanış | Kanıt ekranı + QR | Ör. "52 emir, 51 mühür, 1 kayıtsız işlem: sahnede yaptığımız." Yanında kalibrasyon özeti. Repo ve Snowtrace için QR kod |
 
+**Kurallar kartı (5:00–6:00 sahnesinin girişi):** Kullanıcının Türkçe kuralındaki üç sayı (sadece BTC ve ETH, işlem başı 20 USDT, günde en fazla 50 USDT zarar) kasanın kurulum işleminde ([deploy tx `0x75eeb4ca…b0c`](https://testnet.snowtrace.io/tx/0x75eeb4ca34f9e39153e4af4c17222fce75255cad96fe12ac3bb31845a3e75b0c)) constructor argümanı olarak `pariteler`, `maxTutarCent = 2000`, `maxGunlukZararCent = 5000` değerleriyle kontrata yazıldı ve `immutable` olduğu için bir daha değiştirilemez; bugün Türkçe cümleyi sayılara ekip çevirdi, ürün akışında bunu LLM yapıp kullanıcıya onay kartıyla gösterecek (dürüstçe söyle).
+
 **Alternatif:** Ana ajanın sicilinin temiz kalması istenirse canlı yakalama ikinci bir hesapta yapılır (ayrı API anahtarı + ayrı agentId). Zaman kalırsa. Varsayılan plan ana hesap: kalıcı kırmızı, iddianın en güçlü kanıtı.
 
 **Yedek:** TR demo'da uygulamadan elle işlem yapılamıyorsa, mühür atmadan emir gönderen küçük bir script aynı etkiyi verir ("dolandırıcı script'i").

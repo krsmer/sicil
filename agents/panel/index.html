@@ -123,6 +123,24 @@
   button.fren-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #6e1711; }
   button.fren-btn:disabled { background: #9b928a; box-shadow: 0 5px 0 #6f6862; cursor: not-allowed; }
 
+  /* kurallar kartı */
+  .kurallar { display: grid; grid-template-columns: 1fr 1.6fr; border: 1.5px solid var(--murekkep); margin: 0 0 8px; background: rgba(255,255,255,.22); }
+  .kural-soz { padding: 22px 26px; border-right: 1px solid var(--cizgi); }
+  .kural-soz .etiket, .kural-liste .etiket { font: 600 11px/1.2 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--soluk); }
+  .kural-soz blockquote { margin: 12px 0 10px; font: italic 400 25px/1.35 var(--serif); }
+  .kural-soz blockquote::before { content: "“"; color: var(--muhur); margin-right: 2px; }
+  .kural-soz blockquote::after { content: "”"; color: var(--muhur); margin-left: 2px; }
+  .kural-liste { padding: 18px 24px; }
+  .kural-satirlar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 12px; }
+  .kural { border-left: 1px solid var(--cizgi); padding: 2px 14px 4px; }
+  .kural:first-child { border-left: 0; padding-left: 0; }
+  .kural .d { font: 600 26px/1.15 var(--serif); font-variant-numeric: tabular-nums; }
+  .kural .a { font-size: 13px; color: var(--soluk); margin-top: 4px; }
+  .kural .k { display: inline-block; margin-top: 6px; font: 600 10.5px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; padding: 3px 5px; border-radius: 2px; }
+  .kural .k.kullanici { color: var(--defter); background: var(--defter-acik); }
+  .kural .k.sistem { color: var(--soluk); border: 1px solid var(--cizgi); }
+  .kural-alt { margin-top: 14px; font-size: 13px; color: var(--soluk); }
+  @media (max-width: 1100px) { .kurallar { grid-template-columns: 1fr; } .kural-soz { border-right: 0; border-bottom: 1px solid var(--cizgi); } .kural-satirlar { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
   .eslesmeyen { border: 2px solid var(--muhur); background: var(--muhur-acik); padding: 12px 16px; margin: 10px 0; }
   footer { margin-top: 40px; font: 12px/1.7 var(--mono); color: var(--soluk); border-top: 1px solid var(--cizgi); padding-top: 12px; }
 
@@ -147,6 +165,19 @@
     </div>
     <div class="rakamlar" id="rakamlar"></div>
   </div>
+
+  <section class="kurallar" aria-label="Kurallar">
+    <div class="kural-soz">
+      <div class="etiket">Kullanıcının kuralı (Türkçe)</div>
+      <blockquote>Günde en fazla 50 USDT kaybetmek istiyorum, sadece BTC ve ETH, işlem başı 20 USDT.</blockquote>
+      <div class="kucuk soluk">Bu cümleden çıkan sayılar kasanın kurulumunda (deploy) kontrata yazıldı; sonradan kimse değiştiremez.</div>
+    </div>
+    <div class="kural-liste">
+      <div class="etiket">Kurallar · zincirde, değiştirilemez · değerler kontrattan canlı okunuyor</div>
+      <div class="kural-satirlar" id="kural-satirlar"></div>
+      <div class="kural-alt" id="kural-alt"></div>
+    </div>
+  </section>
 
   <div id="eslesmeyenler"></div>
 
@@ -194,6 +225,8 @@
 <script>
 const FUJI = { chainId: "0xa869", chainName: "Avalanche Fuji C-Chain", nativeCurrency: { name: "Avalanche", symbol: "AVAX", decimals: 18 }, rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"], blockExplorerUrls: ["https://testnet.snowtrace.io"] };
 const PAUSE = "0x8456cb59"; // cast sig "pause()"
+const DEPLOY_TX = "0x75eeb4ca34f9e39153e4af4c17222fce75255cad96fe12ac3bb31845a3e75b0c"; // SicilKasasi kurulumu (constructor argümanları = kurallar)
+const readContract = (a) => `https://testnet.snowtrace.io/address/${a}/contract/43113/readContract`;
 const tx = (h) => `https://testnet.snowtrace.io/tx/${h}`;
 const adr = (a) => `https://testnet.snowtrace.io/address/${a}`;
 const kisa = (h) => (h ? `${h.slice(0, 8)}…${h.slice(-4)}` : "");
@@ -237,6 +270,17 @@ function ciz(d) {
     rakam("Kalibrasyon", brier == null ? "–" : sayi(brier, 3), brier == null ? "Brier · ilk tez sonuçlanınca" : "Brier skoru · düşük = iyi"),
     rakam("ERC-8004 itibar", ni?.adet ? `${sayi(ni.deger / 10 ** ni.ondalik, 2)}%` : "–", `trader #258 · denetçinin ${ni?.adet ?? 0} notu`),
   ].join("");
+
+  // kurallar (kontrattan okunan immutable değerler)
+  const kural = (deger, ad, kaynak) => `<div class="kural"><div class="d">${deger}</div><div class="a">${ad}</div><span class="k ${kaynak === "kullanıcı" ? "kullanici" : "sistem"}">${kaynak === "kullanıcı" ? "kullanıcının kuralından" : "SİCİL sistem kuralı"}</span></div>`;
+  $("kural-satirlar").innerHTML = [
+    kural(esc((z.pariteler ?? []).map((p) => p.replace("-USDT", "")).join(" · ") || "–"), `izinli pariteler <span class="mono">pariteler()</span>`, "kullanıcı"),
+    kural(z.maxTutarCent != null ? `${sayi(z.maxTutarCent / 100, 0)} USDT` : "–", `işlem başı tavan <span class="mono">maxTutarCent</span>`, "kullanıcı"),
+    kural(z.maxGunlukZararCent != null ? `${sayi(z.maxGunlukZararCent / 100, 0)} USDT` : "–", `günlük zarar limiti (aşılırsa otomatik fren) <span class="mono">maxGunlukZararCent</span>`, "kullanıcı"),
+    kural(z.beklemeSn != null ? `${z.beklemeSn} sn` : "–", `iki mühür arası bekleme <span class="mono">beklemeSn</span>`, "sistem"),
+    kural(z.aciklamaPenceresiSn != null ? `${sayi(z.aciklamaPenceresiSn / 3600, 0)} saat` : "–", `açıklama penceresi (geçerse tez tutmadı) <span class="mono">aciklamaPenceresiSn</span>`, "sistem"),
+  ].join("");
+  $("kural-alt").innerHTML = `Kurallar kasanın kurulum işleminde yazıldı: <a href="${tx(DEPLOY_TX)}" target="_blank" rel="noopener">deploy tx ↗</a> · herkes kontrattan doğrulayabilir: <a href="${readContract(z.kontrat)}" target="_blank" rel="noopener">Snowtrace · Read Contract ↗</a> · limit aşan mühürler zincirde reddedilir (aşağıda)`;
 
   // eşleşmeyenler
   $("eslesmeyenler").innerHTML = d.eslesmeyenler.length

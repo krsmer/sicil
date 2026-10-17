@@ -161,3 +161,4 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 13:33 | Türkçe panel (`agents/panel/`, http://127.0.0.1:8787) | ✅ API + sayfa; agent-browser ekran görüntüsüyle kontrol edildi. Fren butonu MetaMask ile provada denenecek |
 | 17 Ekim 13:40 | 15m ATR seviyeleri, rapor tabanlı tez geçmişi, güvenli rapor push'u | ✅ 16/16 test (denetçi 10 + kurtarma 6); trader ve denetçi yeni koda geçti |
 | 17 Ekim 13:49 | **Fren provası** (panel → MetaMask Account 1 → `pause()`) | ✅ pause tx `0x4c374def13…` (fren adresinden), 14:00 trader turu "kasa durdurulmuş (fren)" ile atlandı, 14:03 sahip `unpause()` tx `0x5998f6d243…`. Arif: "sorunsuz çalışıyor" |
+| 17 Ekim 14:30 | Panel kurallar kartı + Snowtrace Read Contract linki | ✅ Değerler kontrattan; link gerçek tarayıcıda açıldı ve kasanın 19 okuma fonksiyonunu listeliyor (Snowtrace verified gözle doğrulandı) |
