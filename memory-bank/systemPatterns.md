@@ -83,6 +83,8 @@ Kod: `contracts/src/SicilKasasi.sol` (K-13). Birimler: tutar **USDT cent** (1 US
 ```
 her tur (saatlik mum kapanışı; sakin piyasada 15 dakika):
   1. Kural motoru: BTC-USDT, ETH-USDT için rejim (EMA eğimi/ADX) + ATR
+     [17 Ekim] Spotta pozisyon SADECE ALIŞ ile açılır; "sell" sadece çıkıştır (OCO).
+     Açığa satış / short aday üretilmez; trend aşağıysa aday = yok (BEKLE)
      → aday: {pair, yön, giriş, tavanBoyutUsdt, zorunluStop, hedefAraligi}
   2. LLM araştırır: kendi seçtiği okuma araçlarıyla (başka zaman dilimi mumları,
      emir defteri; global türev bağlamı: market_get_funding_rate BTC/ETH-USDT-SWAP,
@@ -119,6 +121,8 @@ her tur (saatlik mum kapanışı; sakin piyasada 15 dakika):
 her tur (normalde 60 sn; sunum sırasında 15 sn):
   1. spot_get_fills (begin = sicilBaslangic) + spot_get_orders → sicil başladıktan sonraki bütün dolan işlemler ve emirler
   2. SicilKasasi olayları: Sealed, Revealed
+     [17 Ekim] ts < sicilBaslangic olan mühürler TAMAMEN yok sayılır: eşleştirmeye, puanlamaya ve
+     "açıklanmamış = tutmadı" sayımına girmez (sabah test mühürleri sicili etkilemez)
   3. Her dolum için eşleştirme:
        clOrdId "sicilNNNNNN" → mühür id   (yedek: reveal içindeki okxOrdId)
        mühür zamanı < emir oluşturma zamanı olmalı

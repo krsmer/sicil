@@ -16,3 +16,6 @@ keystores/
 
 # macOS
 .DS_Store
+
+# Ajan JSONL logları
+agents/logs/
