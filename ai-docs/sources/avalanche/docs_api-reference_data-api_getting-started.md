@@ -1,0 +1,176 @@
+---
+title: Getting Started
+description: Getting Started with the Data API
+icon: Book
+---
+
+<Steps>
+  <Step title="Create your account">
+    To begin, create your free account by visiting [Builder Hub Console](https://build.avax.network/login?callbackUrl=%2Fconsole%2Futilities%2Fdata-api-keys).
+
+    <img src="/images/docs/builderhub-console-login.png" data-og-width="2674" width="1600" data-og-height="1606" height="1014" data-path="images/builderhub-console-login.png" data-optimize="true" data-opv="3" />
+  </Step>
+
+  <Step title="Get an API Key">
+    Once the account is created:
+
+    1. Navigating to [**Data API Keys**](https://build.avax.network/console/utilities/data-api-keys)
+    2. Click on **Create API Key**
+    3. Set an alias and click on **create**
+    4. Copy the the value
+
+    <Callout>Always keep your API keys in a secure environment. Never expose them in public repositories, such as GitHub, or share them with unauthorized individuals. Compromised API keys can lead to unauthorized access and potential misuse of your account.</Callout>
+  </Step>
+
+  <Step title="Make a query">
+    With your API Key you can start making queries, for example to get the latest block on the C-chain(43114):
+
+    ```bash  theme={null}
+      curl --location 'https://data-api.avax.network/v1/chains/43114/blocks' \
+      --header 'accept: application/json' \
+      --header 'x-glacier-api-key: <YOUR-API-KEY>' \
+    ```
+
+    And you should see something like this:
+
+    ```json  theme={null}
+    {
+      "blocks": [
+        {
+          "blockNumber": "49889407",
+          "blockTimestamp": 1724990250,
+          "blockHash": "0xd34becc82943e3e49048cdd3f75b80a87e44eb3aed6b87cc06867a7c3b9ee213",
+          "txCount": 1,
+          "baseFee": "25000000000",
+          "gasUsed": "53608",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0xf4917efb4628a1d8f4d101b3d15bce9826e62ef2c93c3e16ee898d27cf02f3d4",
+          "feesSpent": "1435117553916960",
+          "cumulativeTransactions": "500325352"
+        },
+        {
+          "blockNumber": "49889406",
+          "blockTimestamp": 1724990248,
+          "blockHash": "0xf4917efb4628a1d8f4d101b3d15bce9826e62ef2c93c3e16ee898d27cf02f3d4",
+          "txCount": 2,
+          "baseFee": "25000000000",
+          "gasUsed": "169050",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0x2a54f142fa3acee92a839b071bb6c7cca7abc2a797cf4aac68b07f79406ac0cb",
+          "feesSpent": "4226250000000000",
+          "cumulativeTransactions": "500325351"
+        },
+        {
+          "blockNumber": "49889405",
+          "blockTimestamp": 1724990246,
+          "blockHash": "0x2a54f142fa3acee92a839b071bb6c7cca7abc2a797cf4aac68b07f79406ac0cb",
+          "txCount": 4,
+          "baseFee": "25000000000",
+          "gasUsed": "618638",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0x0cda1bb5c86e790976c9330c9fc26e241a705afbad11a4caa44df1c81058451d",
+          "feesSpent": "16763932426044724",
+          "cumulativeTransactions": "500325349"
+        },
+        {
+          "blockNumber": "49889404",
+          "blockTimestamp": 1724990244,
+          "blockHash": "0x0cda1bb5c86e790976c9330c9fc26e241a705afbad11a4caa44df1c81058451d",
+          "txCount": 3,
+          "baseFee": "25000000000",
+          "gasUsed": "254544",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0x60e55dd9eacc095c07f50a73e02d81341c406584f7abbf5d10d938776a4c893c",
+          "feesSpent": "6984642298020000",
+          "cumulativeTransactions": "500325345"
+        },
+        {
+          "blockNumber": "49889403",
+          "blockTimestamp": 1724990242,
+          "blockHash": "0x60e55dd9eacc095c07f50a73e02d81341c406584f7abbf5d10d938776a4c893c",
+          "txCount": 2,
+          "baseFee": "25000000000",
+          "gasUsed": "65050",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0xa3e9f91f45a85ed00b8ebe8e5e976ed1a1f52612143eddd3de9d2588d05398b8",
+          "feesSpent": "1846500000000000",
+          "cumulativeTransactions": "500325342"
+        },
+        {
+          "blockNumber": "49889402",
+          "blockTimestamp": 1724990240,
+          "blockHash": "0xa3e9f91f45a85ed00b8ebe8e5e976ed1a1f52612143eddd3de9d2588d05398b8",
+          "txCount": 2,
+          "baseFee": "25000000000",
+          "gasUsed": "74608",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0x670db772edfc2fdae322d55473ba0670690aed6358a067a718492c819d63356a",
+          "feesSpent": "1997299851936960",
+          "cumulativeTransactions": "500325340"
+        },
+        {
+          "blockNumber": "49889401",
+          "blockTimestamp": 1724990238,
+          "blockHash": "0x670db772edfc2fdae322d55473ba0670690aed6358a067a718492c819d63356a",
+          "txCount": 1,
+          "baseFee": "25000000000",
+          "gasUsed": "273992",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0x75742cf45383ce54823690b9dd2e85a743be819281468163d276f145d077902a",
+          "feesSpent": "7334926295195040",
+          "cumulativeTransactions": "500325338"
+        },
+        {
+          "blockNumber": "49889400",
+          "blockTimestamp": 1724990236,
+          "blockHash": "0x75742cf45383ce54823690b9dd2e85a743be819281468163d276f145d077902a",
+          "txCount": 1,
+          "baseFee": "25000000000",
+          "gasUsed": "291509",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0xe5055eae3e1fd2df24b61e9c691f756c97e5619cfc66b69cbcb6025117d1bde7",
+          "feesSpent": "7724988500000000",
+          "cumulativeTransactions": "500325337"
+        },
+        {
+          "blockNumber": "49889399",
+          "blockTimestamp": 1724990234,
+          "blockHash": "0xe5055eae3e1fd2df24b61e9c691f756c97e5619cfc66b69cbcb6025117d1bde7",
+          "txCount": 8,
+          "baseFee": "25000000000",
+          "gasUsed": "824335",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0xbcacff928f7dd20cc1522155e7c9b9716997914b53ab94034b813c3f207174ef",
+          "feesSpent": "21983004380692400",
+          "cumulativeTransactions": "500325336"
+        },
+        {
+          "blockNumber": "49889398",
+          "blockTimestamp": 1724990229,
+          "blockHash": "0xbcacff928f7dd20cc1522155e7c9b9716997914b53ab94034b813c3f207174ef",
+          "txCount": 1,
+          "baseFee": "25000000000",
+          "gasUsed": "21000",
+          "gasLimit": "15000000",
+          "gasCost": "0",
+          "parentHash": "0x0b686812078429d33e4224d2b48bd26b920db8dbb464e7f135d980759ca7e947",
+          "feesSpent": "562182298020000",
+          "cumulativeTransactions": "500325328"
+        }
+      ],
+      "nextPageToken": "9f9e1d25-14a9-49f4-8742-fd4bf12f7cd8"
+    }
+    ```
+  </Step>
+</Steps>
+
+Congratulations! You’ve successfully set up your account and made your first query to the Data API  🚀🚀🚀

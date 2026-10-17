@@ -1,0 +1,80 @@
+---
+title: 0xGasless
+category: x402
+available: ["C-Chain"]
+description: 0xGasless offers x402 facilitator for the AVALANCHE Chain open payment standard, AgentKit SDK for on-chain agent execution for developers to build user friendly blockchain applications
+logo: /images/0xGasless.png
+developer: 0xGasless
+website: https://0xgasless.com/
+documentation: https://docs.0xgasless.com/
+---
+
+## Overview
+
+0xGasless AgentKit is an SDK for on-chain execution by AI agents, covering transaction signing, smart contract interaction, token swaps, contract deployment, and wallet management — all without gas.
+
+It supports the x402 Payment Protocol with the 0xGasless x402 Facilitator service (https://x402.0xgasless.com/) for the Avalanche Chain open payment standard.
+
+It also includes a full account abstraction stack on ERC-4337 and ERC-7702, so developers can build dApps with gasless transactions, batching, and session keys.
+
+## What we are offering
+
+0xGasless offers an x402 Facilitator for the on-chain open payment standard and an AI AgentKit for gasless smart accounts and autonomous on-chain AI agents via ERC-4337, with paymasters, bundlers, and LLM-ready tools across EVM chains.
+
+### 0xGasless x402 
+
+- Supports x402 Protocol
+- x402 Facilitator ( https://x402.0xgasless.com/ )
+
+### AA SDK
+
+- Bundler-as-a-Service
+- Paymaster-as-a-Service
+- ERC-4337 Smart Wallets
+- ERC-7702
+
+### AgentKit
+
+- Open-source [GitHub repo](https://github.com/0xgasless/agentkit) 
+- [NPM package](https://www.npmjs.com/package/@0xgasless/agentkit) 
+- 0xGasless Claude MCP: [NPM Package](https://www.npmjs.com/package/@0xgasless/mcp) & [Github Repo](https://github.com/0xgasless/mcp)
+
+
+## C‑Chain (Avalanche) notes:
+
+- **Native gas token**: AVAX (sponsored mode requires a funded paymaster).
+- Many stablecoins (e.g., USDT) use 6 decimals, format amounts correctly.
+- Ensure your API key is enabled for 43114 and that your paymaster gas tank is funded.
+
+
+## Getting Started
+
+1. **Sign up**: Create an account on the [0xGasless Platform](https://dashboard.0xgasless.com/) to access the dashboard and developer tools.
+2. **Read the documentation**: See the [0xGasless docs](https://docs.0xgasless.com/) for installation guides, API references, and integrations.
+3. **Fund the paymaster**: Follow the [guide](https://docs.0xgasless.com/Getting%20Started/create-a-page) and use the [dashboard](https://dashboard.0xgasless.com/) to create and fund the paymaster.
+4. **Integrate the SDK**: Obtain API keys and configure the smart account, bundler, and paymaster using the SDK [docs](https://docs.0xgasless.com/Getting%20Started/create-a-page#step-1-obtain-required-api-keys).
+5. **Explore modular options**: The SDK is modular; customize each step of the account abstraction cycle as needed.
+6. **Test and deploy**: Use multi-chain support, test thoroughly, and keep the paymaster gas tank funded.
+
+## Documentation
+
+- For guides, API references, and integration examples, visit [0xGasless Documentation](https://docs.0xgasless.com/).
+
+- For x402 details, visit (https://docs.0xgasless.com/x402/) and for the 0xGasless x402 facilitator service, visit (https://x402.0xgasless.com/)
+
+- Dashboard for keys/paymasters: [0xGasless Dashboard](https://dashboard.0xgasless.com/).
+
+## **Use Cases**
+
+- **Autonomous Agent Services**: Deploy an AI agent (like a data-eval agent or a code reviewer) that charges other agents via x402 to perform a task, such as fine-tuning a model or verifying a pull request.
+- **Monetizing Your APIs**: Automatically charge other users or agents a small fee (e.g., $0.001) every time they call an API endpoint you've deployed.
+- **Pay-Per-Query Dashboards**: Build and host a DeFi savings dashboard or an analytics tool that charges users a micro-payment for each new query or data refresh.
+- **AI Agents**: Streamline payment processes with smart accounts. Account abstraction provides a secure infrastructure for agents interacting with money.
+- **DeFi Applications**: Improve accessibility and usability with gasless transactions and easy onboarding.
+- **Enterprise Applications**: Manage complex access controls and transaction rules with scalable, secure integrations.
+- **Crypto Wallets**: Develop wallets using smart accounts for improved security, usability, and gasless transactions.
+- **Digital Identity Management**: Manage digital identities with customizable transaction and access rules for secure, scalable identity.
+- **Blockchain Games**: Onboard users via social logins to manage in-game assets and progress.
+- **NFT Marketplaces**: Let users interact with platforms using their existing social accounts to improve acquisition and engagement.
+
+

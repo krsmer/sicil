@@ -1,0 +1,2 @@
+1278636c3c16d31be99c888e5051622f8cc87f8e Wed Sep 23 20:55:57 2026 +0800
+repo: https://github.com/okx/agent-trade-kit (branch github-main), package version 1.4.8

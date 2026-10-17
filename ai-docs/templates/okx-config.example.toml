@@ -1,0 +1,35 @@
+# Copy to ~/.okx/config.toml (NOT into the repo). Or run `okx config init`.
+# Demo keys: OKX TR -> Trading -> Demo Trading -> API Management (separate from live keys).
+# Permissions: Read + Trade. Never Withdraw.
+# Passphrase quoting: contains # \ "  -> 'single quotes'; contains ' -> "double"; both -> '''triple single'''.
+
+default_profile = "demo"
+
+[profiles.demo]
+site       = "tr"      # tr.okx.com account. Use "global" for a www.okx.com account.
+api_key    = "..."
+secret_key = "..."
+passphrase = "..."
+demo       = true
+
+# SİCİL auditor: a SEPARATE demo key with Read permission only (no Trade, no Withdraw).
+[profiles.denetci]
+site       = "tr"
+api_key    = "..."
+secret_key = "..."
+passphrase = "..."
+demo       = true
+
+# Fallback if TR demo endpoints misbehave (TR is marked "not yet tested" by ATK):
+# [profiles.demo-global]
+# site = "global"
+# api_key = "..."
+# secret_key = "..."
+# passphrase = "..."
+# demo = true
+
+[profiles.live]
+site       = "tr"
+api_key    = "..."
+secret_key = "..."
+passphrase = "..."

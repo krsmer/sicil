@@ -1,0 +1,18 @@
+.env
+.env.*
+decisions.jsonl
+node_modules/
+out/
+cache/
+broadcast/
+
+# OKX keys never live here (they are in ~/.okx/config.toml)
+
+# Wallets and keys never live in the repo (keystores are in ~/.foundry/keystores)
+keystores/
+.sifreler/
+*.key
+*.pem
+
+# macOS
+.DS_Store

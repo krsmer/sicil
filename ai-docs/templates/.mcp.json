@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "avalanche-docs": {
+      "type": "http",
+      "url": "https://build.avax.network/api/mcp"
+    },
+    "okx-demo": {
+      "type": "stdio",
+      "command": "okx-trade-mcp",
+      "args": ["--profile", "demo", "--modules", "market,spot,swap,account,news,smartmoney"]
+    },
+    "okx-market": {
+      "type": "stdio",
+      "command": "okx-trade-mcp",
+      "args": ["--modules", "market"]
+    }
+  }
+}
