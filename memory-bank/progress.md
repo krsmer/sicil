@@ -86,7 +86,7 @@ Dört kişiyseniz her kola bir kişi; üç kişiyseniz kontratı bitiren kişi 1
 - [x] `register` ile iki agentId (trader **258**, denetçi **259**, 12:35); ~~Reputation ve Validation imzaları Snowtrace'te kontrol~~ ✅ imzalar 12:15 doğrulandı
 - [x] Denetçi cüzdanından `giveFeedback` ✅ 13:24 (gerçek not, deneme değil)
 - [ ] Salon Wi-Fi'sinde olay dinleme gecikmesi; yedek RPC ve telefon hotspot'u
-- [ ] Fren: Brave + MetaMask Account 1 fonlu (~0,01 AVAX), Fuji ağı ekli, panelden bir kez denenmiş (sonra sahip `unpause`)
+- [x] Fren: Brave + MetaMask Account 1, panelden denendi ✅ 13:49 `pause()` → 14:00 ajan turu atladı → 14:03 sahip `unpause()`
 - [ ] **WorkshopHub `checkIn`'i deneme olarak YAPMA** (aynı adresten ikinci kaydı reddediyor)
 
 **Repo ve sicil:**
@@ -160,3 +160,4 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 13:24 | Denetçinin rapor commit+push'u | ✅ `fb1f44a denetçi: 1 rapor` (sadece `reports/`) |
 | 17 Ekim 13:33 | Türkçe panel (`agents/panel/`, http://127.0.0.1:8787) | ✅ API + sayfa; agent-browser ekran görüntüsüyle kontrol edildi. Fren butonu MetaMask ile provada denenecek |
 | 17 Ekim 13:40 | 15m ATR seviyeleri, rapor tabanlı tez geçmişi, güvenli rapor push'u | ✅ 16/16 test (denetçi 10 + kurtarma 6); trader ve denetçi yeni koda geçti |
+| 17 Ekim 13:49 | **Fren provası** (panel → MetaMask Account 1 → `pause()`) | ✅ pause tx `0x4c374def13…` (fren adresinden), 14:00 trader turu "kasa durdurulmuş (fren)" ile atlandı, 14:03 sahip `unpause()` tx `0x5998f6d243…`. Arif: "sorunsuz çalışıyor" |
