@@ -146,3 +146,6 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 12:15 | ERC-8004 imzaları (Routescan verified kaynak, v2.0.0) | ✅ Planla uyumlu. Self-feedback engeli kontratta; `validationRequest` sadece sahip/operatör; `validationResponse` sadece validator, ≤100 |
 | 17 Ekim 12:35 | ERC-8004 `register`: sahip → trader (258), denetçi → kendisi (259) | ✅ ownerOf doğru; `isAuthorizedOrOwner(denetçi,258)=false`; tokenURI zincirden çözüldü |
 | 17 Ekim 13:25 | `SicilKasasi` Fuji deploy `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8` | ✅ Zincirden okunan ayarlar doğru; Builder Hub `exact_match`, Snowtrace verified (SicilKasasi, v0.8.24) |
+| 17 Ekim 12:30 | Uçtan uca döngü (mühür #1 → post_only `sicil000001` → reveal → OCO `sicil000001x`) | ✅ Mühür ~5 sn, dolum ~29 sn, reveal ~5 sn; demo maker ücreti %0,08 (BTC olarak kesildi) |
+| 17 Ekim 12:45 | `sealRetGoster` (simülasyonsuz, gas 200k): 34 USDT mühür | ✅ Zincirde `reverted`, `TutarAsildi(3400, 2000)`: tx `0xe2206eb4…48bd1` (sicilBaslangic öncesi test) |
+| 17 Ekim 12:45 | Kural motoru (1H demo mumları, EMA20/50, ATR14) | ✅ Çalışıyor; o an BTC ve ETH yatay → aday yok. BTC ATR ~%0,41 → ham tutar ~49 USDT > 20 (ret anı doğal olarak oluşur) |

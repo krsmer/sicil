@@ -22,6 +22,16 @@ export function readKasa(functionName, args = []) {
   return publicClient.readContract({ address: SICIL_KASASI, abi: KASA_ABI, functionName, args });
 }
 
+/// Ret anı: limit aşan mührü simülasyonsuz ve sabit gas limitiyle gönderir, böylece revert eden işlem zincirde kalır
+/// ve Snowtrace'te görünür. (writeContract gas verilmezse önce estimateGas çağırır; revert edecek işlemi hiç göndermez.)
+export async function sealRetGoster(wallet, commitHash, pair, notionalCent, gas = 200_000n) {
+  const hash = await wallet.writeContract({
+    address: SICIL_KASASI, abi: KASA_ABI, functionName: "seal", args: [commitHash, pair, notionalCent], gas,
+  });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  return { hash, status: receipt.status, url: snowtrace(hash) };
+}
+
 /// Kasaya yazar ve onayı bekler. Revert eden çağrıyı viem simülasyonda yakalar (zincire gitmez).
 export async function writeKasa(wallet, functionName, args) {
   const hash = await wallet.writeContract({ address: SICIL_KASASI, abi: KASA_ABI, functionName, args });
