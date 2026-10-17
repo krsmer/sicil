@@ -105,7 +105,7 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 
 ## Teslim ölçütleri (19:00)
 
-- [ ] **Repo public yapılmadan ÖNCE: git geçmişinin TAMAMINDA gizli bilgi taraması** (`git log -p --all` üzerinde anahtar/şifre/özel anahtar/passphrase/e-posta desenleri; ör. `gitleaks detect` veya `git log -p --all | grep -E ...`). Bulunursa geçmiş temizlenir (BFG/`git filter-repo`), sonra public. Commit e-postası ve `ai-docs/sources/` lisansı da kontrol edilir
+- [x] ✅ 15:30 tarandı, temiz (aşağıda doğrulama kaydı). Public yapma kararı Arif'te · ~~**Repo public yapılmadan ÖNCE: git geçmişinin TAMAMINDA gizli bilgi taraması**~~ (`git log -p --all` üzerinde anahtar/şifre/özel anahtar/passphrase/e-posta desenleri; ör. `gitleaks detect` veya `git log -p --all | grep -E ...`). Bulunursa geçmiş temizlenir (BFG/`git filter-repo`), sonra public. Commit e-postası ve `ai-docs/sources/` lisansı da kontrol edilir
 - [ ] Repo: tek komutla kurulum, gizli anahtar yok, `DRY_RUN` modu
 - [ ] README: jüri kriterlerine göre kanıt tablosu (her iddia → Snowtrace / OKX emir numarası), ATK araç çağrı zinciri, kullanılan model ve prompt'lar
 - [ ] Foundry test çıktısı
@@ -164,3 +164,6 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 14:30 | Panel kurallar kartı + Snowtrace Read Contract linki | ✅ Değerler kontrattan; link gerçek tarayıcıda açıldı ve kasanın 19 okuma fonksiyonunu listeliyor (Snowtrace verified gözle doğrulandı) |
 | 17 Ekim 14:45 | "Kuralını yaz" gösterimi (`POST /api/kural`) | ✅ 8/8 aralık testi; canlı: Arif'in kuralı ve "sadece ETH, 10/30" kabul; "SOL+BTC, 100 USDT, 10x kaldıraç" ve "40/20" ret (nedenleriyle); yanıtlarda Gemini anahtarı yok |
 | 17 Ekim 14:56 | `spot_amend_algo_order` ile #2 OCO'su fiyata yakın (TP 81.634 / SL 81.552,4) | ✅ algoId 4017438767833788417, algoClOrdId sicil000002x, cTime 1792231405331 **değişmedi**, uTime güncellendi; 4 denetçi amend testi + 5 süre-çıkış testi; toplam 33/33 |
+| 17 Ekim 15:30 | **Git geçmişi gizli bilgi taraması** (33 commit, `git log -p --all`; gitleaks kurulu değil) | ✅ **Temiz.** (1) Gerçek değerler bellekte okunup arandı, hiçbiri yok: 4 cüzdan özel anahtarı, 4 keystore şifresi, OKX `demo`/`denetci` api_key/secret_key/passphrase, `.env` GEMINI_API_KEY, sabah şablona yanlışlıkla yazılan passphrase. (2) Desenler: AIza/sk-/gho_/PEM/keystore JSON/`PRIVATE_KEY=` 0; `api_key/passphrase = …` 13 benzersiz eşleşme, hepsi belge örneği (`your-…`, `my#pass\word`); 1 UUID (ctfassets görsel URL'si). Takip edilen hassas dosya yok (`.env`, keystore, config, `.jsonl` yok). Not: commit e-postası `ariff33445566@gmail.com` repo public olunca görünür |
+| 17 Ekim 15:24 | Fren hesabından ikinci `pause()` (tx `0x2c018187…46e0`) | ⚠️ Kasa durdurulmuş; Arif'in denemesi olduğu varsayıldı, `unpause` yapılmadı (Arif'e soruldu) |
+| 17 Ekim 15:15 | ETH'den ilk aday (K-17 sonrası) → mühür #3 (`0x5bdeecd9…7d20e`) | ✅ |
