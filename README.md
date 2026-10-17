@@ -123,11 +123,3 @@ Ayrıntılı geliştirici notları: [docs/GELISTIRME.md](docs/GELISTIRME.md) · 
 
 ---
 
-## Dürüst sınırlar
-
-- **Demo hesap ve test ağı.** İşlemler OKX TR **demo** hesabında (gerçek emir motoru, sanal para); zincir Avalanche **Fuji** test ağı.
-- **"Kâr eder" demiyoruz.** İddiamız dürüst sicil. Net getiri ücretler dahil şu an eksi; olduğu gibi gösteriliyor. Sakin piyasada az sayıda tez sonuçlandı, kalibrasyon için örnek az.
-- **Türkçe kural.** Kullanıcının kuralını bugün ekip sayılara çevirip kasa kurulumunda kontrata yazdı. Panelde "Kuralını yaz" ekranı bunun yapay zekâ ile nasıl yapılacağını **gösterir**, ama gerçek kontrat kurmaz. Hedef: her kullanıcıya kendi kurallarıyla kendi kasası.
-- **Kontrat emri fiziksel olarak engellemez.** Para OKX'te, emri yürütücü gönderir. Kontrat "yapamazsın" değil "yaparsan herkes görür" der: limit aşan mühürleri reddeder, mühürsüz tek bir dolum ise denetçi tarafından yakalanıp sicili **kalıcı** olarak bozar.
-- **Denetçi de bizim kodumuz.** Ama LLM kullanmıyor, sadece okuma anahtarıyla çalışıyor ve açık kaynak: aynı anahtar ve zincirle herkes aynı sonuca ulaşır.
-- **"10 hesap açıp en iyisini gösterme"** sorununa cevabımız kısmi: Identity kaydında sahibin bütün ajanları görünür; tam çözüm borsanın doğrulanmış hesabı agentId'ye bağlaması.
