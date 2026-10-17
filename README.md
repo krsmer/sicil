@@ -6,6 +6,19 @@
 
 **Kaybettiği günleri bile saklayamayan bir yapay zekâ trader'ı.**
 
+## Jüri kriterleri → kanıt
+
+| Kriter | Puan | Kanıt (tıklanabilir) |
+|---|---|---|
+| **Agentic Design**: otonomi, muhakeme ve araç kullanımı | 20 | 17 Ekim 13:01'den beri insansız döngü (aday → LLM kararı → mühür → emir → açılış → OCO → denetim). Son mühür [#3 seal](https://testnet.snowtrace.io/tx/0x5bdeecd9fe4d5d73c4289fb85dcdeccc7e652041e4a392a568f08e49b457d20e): yapay zekâ kendi seçtiği 4 OKX ATK aracını sırayla çağırdı (funding, OI, RSI 15m, MACD 1H), AL dedi, tezini yazdı; panelde sicil kartı → "Gerekçeyi ve araştırmayı göster". Kod: [karar.mjs](agents/trader/karar.mjs), [ajan.mjs](agents/trader/ajan.mjs) |
+| **Technical Execution**: çalışan ürün, mimari, zorluk | 15 | [Deploy tx](https://testnet.snowtrace.io/tx/0x75eeb4ca34f9e39153e4af4c17222fce75255cad96fe12ac3bb31845a3e75b0c) · [SicilKasasi.sol](contracts/src/SicilKasasi.sol) · [denetci.mjs](agents/denetci/denetci.mjs). Commit-reveal, LLM'siz denetçi (OCO çıkışlarını `algoClOrdId` + `ordIdList` + zamanla mühre bağlar), ERC-8004 "kendi notunu kendi veremez". `forge test` 29 · `node --test` 33 |
+| **Avalanche Integration**: C-Chain deploy, güçlü yanlar | 10 | [SicilKasasi (verified, Read Contract)](https://testnet.snowtrace.io/address/0x60735035CC6f4d810f4878f9A4a1993F534fe6a8/contract/43113/readContract) · [son denetim (attest)](https://testnet.snowtrace.io/tx/0xd7f9e65b72e4d36877e9a11043a09916cfb61ccb1e99fdee801e2a8e6efc9547) · [ERC-8004 Reputation notu](https://testnet.snowtrace.io/tx/0xbf051b7214724e149a77684ab7ae4b722d92dcded27bc47880984517b5d59f10). Hızlı kesinleşme: mühür bloğundan OKX emrine 2,5 sn (#3) / 4,6 sn (#2); bir mühür 107.922 gas × 160 wei ≈ 1,7e-11 AVAX (panelde canlı ölçüm). Vizyon: borsalar için özel L1, ICM ile sicilin diğer zincirlerden okunması |
+| **OKX Integration**: Agent Trade Kit, OKX.AI servisi | 10 | Üç ayrı `okx-trade-mcp` süreci (yürütücü, `--read-only` anahtarsız LLM, `--read-only` denetçi). [Açılış #3](https://testnet.snowtrace.io/tx/0xd06c0cdba4cb45126ef3429a923c9c6c5f812a323950487be932dae77588ebcb): OKX emir no `4017705195929448449` zincirde · [executor.mjs](agents/trader/executor.mjs) (`post_only`, OCO, `spot_amend_algo_order`). OKX.AI servis örneği: `GET /api/sicil/258` (panel sunucusu, canlı JSON); OKX.AI'da listeleme vizyon |
+| **Innovation and Real-World Value** | 25 | Zincire kayıt ≠ sicil: kayıt işlemden **önce**, denetçi **bütün** işlemleri sayar, mühürsüz tek işlem sicili kalıcı bozar. Kullanıcı: OKX TR'de ajan/trader takip etmek isteyen yatırımcı ve başarısını kanıtlamak isteyen geliştirici. SPK uyumlu (spot, kaldıraç yok). İş modeli (vizyon): sicil aboneliği, x402 sorgu ödemesi, OKX TR için sicili doğrulanmış ajan pazarı |
+| **Demo and Presentation** | 20 | Panel 7 bölümlük sunum sitesi (→/← ile gezilir, S sunum modu): canlı sicil, **jüri freni** (MetaMask `pause()`; [prova](https://testnet.snowtrace.io/tx/0x4c374def13a602a8e6218bbddd8ac416aaef0eab3d2ac9aaa93fc09488d0a5c7)), mührü kendin doğrula, kontratı kandırmayı dene (4 `eth_call` reddi), Türkçe kuralını yaz |
+
+Görevler: **ana görev** ATK ile otonom ajan ✓ · **Bonus 1** OKX TR spot demo hesabında gerçek emir ve dolumlar (canlı fiyat ve emir defteri, gerçek ücretler) ✓ · **Bonus 2** Avalanche Fuji'de verified kontrat + ERC-8004 ✓
+
 Telegram'daki sinyal gruplarının kâr ekran görüntüleri düzenlenebilir, kaybettiren işlemler gizlenebilir; işlemleri sonradan zincire yazmak da yalnızca seçilenleri kanıtlar. SİCİL'de yapay zekâ ajanı OKX TR spotta her emirden **önce** kararını ve yanlışlanabilir tezini Avalanche'a mühürler. LLM kullanmayan bağımsız bir denetçi ajan hesabın **bütün** dolumlarını mühürlerle eşler, tezleri puanlar ve notu ERC-8004'e yazar. Mühürsüz tek bir işlem sicili zincirde kalıcı olarak "bozuk" yapar.
 
 > Agentic Hackathon · OKX TR × Team1 Türkiye · Avalanche · Ankara, 17 Ekim 2026. Sicil 17 Ekim 13:01:34'te (TR) başladı ve o andan beri insansız çalışıyor.
@@ -41,20 +54,7 @@ Her bağlantı Snowtrace'te (Avalanche Fuji) açılır; hiçbiri bize güvenmeni
 3. **Emir.** `Sealed` olayı onaylanmadan emir yok. OKX TR spotta `post_only` alış, `clOrdId = sicil<mühür no>`; dolunca `reveal()` ve OCO çıkışı (`algoClOrdId = sicil<no>x`). Tez süresi dolan OCO, ayrı satış emri olmadan fiyata yakın çekilir.
 4. **Denetçi.** LLM yok, sadece-okuma anahtarı. Sicil başladıktan sonraki **bütün** dolumları emir kayıtları üzerinden mühürlerle eşler (etiket + `algoId` + `ordIdList` + zaman + tutar), net getiriyi **sadece mühürlü işlemlerden** hesaplar, tezleri 1 dakikalık mumlarla puanlar (Brier), raporu `reports/` altına yazıp hash'ini `attest()` ile zincire koyar. Mühürsüz tek emir → kalıcı `SicilBozuldu`. Saatte bir ERC-8004 Reputation notu verir.
 
-Panel (`agents/panel`, http://127.0.0.1:8787) bir tanıtım sayfası: sorun, nasıl çalışır (her adımda kanıt linki), 5 sn'de bir güncellenen **canlı sicil**, **kendin dene** (bir mührü kendin doğrula: açılış verisinden hash'i yeniden hesaplar ve zincirdeki mühürle karşılaştırır; kontratı kandırmayı dene: limit üstü / izinsiz parite / yetkisiz fren denemeleri `eth_call` ile reddedilir; Türkçe kuralını yaz gösterimi), mimari, teknoloji ve jüri freni (MetaMask'teki fren hesabıyla `pause()`).
-
----
-
-## Puanlama kriterleri → kanıt
-
-| Kriter | Ağırlık | SİCİL'de nerede |
-|---|---|---|
-| **Agent mimarisi ve otonomi** | %35 | İki bağımsız ajan, birbirine **sadece zincir üzerinden** güveniyor. Trader 13:02'den beri insansız: aday → LLM kararı → mühür → emir → açılış → OCO; çökme sonrası açılışta yarım mühürleri tamamlıyor (`trader/kurtarma.mjs`), tez süresi dolan pozisyonu kendisi kapatıyor (`trader/sure-cikis.mjs`). LLM araçlarla araştırıyor ve PAS diyebiliyor; kararları panelde. |
-| **Ürün ve strateji** | %25 | Gerçek bir yerel sorun (sahte sinyal grupları) ve OKX TR'nin kendi kullanıcısına sunabileceği ürün: "sicili doğrulanmış spot ajanlar" (SPK gereği kaldıraç yok). Strateji: 1H rejim (EMA20/50 eğimi) + 15m tetikleyici, ATR'ye göre boyut, `post_only` maker giriş, OCO çıkış, tez kalibrasyonu (Brier). Türkçe kural → kontrat limitleri (kurallar kartı + "Kuralını yaz" gösterimi). |
-| **Teknik kalite** | %20 | `forge test`: 29 test (limitler, hash eşleşmesi viem ile `ffi`, tutar tutarlılığı, fren, kalıcı bozulma, `sicilBaslangic`). `node --test`: 33 test (denetçi eşleştirme ve sahte etiketler, kurtarma, süre çıkışı, kural aralıkları). Kontrat Builder Hub + Snowtrace'te verified. Fail-closed tasarım, en az yetki (3 ayrı ATK süreci). |
-| **Demo ve sunum** | %20 | Canlı Türkçe panel; sahnede jüri freni (MetaMask), canlı yakalama (mühürsüz işlem → kalıcı kırmızı), gerçek ret kaydı. Prova için `?onizleme=bozuk` ve `?onizleme=durdu` (sadece arayüz). |
-| **Bonus 1**: ATK ile gerçek piyasa koşulları | + | OKX TR **demo** hesabında gerçek emirler ve dolumlar (ör. `sicil000002`, ordId `4017437100212072450`); fiyatlar TR demo piyasa verisinden; gerçek ücretler (maker %0,08, taker %0,10) sicile giriyor. |
-| **Bonus 2**: Avalanche | + | `SicilKasasi` Fuji'de (mühür, açılış, limitler, denetim, fren), resmi ERC-8004 Identity (#258, #259) ve Reputation, Snowtrace'te her adım. |
+Panel (`agents/panel`, http://127.0.0.1:8787) jüri kriterlerine göre dizilmiş **7 bölümlük bir sunum sitesi**: giriş, sorun ve kullanıcı, **canlı sicil** (5 sn'de bir güncellenen sicil kartları: karar → mühür → emir → denetim, düz Türkçe tez, fiyat çubuğu, yapay zekânın araç zinciri), **canlı deney** (jüri freni, bir mührü kendin doğrula, kontratı kandırmayı dene, Türkçe kuralını yaz), mimari ve entegrasyonlar (Avalanche'ta canlı ölçümler), iş modeli ve OKX.AI servis örneği (`GET /api/sicil/258`, canlı JSON), kriter → kanıt kapanışı. Klavye: → / ← bölüm, **S** sunum modu; altta canlı kanıt şeridi.
 
 ---
 

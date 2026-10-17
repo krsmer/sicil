@@ -168,3 +168,5 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 15:24 | Fren hesabından ikinci `pause()` (tx `0x2c018187…46e0`) | ⚠️ Kasa durdurulmuş; Arif'in denemesi olduğu varsayıldı, `unpause` yapılmadı (Arif'e soruldu) |
 | 17 Ekim 15:15 | ETH'den ilk aday (K-17 sonrası) → mühür #3 (`0x5bdeecd9…7d20e`) | ✅ |
 | 17 Ekim 16:08 | Panel: mühür defteri → sicil kaydı kartları (1440 ve 1280 px, açık/kapalı durumu yenilemede korunuyor, `?onizleme=bozuk` çalışıyor, konsol hatası yok) | ✅ #3 sürüyor (38 dk kaldı), #2 TUTMADI (çıkış 81.554,9; denetçi: süre doldu, 91 mum) |
+| 17 Ekim 16:43 | Denetçinin saatlik rapor push'u | ❌→✅ 15:26'dan beri yarım rebase (`.git/rebase-merge/autostash`) yüzünden başarısızdı (15:24, 16:24 notları atlandı). `git rebase --quit` + push; stash `stash@{0}` saklı (içeriği zaten commit'li) |
+| 17 Ekim 16:46 | Panel → 7 bölümlük sunum sitesi; `/api/sicil/258`, `/api/avalanche` | ✅ 1280 ve 1920 px; klavye gezinme 1→7, S modu, `?onizleme=durdu`; mührü doğrula (#3 eşleşiyor), kontratı kandır (TutarAsildi, PariteIzinsiz, YetkiYok ×2), fren düğmesi aktif; konsol hatası yok |

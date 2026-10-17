@@ -1,6 +1,8 @@
 // SİCİL Türkçe panel sunucusu: sadece okur, sadece 127.0.0.1'de dinler. Derleme adımı yok.
 //   GET /           → panel/index.html
 //   GET /api/durum  → zincir (SicilKasasi + ERC-8004) + denetçi durumu + son rapor + ajan/denetçi log özetleri
+//   GET /api/sicil/258 → OKX.AI servis örneği: agentId'nin sicil özeti (/api/durum'dan türetilir)
+//   GET /api/avalanche → gas fiyatı, son mührün maliyeti, ortalama blok süresi (canlı ölçüm)
 // Çalıştırma: node panel/sunucu.mjs   → http://127.0.0.1:8787
 import { createServer } from "node:http";
 import { existsSync, readFileSync, statSync, openSync, readSync, closeSync } from "node:fs";
@@ -90,7 +92,8 @@ async function durum() {
 
   const kararlar = trader.filter((s) => s.adim === "karar" && sonra(s)).slice(-25).reverse().map((s) => ({
     ts: s.ts, pair: s.pair, karar: s.karar, guven: s.guven, boyutCarpani: s.boyutCarpani, sureDk: s.sureDk, gerekce: s.gerekce,
-    gecerli: s.gecerli, model: s.model, araclar: (s.aracCagrilari ?? []).map((a) => a.arac), sureMs: s.sureMs, aday: s.aday ? { tur: s.aday.tur, giris: s.aday.giris, stop: s.aday.stop, hedef: s.aday.hedef } : null,
+    gecerli: s.gecerli, model: s.model, araclar: (s.aracCagrilari ?? []).map((a) => a.arac), sureMs: s.sureMs,
+    aracDetay: (s.aracCagrilari ?? []).map((a) => ({ arac: a.arac, girdi: a.girdi ?? null, ms: a.ms ?? null })), // ek alan: araç sırası ve girdileri aday: s.aday ? { tur: s.aday.tur, giris: s.aday.giris, stop: s.aday.stop, hedef: s.aday.hedef } : null,
   }));
   const retler = trader.filter((s) => s.adim === "ret" && sonra(s)).slice(-10).reverse();
   const turlar = trader.filter((s) => ["aday-yok", "tur-atlandi"].includes(s.adim) && sonra(s));
@@ -108,6 +111,41 @@ async function durum() {
 }
 
 let onbellek = { ms: 0, veri: null };
+async function durumOnbellekli() {
+  if (Date.now() - onbellek.ms > 3000) onbellek = { ms: Date.now(), veri: await durum() };
+  return onbellek.veri;
+}
+
+/// OKX.AI servis örneği: agentId → sicil özeti. Sadece /api/durum verisinden türetilir (yeni hesap yok).
+function sicilOzeti(d) {
+  const z = d.zincir, o = d.ozet ?? {};
+  const ni = z.itibar?.netGetiri, br = z.itibar?.brier;
+  return {
+    agentId: Number(TRADER_AGENT_ID), ad: "SİCİL Trader", zincir: "eip155:43113", kasa: SICIL_KASASI,
+    identityRegistry: "0x8004A818BFB912233c491871b3d84c89A494BD9e", reputationRegistry: REPUTATION, denetci: { adres: DENETCI, agentId: 259 },
+    sicil: z.sicilBozuk ? "BOZUK" : "TEMIZ", durduruldu: !!z.durduruldu,
+    sicilBaslangic: z.sicilBaslangic ? new Date(z.sicilBaslangic * 1000).toISOString() : null,
+    muhur: d.muhurler.length, eslesenEmir: o.eslesen ?? 0, muhursuzEmir: o.eslesmeyen ?? 0, aciklanmamisMuhur: o.unrevealedExpired ?? 0,
+    netGetiriUsdt: o.netPnlUsdt ?? null, islemHacmiUsdt: o.islemHacmiUsdt ?? null, tezler: o.tez ?? null, brier: o.brier ?? null,
+    erc8004: { netGetiri: ni?.adet ? { notSayisi: ni.adet, ortalamaYuzde: ni.deger / 10 ** ni.ondalik } : null, kalibrasyon: br?.adet ? { notSayisi: br.adet, brier: br.deger / 10 ** br.ondalik } : null },
+    sonDenetim: d.sonAttest ? { zaman: new Date(d.sonAttest.ms).toISOString(), tx: d.sonAttest.tx, raporHash: d.sonAttest.reportHash, rapor: d.raporDosyasi ? `https://github.com/krsmer/sicil/blob/main/${d.raporDosyasi}` : null } : null,
+    uretildi: new Date(d.simdi).toISOString(),
+  };
+}
+
+/// "Neden Avalanche?" kartı için canlı ölçüm: gas fiyatı, son mührün maliyeti, ortalama blok süresi (60 sn önbellek)
+let avaxOnbellek = { ms: 0, veri: null };
+async function avalancheOlcum(d) {
+  const [gasPrice, blok] = await Promise.all([publicClient.getGasPrice(), publicClient.getBlock()]);
+  const eski = await publicClient.getBlock({ blockNumber: blok.number - 100n });
+  const son = d.muhurler[0];
+  let muhur = null;
+  if (son?.sealTx) {
+    const rc = await publicClient.getTransactionReceipt({ hash: son.sealTx });
+    muhur = { id: son.id, tx: son.sealTx, gasUsed: Number(rc.gasUsed), effectiveGasPriceWei: Number(rc.effectiveGasPrice), maliyetAvax: Number(rc.gasUsed * rc.effectiveGasPrice) / 1e18 };
+  }
+  return { gasPriceWei: Number(gasPrice), blokSuresiSn: Number(blok.timestamp - eski.timestamp) / 100, blok: Number(blok.number), muhur, olculdu: Date.now() };
+}
 let sonKuralMs = 0;
 let kandirOnbellek = { ms: 0, veri: null };
 createServer(async (req, res) => {
@@ -119,9 +157,21 @@ createServer(async (req, res) => {
       return res.end(readFileSync(HTML));
     }
     if (req.url === "/api/durum") {
-      if (Date.now() - onbellek.ms > 3000) onbellek = { ms: Date.now(), veri: await durum() };
+      await durumOnbellekli();
       res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
       return res.end(JSON.stringify(onbellek.veri));
+    }
+    const sicilEsles = /^\/api\/sicil\/(\d+)$/.exec(req.url);
+    if (sicilEsles) {
+      res.setHeader("content-type", "application/json; charset=utf-8");
+      if (BigInt(sicilEsles[1]) !== TRADER_AGENT_ID) { res.writeHead(404); return res.end(JSON.stringify({ hata: "bu sunucu sadece agentId 258'in sicilini tutar" })); }
+      res.writeHead(200, { "cache-control": "no-store" });
+      return res.end(JSON.stringify(sicilOzeti(await durumOnbellekli()), null, 2));
+    }
+    if (req.url === "/api/avalanche") {
+      if (Date.now() - avaxOnbellek.ms > 60_000) avaxOnbellek = { ms: Date.now(), veri: await avalancheOlcum(await durumOnbellekli()) };
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+      return res.end(JSON.stringify(avaxOnbellek.veri));
     }
     if (req.url === "/mimari.png") {
       res.writeHead(200, { "content-type": "image/png", "cache-control": "max-age=3600" });
