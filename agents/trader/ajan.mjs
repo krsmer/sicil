@@ -29,6 +29,17 @@ const RET_ARALIGI_MS = 60 * 60_000;
 const LOG_DOSYASI = new URL("../logs/trader.jsonl", import.meta.url);
 
 let sonRetMs = 0;
+let turda = false;
+let durmaIstegi = false;
+// Düzgün kapanma: tur ortasında sinyal gelirse tur bitince çıkılır (yarım işlem bırakılmaz)
+for (const sinyal of ["SIGTERM", "SIGINT"]) {
+  process.on(sinyal, () => {
+    durmaIstegi = true;
+    log("durma-istegi", { sinyal, turda });
+    if (!turda) process.exit(0);
+  });
+}
+const uyu = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /// LLM'e verilecek son 10 tez (yerel log'dan). Sonuçlar denetçi raporlarından gelecek; şimdilik "bekliyor".
 function sonTezler() {
@@ -57,7 +68,7 @@ async function trBaglam(okx, pair) {
 }
 
 async function tur(ctx) {
-  const { okx, piyasa, araclar, trader, maxTutarCent } = ctx;
+  const { okx, piyasa, araclar, trader, maxTutarCent, beklemeSn } = ctx;
   if (await readKasa("durduruldu")) {
     log("tur-atlandi", { neden: "kasa durdurulmuş (fren)" });
     return;
@@ -66,8 +77,17 @@ async function tur(ctx) {
   for (const pair of PARITELER) {
     try {
       if (muhurlendi) {
-        log("tur-atlandi", { pair, neden: "bu turda mühür atıldı; 300 sn bekleme kuralı" });
-        continue;
+        // Kontrattaki bekleme süresi (iki mühür arası) dolana kadar bekle, sonra bu pariteyi taze veriyle değerlendir
+        const bitis = (Number(await readKasa("sonMuhurTs")) + Number(beklemeSn)) * 1000 + 5_000;
+        const kalan = bitis - Date.now();
+        if (kalan > 0) {
+          log("bekleme", { pair, sn: Math.ceil(kalan / 1000), neden: "mühürler arası bekleme kuralı" });
+          await uyu(kalan);
+        }
+        if (await readKasa("durduruldu")) {
+          log("tur-atlandi", { pair, neden: "kasa durdurulmuş (fren)" });
+          return;
+        }
       }
       if (await acikPozisyon(okx, pair)) {
         log("tur-atlandi", { pair, neden: "açık pozisyon var (bekleyen OCO)" });
@@ -112,12 +132,17 @@ async function tur(ctx) {
 async function main() {
   const okx = await connectOkx({ profile: "demo", modules: "spot,account,market", name: "sicil-yurutucu" });
   const piyasa = await connectOkx({ profile: "piyasa", modules: "market", readOnly: true, name: "sicil-llm-arastirma" });
-  const ctx = { okx, piyasa, araclar: await araclariHazirla(piyasa), trader: walletFor("sicil-trader"), maxTutarCent: await readKasa("maxTutarCent") };
+  const ctx = {
+    okx, piyasa, araclar: await araclariHazirla(piyasa), trader: walletFor("sicil-trader"),
+    maxTutarCent: await readKasa("maxTutarCent"), beklemeSn: await readKasa("beklemeSn"),
+  };
   log("ajan-basladi", { pariteler: PARITELER, llmAraclari: ctx.araclar.map((a) => a.name), maxTutarCent: Number(ctx.maxTutarCent) });
   try {
     for (;;) {
+      turda = true;
       await tur(ctx);
-      if (opt["tek-tur"]) break;
+      turda = false;
+      if (opt["tek-tur"] || durmaIstegi) break;
       const simdi = Date.now();
       const sonraki = Math.ceil(simdi / TUR_MS) * TUR_MS + MUM_SONRASI_MS;
       await new Promise((r) => setTimeout(r, sonraki - simdi));

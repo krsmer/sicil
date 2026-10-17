@@ -4,7 +4,7 @@
 
 ## Şu anki durum (17 Ekim 2026, ~13:05)
 
-**SİCİL CANLI.** `sicilBaslangic` 13:01:34 (TR). Trader ajan `agents/trader/ajan.mjs` nohup ile çalışıyor (log: `agents/logs/ajan.out`, `trader.jsonl`; durdurmak: `pkill -f trader/ajan.mjs`). **Demo hesapta elle işlem YOK** (canlı yakalama hariç). Sıradaki: denetçi ajan.
+**SİCİL CANLI.** `sicilBaslangic` 13:01:34 (TR). Trader ajan `agents/trader/calistir.sh` ile çalışıyor: `caffeinate -ims` (Mac uyumaz) + çökerse 15 sn sonra yeniden başlatır. Log: `agents/logs/ajan.out`, `trader.jsonl`. **Durdurmak:** `touch agents/logs/DUR && pkill -TERM -f "node trader/ajan.mjs"` (tur ortasındaysa tur bitince çıkar). **Demo hesapta elle işlem YOK** (canlı yakalama hariç). Sıradaki: denetçi ajan.
 
 ## Önceki durum (16 Ekim 2026, ~21:00)
 
@@ -25,6 +25,15 @@
 5. Slayt iskeleti ve sunum metni (`demoScript.md` hazır, slayta dökülecek).
 6. İş bölümü: isimleri `progress.md` saat planına yaz.
 7. Organizatör kanalı varsa sor: "önceden kod/şablon serbest mi?"
+
+## Gözlem: LLM kararlarının dağılımı (K-16 izleme)
+
+| Zaman (TR) | Ortam | Karar | Çarpan | Güven | Not |
+|---|---|---|---|---|---|
+| ~13:15 | Test (sahte aday, araçlı) | AL | 0,7 | 64 | 3 araç (funding, OI, RSI) |
+| 13:02 | Canlı, BTC ortalamaya dönüş | AL | 0,7 | 64 | Mühür #2 |
+
+İki karar da aynı (AL / 0,7 / 64). Sistem talimatında örnek sayı **yok** (kontrol edildi); büyük ihtimalle benzer girdilere benzer cevap. **Plan:** ilk 4-5 aday turunda AL / BEKLE / PAS oranını izle (`grep '"adim":"karar"' agents/logs/trader.jsonl`). Hep AL derse talimatı daha eleştirel yap: "kanıt zayıf ya da çelişkiliyse PAS; AL için en az iki bağımsız destekleyici işaret", ve güven dağılımını izle.
 
 ## Ekip incelemesinden gelen kararlar (16 Ekim gece)
 
@@ -59,6 +68,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~13:10:** Ajan `calistir.sh` (caffeinate + otomatik yeniden başlatma) ile, boşta iken yeniden başlatıldı. SIGTERM'de tur bitince çıkar. Aynı turda mühür atıldıysa 300 sn bekleme dolunca diğer parite değerlendirilir.
 - **17 Ekim ~13:03:** Sicil başlatıldı (ön kontrol temiz) ve ajan canlı: ilk otonom döngü mühür #2 ile tamamlandı (ret anı dahil). Not: sabahki manuel test OCO'su da `sicil000002x` etiketliydi ama `sicilBaslangic`'ten önce; denetçi dolumları `begin = sicilBaslangic` ile çektiği için çakışmaz. Ajan ilk 2 saatlik arka plan sınırına takılmasın diye nohup ile çalışıyor.
 - **17 Ekim ~13:20 · K-16:** LLM Gemini `gemini-3.8-flash`'e geçti; sahte adayla doğrulandı (3 araç, 20 sn, geçerli JSON). Sıradaki: `sicil-baslat --onayla` (Arif'in son onayıyla) → ajanı arka planda başlat.
 - **17 Ekim ~13:10:** Ajan döngüsü yazıldı: `agents/trader/ajan.mjs` (15m tur, 1H rejim + 15m giriş, LLM `karar.mjs`, ret anı saatte en fazla bir, açık pozisyonlu pariteye giriş yok, kasa durdurulmuşsa tur atlanır). LLM yolu **API anahtarı bekliyor** (`.env` → `ANTHROPIC_API_KEY`). Tek tur denemesi: iki parite yatay, aday yok. Sıradaki: anahtar → LLM testi → `sicil-baslat --onayla` → ajanı arka planda başlat.
