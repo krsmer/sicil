@@ -56,7 +56,7 @@ Not: ATK'nin npm kurulumu `~/.okx/bin/` altına OKX'in kendi yardımcı binary'l
 | Trader | `sicil-trader` | `0x7c9931802977377aa62315DaebE1D455a2874E07` | 0,15 AVAX |
 | Denetçi | `sicil-denetci` | `0x963261691606dCe9C4C9Bd0a5181371BB4eE3D02` | 0,10 AVAX |
 | Fren (eski, kullanılmıyor) | `sicil-fren` | `0x9F37AaAeA7a216C2d6fB790707841B39086FCFE3` | 0,05 AVAX |
-| **Fren (K-14)** | Core tarayıcı eklentisi | `0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e` | ~0,01 AVAX |
+| **Fren (K-14)** | Brave + MetaMask (Account 1) | `0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e` | ~0,01 AVAX |
 
 - Keystore'lar: `~/.foundry/keystores/<hesap>`; şifreler: `~/.foundry/keystores/.sifreler/<hesap>.txt` (izinler 600). **Bunlar repoya asla girmez.** Keystore'lar sadece Arif'in makinesinde; deploy ve ajanlar orada çalışır.
 - Şifreler otomasyon için keystore'ların yanında düz metin duruyor; bu yüzden şifrelemenin pratik koruması zayıf. **Bu cüzdanlar sadece test içindir; gerçek AVAX asla konmaz.**
@@ -75,7 +75,7 @@ Not: ATK'nin npm kurulumu `~/.okx/bin/` altına OKX'in kendi yardımcı binary'l
 | **SicilKasasi** | `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8` | `0x75eeb4ca34f9e39153e4af4c17222fce75255cad96fe12ac3bb31845a3e75b0c` | Builder Hub `exact_match`, Snowtrace verified (17 Ekim ~13:25) |
 | SicilPing (atılabilir test) | `0xDf769dE9Fc427863C8CC4cf7231226a93c2435f6` | `0x4ad1bd17…6a09` | Builder Hub `exact_match` |
 
-SicilKasasi constructor: sahip `0x8394…90A8`, trader `0x7c99…4E07`, denetçi `0x9632…3D02`, fren `0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e` (Core eklentisi, K-14), `["BTC-USDT","ETH-USDT"]`, `2000, 300, 5000, 10800`. Snowtrace doğrulaması constructor argümanlarını ister: `cast abi-encode "constructor(address,address,address,address,string[],uint256,uint256,uint256,uint256)" …`.
+SicilKasasi constructor: sahip `0x8394…90A8`, trader `0x7c99…4E07`, denetçi `0x9632…3D02`, fren `0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e` (Brave + MetaMask, K-14), `["BTC-USDT","ETH-USDT"]`, `2000, 300, 5000, 10800`. Snowtrace doğrulaması constructor argümanlarını ister: `cast abi-encode "constructor(address,address,address,address,string[],uint256,uint256,uint256,uint256)" …`.
 
 ### ERC-8004 resmi kayıtları (Fuji)
 

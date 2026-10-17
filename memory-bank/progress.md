@@ -24,7 +24,7 @@
 - [ ] **Bu gece commit atma** (ilk commit yarın 10:00)
 - [ ] OKX TR demo erişimi + 2 API anahtarı (trader: okuma+işlem, denetçi: sadece okuma)
 - [ ] `okx config init` → `demo` ve `denetci` profilleri; bakiye testi
-- [ ] İkinci telefona Core cüzdanı; fren adresi kararı
+- [x] Fren adresi kararı: K-14, Brave'deki MetaMask (Account 1) `0xFD05…c35e`
 - [ ] "Örnek" etiketli sahte sinyal ekran görüntüsü (slayt 1)
 - [ ] Slayt iskeleti, sunum metni, soru-cevap tablosu ekipte paylaşıldı
 - [ ] İş bölümü kesinleşti (aşağıdaki tabloya isim yaz)
@@ -86,7 +86,7 @@ Dört kişiyseniz her kola bir kişi; üç kişiyseniz kontratı bitiren kişi 1
 - [x] `register` ile iki agentId (trader **258**, denetçi **259**, 12:35); ~~Reputation ve Validation imzaları Snowtrace'te kontrol~~ ✅ imzalar 12:15 doğrulandı
 - [x] Denetçi cüzdanından `giveFeedback` ✅ 13:24 (gerçek not, deneme değil)
 - [ ] Salon Wi-Fi'sinde olay dinleme gecikmesi; yedek RPC ve telefon hotspot'u
-- [ ] İkinci telefonda Core kurulu, fren adresi fonlu
+- [ ] Fren: Brave + MetaMask Account 1 fonlu (~0,01 AVAX), Fuji ağı ekli, panelden bir kez denenmiş (sonra sahip `unpause`)
 - [ ] **WorkshopHub `checkIn`'i deneme olarak YAPMA** (aynı adresten ikinci kaydı reddediyor)
 
 **Repo ve sicil:**
@@ -158,5 +158,5 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 13:15 | Denetçi birim testleri (`node --test denetci/denetci.test.mjs`) | ✅ 10/10: sabahki `sicil000002x` (algo sicil öncesi) reddedilir, sahte algoId, ordIdList, mühürsüz, mühür emirden sonra, tutar aşımı, fazla satış, net getiri |
 | 17 Ekim 13:24 | **İlk ERC-8004 Reputation notu** (denetçi → trader agentId 258) | ✅ net-getiri −5 (valueDecimals 2 = −%0,05), feedbackURI `raw.githubusercontent.com/krsmer/sicil/main/reports/1792232666.json`, feedbackHash = attest'teki rapor hash'i; tx `0xbdd99ffbbefa9087b9736f6e3ea21d54fff4f01e164814412ff8c7147c66ec49`. Zincirden `getSummary(258,[denetçi],"net-getiri","sicil") = (1, −5, 2)`. Kalibrasyon notu: henüz puanlanmış tez yok (Brier null) → ilk tez sonuçlanınca |
 | 17 Ekim 13:24 | Denetçinin rapor commit+push'u | ✅ `fb1f44a denetçi: 1 rapor` (sadece `reports/`) |
-| 17 Ekim 13:33 | Türkçe panel (`agents/panel/`, http://127.0.0.1:8787) | ✅ API + sayfa; agent-browser ekran görüntüsüyle kontrol edildi. Fren butonu Core ile sahnede denenecek |
+| 17 Ekim 13:33 | Türkçe panel (`agents/panel/`, http://127.0.0.1:8787) | ✅ API + sayfa; agent-browser ekran görüntüsüyle kontrol edildi. Fren butonu MetaMask ile provada denenecek |
 | 17 Ekim 13:40 | 15m ATR seviyeleri, rapor tabanlı tez geçmişi, güvenli rapor push'u | ✅ 16/16 test (denetçi 10 + kurtarma 6); trader ve denetçi yeni koda geçti |

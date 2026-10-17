@@ -89,13 +89,15 @@ Limitler: 20 USDT/işlem, 50 USDT/gün, 300 sn bekleme.
 **Uygulama notları (Claude):** constructor denetçinin trader veya sahip olmasını reddeder (K-08/K-12 ile tutarlı); `reveal` durdurulmuş kontratta da çalışır (dürüstlük); `Revealed` olayı salt'ı da yayınlar (herkes hash'i yeniden hesaplayabilsin); `via_ir = true` (reveal'in 8 parametresi stack too deep veriyordu).
 **Gerekçe:** Mühürde küçük tutar gösterip büyük emir açmanın ve geriye tarihli sicil başlatmanın yolunu kapatmak; zarar limitinin kontratta gerçekten karşılaştırılabilmesi.
 
-## K-14 · Fren: bilgisayardaki Core tarayıcı eklentisi hesabı (17 Ekim, ~12:50)
+## K-14 · Fren: Brave'deki MetaMask hesabı (17 Ekim, ~12:50; cüzdan bilgisi 13:45'te düzeltildi)
 
-**Karar:** `SicilKasasi`'nın `fren` adresi, Arif'in bilgisayarındaki **Core tarayıcı eklentisindeki hesap** (`0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e`, 17 Ekim'de EOA, ~0,01 AVAX). Panelde **"Freni çek"** butonu, Core eklentisinin enjekte ettiği EIP-1193 sağlayıcısıyla `pause()` çağırır; jüri üyesi Core'un onay penceresinde onaylar.
+> **Düzeltme (17 Ekim ~13:45, Arif):** Fren hesabı Core'da değil, **Brave tarayıcısındaki MetaMask eklentisinde (Account 1)**. Adres ve kontrat aynı; aşağıdaki metin buna göre düzeltildi. İlk kayıtta "Core tarayıcı eklentisi" yazıyordu.
+
+**Karar:** `SicilKasasi`'nın `fren` adresi, Arif'in bilgisayarındaki **Brave + MetaMask (Account 1)** hesabı (`0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e`, 17 Ekim'de EOA, ~0,01 AVAX). Panelde **"Freni çek"** butonu MetaMask'in EIP-1193 sağlayıcısıyla (EIP-6963 rdns `io.metamask`; Brave Wallet otomatik seçilmez) `pause()` çağırır; jüri üyesi MetaMask'in onay penceresinde onaylar.
 **Elenenler:** (a) jüri telefonunda yeni Core cüzdanı, (b) `sicil-fren` keystore'u (`0x9F37…FCFE3`; artık kullanılmıyor).
-**Gerekçe:** Sahnede tek ekran: panel + Core onay penceresi; anahtar keystore dosyasında değil eklentide. Sahip de her zaman `pause` yapabildiği için yedek fren var.
+**Gerekçe:** Sahnede tek ekran: panel + MetaMask onay penceresi; anahtar keystore dosyasında değil eklentide. Sahip de her zaman `pause` yapabildiği için yedek fren var.
 **Uygulandı (17 Ekim ~13:25):** `SicilKasasi` bu fren adresiyle deploy edildi: `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8`. Builder Hub `exact_match` + Snowtrace verified.
-**Gereken:** Core'da Fuji testnet açık; panelde EIP-1193 `pause()` butonu.
+**Gereken:** MetaMask'te Avalanche Fuji ağı (panel yoksa ekler/geçirir) ve Account 1 seçili; panelde EIP-1193 `pause()` butonu.
 
 ## K-15 · LLM karar katmanı: Claude Sonnet 5.5, 1H rejim + 15m giriş (17 Ekim, ~13:00)
 

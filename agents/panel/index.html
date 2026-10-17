@@ -179,7 +179,7 @@
   <div class="fren">
     <div>
       <h3>Jüri freni</h3>
-      <p>Core cüzdanındaki fren hesabıyla <span class="mono">SicilKasasi.pause()</span> çağrılır. Durdurulan kasa yeni mühür kabul etmez; ajan yeni işlem açamaz. Açık pozisyonlar borsadaki OCO emirleriyle korunur.</p>
+      <p>Brave'deki MetaMask'in fren hesabıyla (Account 1) <span class="mono">SicilKasasi.pause()</span> çağrılır. Durdurulan kasa yeni mühür kabul etmez; ajan yeni işlem açamaz. Açık pozisyonlar borsadaki OCO emirleriyle korunur.</p>
       <div class="fren-durum" id="fren-durum">Fren adresi: <span id="fren-adres">–</span></div>
     </div>
     <button class="fren-btn" id="fren-btn">Freni çek</button>
@@ -305,29 +305,38 @@ async function yenile() {
   }
 }
 
-// ---- Fren: Core eklentisinin EIP-1193 sağlayıcısı (EIP-6963 ile Core seçilir) ----
-const saglayicilar = [];
-window.addEventListener("eip6963:announceProvider", (e) => saglayicilar.push(e.detail));
-window.dispatchEvent(new Event("eip6963:requestProvider"));
-function coreSaglayici() {
-  const core = saglayicilar.find((p) => /core/i.test(p.info?.name ?? "") || /core/i.test(p.info?.rdns ?? ""));
-  return core?.provider ?? window.avalanche ?? window.ethereum ?? null;
+// ---- Fren: MetaMask'in EIP-1193 sağlayıcısı (K-14). EIP-6963 ile rdns "io.metamask" seçilir; Brave Wallet asla
+// otomatik seçilmez (Brave'de window.ethereum Brave Wallet olabilir).
+const saglayicilar = new Map();
+window.addEventListener("eip6963:announceProvider", (e) => saglayicilar.set(e.detail.info?.uuid ?? e.detail.info?.rdns, e.detail));
+const saglayiciIste = () => window.dispatchEvent(new Event("eip6963:requestProvider"));
+saglayiciIste();
+function metamaskSaglayici() {
+  saglayiciIste();
+  const liste = [...saglayicilar.values()];
+  const mm = liste.find((p) => p.info?.rdns === "io.metamask");
+  if (mm) return { provider: mm.provider, ad: mm.info.name };
+  // EIP-6963 yoksa: sadece gerçekten MetaMask olan window.ethereum (Brave Wallet de isMetaMask=true diyebilir)
+  const w = window.ethereum;
+  if (w?.isMetaMask && !w.isBraveWallet) return { provider: w, ad: "MetaMask" };
+  return { provider: null, bulunanlar: liste.map((p) => `${p.info?.name} (${p.info?.rdns})`) };
 }
 function frenYaz(html, sinif = "") { $("fren-durum").innerHTML = `<span class="${sinif}">${html}</span>`; }
 
 $("fren-btn").addEventListener("click", async () => {
-  const p = coreSaglayici();
+  const secim = metamaskSaglayici();
+  const p = secim.provider;
   const z = son?.zincir;
-  if (!p) return frenYaz("Core cüzdan eklentisi bulunamadı.", "eksi");
+  if (!p) return frenYaz(`MetaMask bulunamadı (Brave Wallet bilerek kullanılmıyor). Bulunan cüzdanlar: ${esc((secim.bulunanlar ?? []).join(", ") || "yok")}`, "eksi");
   if (!z) return frenYaz("Durum henüz yüklenmedi.", "eksi");
   try {
     $("fren-btn").disabled = true;
-    frenYaz("Core'dan hesap izni isteniyor…");
+    frenYaz("MetaMask'ten hesap izni isteniyor…");
     const [hesap] = await p.request({ method: "eth_requestAccounts" });
     const yetkili = [z.fren, z.sahip].map((x) => x.toLowerCase());
     if (!yetkili.includes(hesap.toLowerCase())) {
       $("fren-btn").disabled = false;
-      return frenYaz(`Seçili hesap (${kisa(hesap)}) fren yetkisine sahip değil. Core'da fren hesabını seçin: ${kisa(z.fren)}`, "eksi");
+      return frenYaz(`Seçili hesap (${kisa(hesap)}) fren yetkisine sahip değil. MetaMask'te fren hesabını (Account 1) seçin: ${kisa(z.fren)}`, "eksi");
     }
     const zincirNo = await p.request({ method: "eth_chainId" });
     if (zincirNo.toLowerCase() !== FUJI.chainId) {
@@ -335,7 +344,7 @@ $("fren-btn").addEventListener("click", async () => {
       try { await p.request({ method: "wallet_switchEthereumChain", params: [{ chainId: FUJI.chainId }] }); }
       catch (e) { if (e.code === 4902) await p.request({ method: "wallet_addEthereumChain", params: [FUJI] }); else throw e; }
     }
-    frenYaz("Core onay penceresinde işlemi onaylayın…");
+    frenYaz("MetaMask onay penceresinde işlemi onaylayın…");
     const h = await p.request({ method: "eth_sendTransaction", params: [{ from: hesap, to: z.kontrat, data: PAUSE }] });
     frenYaz(`Fren gönderildi: <a href="${tx(h)}" target="_blank" rel="noopener">${kisa(h)} ↗</a> · zincir onayı bekleniyor…`);
     for (let i = 0; i < 30; i++) {

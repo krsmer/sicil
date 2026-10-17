@@ -38,7 +38,7 @@ Panel: http://127.0.0.1:8787 · Kasa `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8
 | `news` (seçenek a) | Canlı TR'de sadece Read anahtar | K-11: vakit kalırsa |
 | `setAgentWallet` | Yap · Yapma | K-12: en sona, en fazla 20 dk |
 
-Kapanan kararlar `decisionLog.md`'de: K-11 (news yok, global piyasa verisi), K-12 (ERC-8004 kayıtları), K-13 (kasa ayrıntıları), K-14 (fren = Core eklentisi), K-15/K-16 (LLM: Gemini `gemini-3.8-flash`, 1H rejim + 15m giriş, 4 araç / 45 sn), BTC-TRY eklenmedi.
+Kapanan kararlar `decisionLog.md`'de: K-11 (news yok, global piyasa verisi), K-12 (ERC-8004 kayıtları), K-13 (kasa ayrıntıları), K-14 (fren = Brave'deki MetaMask, Account 1), K-15/K-16 (LLM: Gemini `gemini-3.8-flash`, 1H rejim + 15m giriş, 4 araç / 45 sn), BTC-TRY eklenmedi.
 
 ## Bilinen riskler (aktif)
 
@@ -49,8 +49,9 @@ Kapanan kararlar `decisionLog.md`'de: K-11 (news yok, global piyasa verisi), K-1
 
 ## Son değişiklikler
 
+- **13:45:** Düzeltme (Arif): fren hesabı Core değil, **Brave'deki MetaMask (Account 1)**; adres ve kontrat aynı. K-14, systemPatterns, techContext, demoScript ve panel düzeltildi; panel MetaMask'i EIP-6963 `io.metamask` ile seçer, Brave Wallet'ı otomatik seçmez. `assets/mimari.png` hâlâ "Core cüzdan" yazıyor (görsel; sunumdan önce düzeltilmeli).
 - **13:40:** Bağımsız inceleme düzeltmeleri: (1) stop/hedef **15m ATR**'den (2,0× / 3,0×; BTC'de ~%0,23 / ~%0,34; önce 1H ATR ile %0,59 / %0,78 idi ve pozisyon saatlerce açık kalıp pariteyi kilitliyordu); zaman çıkışı eklenmedi. (2) LLM'e geçmiş tezler artık **denetçinin son raporundan** (tuttu/tutmadı/bekliyor + Brier). (3) demoScript 5:00–6:00 ret sahnesi metni düzeltildi ("saatte bir zincire sunuyor, zincir reddediyor"). (4) Denetçinin rapor push'u: `index.lock` varsa atla, push öncesi `pull --rebase --autostash`, hata olursa o saatin notu atlanır. (5) Bu dosya temizlendi. Trader ve denetçi turlar arasında yeni koda geçirildi.
-- **13:33:** Türkçe panel (`agents/panel/`): sicil damgası (TEMİZ/BOZUK), mühür defteri (mühür → emir süresi; #2'de mühür emirden 4,6 sn önce), yapay zekâ kararları + araçlar, ret kayıtları, denetim + ERC-8004 notları, Snowtrace linkleri, Core EIP-1193 "Freni çek" (EIP-6963 ile Core seçilir, yetki ve Fuji ağı kontrolü, `pause()` = `0x8456cb59`).
+- **13:33:** Türkçe panel (`agents/panel/`): sicil damgası (TEMİZ/BOZUK), mühür defteri (mühür → emir süresi; #2'de mühür emirden 4,6 sn önce), yapay zekâ kararları + araçlar, ret kayıtları, denetim + ERC-8004 notları, Snowtrace linkleri, MetaMask EIP-1193 "Freni çek" (EIP-6963 ile MetaMask seçilir, yetki ve Fuji ağı kontrolü, `pause()` = `0x8456cb59`).
 - **13:24:** ERC-8004 Reputation canlı: denetçi saatte bir raporları commit+push edip trader'a (258) net getiri + Brier notu verir; ilk not −%0,05 (zincirden `getSummary` ile okundu). Brier ilk tez sonuçlanınca.
 - **13:23:** Çökme güvencesi: açıklanmamış mühür Brier'e güven = 100 ile girer (Arif onayladı); seal öncesi `agents/logs/bekleyen-acilislar.json`, ajan açılışında kurtarma (6 test).
 - **13:16:** Denetçi canlı: eşleştirme etiket + algoId + ordIdList + zaman (10 test); attest yapısal değişiklikte hemen, getiri için 10 dk kalp atışı, zarar limitinde hemen. İlk attest 13:14, sicil temiz.
@@ -59,7 +60,7 @@ Kapanan kararlar `decisionLog.md`'de: K-11 (news yok, global piyasa verisi), K-1
 - **12:57 · K-16:** LLM Gemini `gemini-3.8-flash` (Claude Sonnet 5.5 yerine; Arif'in anahtarı). En az bir araştırma aracı zorunlu.
 - **12:46 · K-15:** Ajan döngüsü + LLM karar katmanı (4 araç / 45 sn → BEKLE; 1H rejim + 15m giriş; tez 60–120 dk).
 - **12:31–12:38:** Yürütücü iskeleti, ilk uçtan uca döngü (mühür #1, sicil öncesi), OCO çıkışı doğrulandı (çıkış emrinde `algoClOrdId` var, dolumda yok); net getiri sadece mühürlü dolumlardan; `sicil-baslat.mjs` açık emir/OCO kontrolü; demo ücretleri dürüstleştirildi; kural motoru + simülasyonsuz ret mührü.
-- **12:20–12:25 · K-13/K-14:** `SicilKasasi` (28 Foundry testi, viem hash eşleşmesi `ffi` ile kanıtlı) Fuji'de, Builder Hub + Snowtrace verified; fren = Core eklentisi `0xFD05…c35e`.
+- **12:20–12:25 · K-13/K-14:** `SicilKasasi` (28 Foundry testi, viem hash eşleşmesi `ffi` ile kanıtlı) Fuji'de, Builder Hub + Snowtrace verified; fren = Brave + MetaMask (Account 1) `0xFD05…c35e`.
 - **12:04–12:10 · K-12:** ERC-8004 imzaları kaynak koddan doğrulandı; trader (258, sahibi sahip) ve denetçi (259) kaydedildi.
 - **11:52–12:00:** Repo açıldı (private), BTC-TRY ölçüldü (eklenmedi), Foundry + Fuji deploy/verify hattı (`SicilPing`).
 - **11:25–11:50 (repo öncesi):** TR demo profilleri (`demo`, `denetci`, anahtarsız `piyasa`), ilk demo emir, OCO testleri, `news` demo modda kapalı (K-11).

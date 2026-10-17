@@ -17,7 +17,7 @@ Neden ilk dakika bu kadar önemli: Jüri ilk dakikada "bir zincire kayıt projes
 | 1:45–3:00 | **Canlı yakalama** | Panel + OKX TR uygulaması | Sunucu uygulamadan elle, mühürsüz küçük bir işlem yapar: "Dolandırıcı tam olarak bunu yapar." Denetçi (sunum sırasında 15 sn'de bir tarar) yakalar; zincire `SicilBozuldu` düşer, panel kırmızıya döner. **"Bu kırmızı artık silinemez. Benim tarafımdan bile."** |
 | 3:00–5:00 | Yapay zekânın muhakemesi | Gün içinden bir mühür | LLM'in çağırdığı ATK araçları, kararı, tezi (hedef, geçersizlik, süre, güven). Denetçinin tezi nasıl puanladığı. LLM'in PAS dediği bir aday. Kalibrasyon: "%70 güvendiği tezlerin kaçı tuttu?" |
 | 5:00–6:00 | Zincir sınır koyuyor | Gün içinden gerçek bir ret kaydı (Snowtrace'te reverted tx) | "Kural motoru volatiliteye göre 34 USDT hesapladı, kontrat 20 USDT limitinde reddetti, ajan tutarı düşürüp yeniden mühürledi." Ajan, kural motorunun limit üstü ham tutarını **saatte en fazla bir kez** simülasyonsuz olarak zincire sunuyor, zincir reddediyor (reverted tx Snowtrace'te); ajan tutarı limite indirip yeniden mühürlüyor. Gösterilen kayıt günün gerçek kaydı (bugün 13:02: 51,02 USDT → 20 USDT limiti) |
-| 6:00–7:00 | **Jüri freni** | Panel | Bir jüri üyesi Core cüzdandan `pause`'a basar. Ajan durur, panelde "durduruldu" |
+| 6:00–7:00 | **Jüri freni** | Panel | Bir jüri üyesi paneldeki "Freni çek"e basar ve Brave'deki MetaMask penceresinde `pause()` işlemini onaylar. Ajan durur, panelde "durduruldu" |
 | 7:00–8:30 | Mimari ve vizyon | Mimari diyagramı (`assets/mimari.png`) | "Yapay zekâyı muhakeme gereken yere, kuralı güven gereken yere koyduk." ERC-8004'ün üç kaydı, "OKX TR Ajan Pazarı" vizyonu |
 | 8:30–10:00 | Kapanış | Kanıt ekranı + QR | Ör. "52 emir, 51 mühür, 1 kayıtsız işlem: sahnede yaptığımız." Yanında kalibrasyon özeti. Repo ve Snowtrace için QR kod |
 
@@ -28,7 +28,7 @@ Neden ilk dakika bu kadar önemli: Jüri ilk dakikada "bir zincire kayıt projes
 ## Sahne hazırlığı
 
 - [ ] Panel ve Snowtrace sekmeleri önceden açık
-- [ ] Jüri freni için telefon: Core açık, fren cüzdanı seçili, kontrat etkileşimi hazır
+- [ ] Jüri freni: Brave'de panel açık, MetaMask kilidi açık, Account 1 (fren) seçili, Avalanche Fuji ağı ekli; Brave Wallet varsayılan cüzdan değil (Ayarlar → Web3 → Varsayılan Ethereum cüzdanı: MetaMask / uzantılar)
 - [ ] Yedek RPC tanımlı, telefon hotspot'u hazır
 - [ ] Her bölümün yedek videosu (17:30 çekimi) sunum bilgisayarında
 - [ ] Sahte sinyal görselinde "örnek" etiketi görünür
@@ -48,7 +48,7 @@ En tehlikeli sorular ilk ikisi; cevaplarını her ekip üyesi ezbere bilmeli.
 | Hash'i işlemden önce zincire yazmak gecikme yaratmıyor mu? | Fuji'de onay birkaç saniye sürüyor (sabah ölçülen değeri söyle). Strateji saatlik mumlarla çalıştığı için bu gecikmenin önemi yok. |
 | Strateji para kazandırıyor mu? | İddiamız kâr değil, dürüst sicil. Bugünkü net getiri ve kalibrasyon bu, eksiyse eksi. Emirlerimiz maker (`post_only`); OKX TR canlıda maker ücretinin sıfır olduğunu söylüyor, bugünkü demo hesapta ise %0,08 ödedik. Sicile her işlemin gerçek ücreti yazılıyor, getiri net. |
 | Neden kaldıraçlı işlem yok? | SPK'nın düzenlemesiyle Türkiye'de faaliyet gösteren platformlar kaldıraç sunamıyor. OKX TR'nin kullanıcısına bugün sunabileceği ürün spot. |
-| Neden Avalanche? | Onay hızlı ve ücret düşük; saatte onlarca mühür mümkün. ERC-8004'ün üç kaydı Fuji'de hazır duruyor. Fren için Avalanche'ın kendi cüzdanı Core kullanılıyor. |
+| Neden Avalanche? | Onay hızlı ve ücret düşük; saatte onlarca mühür mümkün. ERC-8004'ün üç kaydı Fuji'de hazır duruyor. Fren MetaMask gibi standart bir EVM cüzdanından tek işlemle çekiliyor. |
 | PAS dediği adayı sonradan seçmediğinizi nereden bileceğiz? | (Hazırlıklı ol.) PAS kararları zincire mühürlendiyse: "Onlar da mühürlü." Mühürlenmediyse dürüst ol: "PAS kayıtları şu an yerel log'da; bir sonraki adım onları da mühürlemek." |
 
 ## Atıflar (sunumda tek cümle)

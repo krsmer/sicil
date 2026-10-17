@@ -13,7 +13,7 @@
 | **SicilKasasi** | Avalanche Fuji | Mühür (limit kontrolü), açıklama (hash doğrulama), denetim raporu, fren | — |
 | **ERC-8004 kayıtları** | Avalanche Fuji (resmi, hazır) | Identity (agentId), Reputation (notlar), Validation (denetim puanı) | — |
 | **Türkçe panel** | Tarayıcı | Aynı zincir olaylarını ve rapor JSON'larını okuyup gösterir | Sadece okuma |
-| **Fren** | Jüri üyesinin telefonu (Core) | `pause()` | `sicil-fren` veya telefonda açılacak Core cüzdanı (açık karar) |
+| **Fren** | Arif'in bilgisayarı, Brave + MetaMask (K-14) | `pause()` (panelde "Freni çek") | MetaMask Account 1 `0xFD05…c35e` |
 
 **Temel ilke [karar]:** İki ajan birbirine doğrudan mesaj göndermez; birbirine **sadece zincir üzerinden** güvenir. Trader işlem yapar, denetçi kanıtlar.
 
@@ -38,7 +38,7 @@ Panel      ← 1–8'in bütün olayları + reports/*.json
 | Sahip (ekip) | `0x8394359d719ccD2cf037Edde7c50011D3cB690A8` | Deploy'da limitleri belirler, `unpause`, `report` (WorkshopHub kaydı); ERC-8004: trader agentId'sinin **sahibi**, saatlik `validationRequest` (K-12) |
 | Trader | `0x7c9931802977377aa62315DaebE1D455a2874E07` | `seal`, `reveal` |
 | Denetçi | `0x963261691606dCe9C4C9Bd0a5181371BB4eE3D02` | `attest`; ERC-8004 Reputation/Validation yazımı; kendi agentId'sinin sahibi; **asla sahibin operatörü değil** (K-12) |
-| Fren (guardian) | `0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e` (Core tarayıcı eklentisi, K-14; eski `sicil-fren` keystore'u kullanılmıyor) | `pause` (panelde EIP-1193 "Freni çek") |
+| Fren (guardian) | `0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e` (Brave'deki MetaMask, Account 1, K-14; eski `sicil-fren` keystore'u kullanılmıyor) | `pause` (panelde EIP-1193 "Freni çek") |
 
 Fren kararı K-14 ile kapandı.
 
