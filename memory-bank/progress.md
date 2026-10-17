@@ -40,8 +40,8 @@
 | Saat | Kapı | Şart | Durum |
 |---|---|---|---|
 | 10:30 | TR demo kararı | TR demo profili ile bakiye + bir `post_only` emir çalışıyor mu? Hayırsa canlı küçük spot hesap veya global demo | ✅ 11:45 TR demo çalışıyor |
-| 12:30 | Ajan canlı | Trader ajan insansız çalışmaya başladı; sicil birikiyor | ⬜ |
-| **14:00** | **SİCİL / ANAYASA** | En az bir işlem mühür → emir → açıklama döngüsünü uçtan uca tamamladı mı? Hayırsa ANAYASA | ⬜ |
+| 12:30 | Ajan canlı | Trader ajan insansız çalışmaya başladı; sicil birikiyor | ✅ 13:02 (`sicilBaslangic` 13:01:34 TR) |
+| **14:00** | **SİCİL / ANAYASA** | En az bir işlem mühür → emir → açıklama döngüsünü uçtan uca tamamladı mı? Hayırsa ANAYASA | ✅ **SİCİL** (12:31 elle, 13:03 otonom) |
 | 17:00 | Kod dondurma | Yeni özellik yok; sadece hata düzeltme, prova, video | ⬜ |
 | 19:00 | Teslim | Repo, README, video | ⬜ |
 
@@ -91,7 +91,7 @@ Dört kişiyseniz her kola bir kişi; üç kişiyseniz kontratı bitiren kişi 1
 
 **Repo ve sicil:**
 - [x] Repo açıldı, ilk commit gün içinde atıldı (17 Ekim ~12:25, https://github.com/krsmer/sicil, private)
-- [ ] Sabah test emirleri `sicilBaslangic`'ten **önce** atıldı (sicile girmeyecekler)
+- [x] Sabah test emirleri `sicilBaslangic`'ten **önce** atıldı (sicile girmeyecekler); `sicilBaslangic` = 1792231294 (13:01:34 TR), tx `0x6aa0d08f…54c7`
 
 ### Asla kesilmeyecekler
 Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` · jüri freni · verified kontrat.
@@ -150,3 +150,5 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 12:45 | `sealRetGoster` (simülasyonsuz, gas 200k): 34 USDT mühür | ✅ Zincirde `reverted`, `TutarAsildi(3400, 2000)`: tx `0xe2206eb4…48bd1` (sicilBaslangic öncesi test) |
 | 17 Ekim 12:45 | Kural motoru (1H demo mumları, EMA20/50, ATR14) | ✅ Çalışıyor; o an BTC ve ETH yatay → aday yok. BTC ATR ~%0,41 → ham tutar ~49 USDT > 20 (ret anı doğal olarak oluşur) |
 | 17 Ekim 12:42 | OCO tetiklenmesi (yürütücü döngüsü, mühür #1) | ✅ SL tetiklendi, çıkış @ 81.650,4. Çıkış **emrinde** `algoId` + `algoClOrdId=sicil000001x` var, **dolumda** yok → denetçi dolum→ordId→emir zinciriyle eşler. İşlem sonucu ≈ −0,005 USDT fiyat + ≈ −0,027 USDT ücret |
+| 17 Ekim 13:01 | `setSicilBaslangic()` (ön kontrol: açık emir 0, bekleyen algo 0) | ✅ `sicilBaslangic = 1792231294`, tx `0x6aa0d08f8d4b615c8abd5b6ea73e04c2d6f3883115ac31f60d95812931bd54c7` |
+| 17 Ekim 13:03 | **İlk otonom döngü** (ajan.mjs, nohup): BTC-USDT ortalamaya dönüş adayı → Gemini AL (çarpan 0,7, güven 64, 90 dk) → ret anı (51,02 > 20 USDT, zincirde reverted `0xa8a61493…1ed0`) → mühür #2 → `sicil000002` doldu (~40 sn) → reveal → OCO `sicil000002x` (çıkış miktarı ücret düşülmüş: 0,00017148) | ✅ İnsan müdahalesi yok |

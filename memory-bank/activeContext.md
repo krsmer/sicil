@@ -2,7 +2,11 @@
 
 > Bu dosya "şu an neredeyiz" sorusunun cevabı. Her görevden sonra güncellenir; en yeni kayıt en üstte.
 
-## Şu anki durum (16 Ekim 2026, ~21:00)
+## Şu anki durum (17 Ekim 2026, ~13:05)
+
+**SİCİL CANLI.** `sicilBaslangic` 13:01:34 (TR). Trader ajan `agents/trader/ajan.mjs` nohup ile çalışıyor (log: `agents/logs/ajan.out`, `trader.jsonl`; durdurmak: `pkill -f trader/ajan.mjs`). **Demo hesapta elle işlem YOK** (canlı yakalama hariç). Sıradaki: denetçi ajan.
+
+## Önceki durum (16 Ekim 2026, ~21:00)
 
 **Aşama:** Hackathon'dan önceki gece. Kod yazılmıyor, sadece kurulum ve hazırlık yapılıyor.
 **Odak:** Gece işleri listesini bitirip sabahki kontrol listesini 45 dakikadan 15 dakikaya indirmek.
@@ -55,6 +59,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~13:03:** Sicil başlatıldı (ön kontrol temiz) ve ajan canlı: ilk otonom döngü mühür #2 ile tamamlandı (ret anı dahil). Not: sabahki manuel test OCO'su da `sicil000002x` etiketliydi ama `sicilBaslangic`'ten önce; denetçi dolumları `begin = sicilBaslangic` ile çektiği için çakışmaz. Ajan ilk 2 saatlik arka plan sınırına takılmasın diye nohup ile çalışıyor.
 - **17 Ekim ~13:20 · K-16:** LLM Gemini `gemini-3.8-flash`'e geçti; sahte adayla doğrulandı (3 araç, 20 sn, geçerli JSON). Sıradaki: `sicil-baslat --onayla` (Arif'in son onayıyla) → ajanı arka planda başlat.
 - **17 Ekim ~13:10:** Ajan döngüsü yazıldı: `agents/trader/ajan.mjs` (15m tur, 1H rejim + 15m giriş, LLM `karar.mjs`, ret anı saatte en fazla bir, açık pozisyonlu pariteye giriş yok, kasa durdurulmuşsa tur atlanır). LLM yolu **API anahtarı bekliyor** (`.env` → `ANTHROPIC_API_KEY`). Tek tur denemesi: iki parite yatay, aday yok. Sıradaki: anahtar → LLM testi → `sicil-baslat --onayla` → ajanı arka planda başlat.
 - **17 Ekim ~13:00 · K-15:** LLM = Claude Sonnet 5.5; 1H rejim + 15m giriş; 4 araç / 45 sn → BEKLE; tez 60–120 dk. OCO çıkışı yürütücü döngüsünde tetiklendi ve doğrulandı (techContext §4).
