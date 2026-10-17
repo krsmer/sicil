@@ -55,6 +55,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~12:25:** Repo açıldı: https://github.com/krsmer/sicil (**private**), `main`, ilk commit `3ad78cd`. Teslimde public'e çevrilecek; öncesinde commit e-postası ve `ai-docs/sources/` lisansı gözden geçirilecek.
 - **17 Ekim ~12:15 · K-11:** `news` kaldırıldı. LLM araştırma süreci: `okx-trade-mcp --profile piyasa --read-only --modules market` (anahtarsız, global; `~/.okx/config.toml`'a `piyasa` profili eklendi). Funding (BTC/ETH-USDT-SWAP), OI, OI değişim taraması, market_filter, indikatörler (ema/atr/adx) anahtarsız doğrulandı. Global veri sadece bağlam; emir fiyatı TR demo'dan. `.mcp.json` güncellendi. (a) seçeneği vakit kalırsa.
 - **17 Ekim ~12:05:** OCO riski çözüldü: tetiklenen çıkış emrinde `algoClOrdId` var (dolumda yok) → denetçi dolum→ordId→emir zinciriyle eşler. `news` demo modda kapalı; karar bekliyor (canlı Read-only anahtar / OAuth / haberi bırak).
 - **17 Ekim ~11:45:** 10:30 kapısı geçti: TR demo'da `post_only` + `clOrdId=sicil000001` emri gönderildi, geri okundu, iptal edildi. Sıradaki: OCO + `algoClOrdId` testi.

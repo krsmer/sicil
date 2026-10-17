@@ -90,7 +90,7 @@ Dört kişiyseniz her kola bir kişi; üç kişiyseniz kontratı bitiren kişi 1
 - [ ] **WorkshopHub `checkIn`'i deneme olarak YAPMA** (aynı adresten ikinci kaydı reddediyor)
 
 **Repo ve sicil:**
-- [ ] Repo 10:00'da açıldı, ilk commit gün içinde atıldı
+- [x] Repo açıldı, ilk commit gün içinde atıldı (17 Ekim ~12:25, https://github.com/krsmer/sicil, private)
 - [ ] Sabah test emirleri `sicilBaslangic`'ten **önce** atıldı (sicile girmeyecekler)
 
 ### Asla kesilmeyecekler
