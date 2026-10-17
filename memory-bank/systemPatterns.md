@@ -143,7 +143,11 @@ her tur (normalde 60 sn; sunum sırasında 15 sn):
      Eşleşmeyen (mühürsüz) dolumlar getiriye katılmaz; onlar ayrıca sicili bozar
   5. Süresi dolan tezleri puanla (bkz. §7); süresi dolup açıklanmamış mühürleri "tutmadı" say ve raporda ayrıca listele
   6. reports/<zaman>.json yaz → keccak256 → attest(upToTs, matched, unmatched, unrevealedExpired, dayPnlCent, reportHash)
-  7. Saatte bir: Reputation.giveFeedback (net getiri, kalibrasyon) + Validation.validationResponse
+  7. Saatte bir [uygulandı 17 Ekim]: reports/ commit+push → Reputation.giveFeedback(258, …) ×2:
+       net-getiri: value = net / işlem hacmi × 10000 (baz puan), valueDecimals 2 (= yüzde), tag1 "net-getiri", tag2 "sicil"
+       kalibrasyon: value = Brier × 10000, valueDecimals 4, tag1 "kalibrasyon-brier" (Brier null ise verilmez)
+       endpoint eip155:43113:<kasa>, feedbackURI = raw GitHub rapor URL'si, feedbackHash = attest'teki rapor hash'i
+     Validation (sahip istek / denetçi cevap): panelden sonraya bırakıldı
 ```
 
 **OCO çıkış emirleri [doğrulandı 17 Ekim: dolumda `algoClOrdId` yok, emirde var; eşleştirme dolum → ordId → emir → algoClOrdId zinciriyle yapılır, bkz. `techContext.md` §4]:** Kâr al / zarar durdur tetiklendiğinde borsa **yeni bir emir** oluşturur; onun `ordId`'si ve `clOrdId`'si giriş emrinden farklıdır. Denetçi bu çıkış dolumlarını eşleştiremezse **kendi ajanımızın meşru çıkışlarını "mühürsüz işlem" diye işaretler** ve sicil yanlışlıkla bozulur. Öneri: OCO'yu `algoClOrdId = "sicil" + id + "x"` ile ver; denetçi çıkış dolumlarını `algoId`/`algoClOrdId` üzerinden ana mühre bağlasın. Sabah kontrol: tetiklenen OCO emrinin dolum/emir kaydında `algoId` veya `algoClOrdId` görünüyor mu?

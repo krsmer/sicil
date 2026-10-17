@@ -4,7 +4,7 @@
 
 ## Şu anki durum (17 Ekim 2026, ~13:05)
 
-**SİCİL CANLI.** `sicilBaslangic` 13:01:34 (TR). Trader ajan `agents/trader/calistir.sh` ile çalışıyor: `caffeinate -ims` (Mac uyumaz) + çökerse 15 sn sonra yeniden başlatır. Log: `agents/logs/ajan.out`, `trader.jsonl`. **Durdurmak:** `touch agents/logs/DUR && pkill -TERM -f "node trader/ajan.mjs"` (tur ortasındaysa tur bitince çıkar). **Demo hesapta elle işlem YOK** (canlı yakalama hariç). **Denetçi de canlı** (`agents/denetci/calistir.sh`, 60 sn; log `agents/logs/denetci.out`, durum `denetci-durum.json`; raporlar `reports/`). Sıradaki: ERC-8004 (saatlik Reputation + Validation), sonra panel.
+**SİCİL CANLI.** `sicilBaslangic` 13:01:34 (TR). Trader ajan `agents/trader/calistir.sh` ile çalışıyor: `caffeinate -ims` (Mac uyumaz) + çökerse 15 sn sonra yeniden başlatır. Log: `agents/logs/ajan.out`, `trader.jsonl`. **Durdurmak:** `touch agents/logs/DUR && pkill -TERM -f "node trader/ajan.mjs"` (tur ortasındaysa tur bitince çıkar). **Demo hesapta elle işlem YOK** (canlı yakalama hariç). **Denetçi de canlı** (`agents/denetci/calistir.sh`, 60 sn; log `agents/logs/denetci.out`, durum `denetci-durum.json`; raporlar `reports/`). ERC-8004 Reputation saatlik çalışıyor (ilk not 13:24). Sıradaki: **Türkçe panel** (14:00–17:00), sonra Validation.
 
 ## Önceki durum (16 Ekim 2026, ~21:00)
 
@@ -68,6 +68,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~13:25:** ERC-8004 Reputation canlı: denetçi saatte bir raporları commit+push edip trader'a (258) net getiri + Brier notu veriyor; ilk not −5 bps/100 (zincirden okundu). Repo private iken feedbackURI dışarıdan açılmaz; hash zincirde.
 - **17 Ekim ~13:25:** Açıklanmamış mühür = güven 100 kuralı onaylandı + çökme güvencesi (bekleyen açılışlar dosyası, açılışta kurtarma, 6 test). Trader yeni kodla tur arasında yeniden başlatıldı. Sıradaki: ERC-8004 saatlik Reputation (≤30 dk), sonra panel. Validation panelden sonra.
 - **17 Ekim ~13:16:** Denetçi canlı: ilk attest zincirde (sicil temiz). Eşleştirme etiket + algoId + ordIdList + zaman ile (10 birim testi). Attest: yapısal değişiklikte hemen, getiri için 10 dk kalp atışı, zarar limitinde hemen. Açıklanmamış mühürler Brier'e güven = 100 ile girer (gizlemek kalibrasyonu güzelleştiremez) — **Arif'in onayına sunuldu**.
 - **17 Ekim ~13:10:** Ajan `calistir.sh` (caffeinate + otomatik yeniden başlatma) ile, boşta iken yeniden başlatıldı. SIGTERM'de tur bitince çıkar. Aynı turda mühür atıldıysa 300 sn bekleme dolunca diğer parite değerlendirilir.

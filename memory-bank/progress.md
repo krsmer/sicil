@@ -84,7 +84,7 @@ Dört kişiyseniz her kola bir kişi; üç kişiyseniz kontratı bitiren kişi 1
 - [ ] Dört cüzdanda AVAX var mı? (16 Ekim: var)
 - [x] Boş bir kontrat deploy + verify (cancun) ✅ 12:00 (`SicilPing`)
 - [x] `register` ile iki agentId (trader **258**, denetçi **259**, 12:35); ~~Reputation ve Validation imzaları Snowtrace'te kontrol~~ ✅ imzalar 12:15 doğrulandı
-- [ ] Denetçi cüzdanından deneme `giveFeedback`
+- [x] Denetçi cüzdanından `giveFeedback` ✅ 13:24 (gerçek not, deneme değil)
 - [ ] Salon Wi-Fi'sinde olay dinleme gecikmesi; yedek RPC ve telefon hotspot'u
 - [ ] İkinci telefonda Core kurulu, fren adresi fonlu
 - [ ] **WorkshopHub `checkIn`'i deneme olarak YAPMA** (aynı adresten ikinci kaydı reddediyor)
@@ -156,3 +156,5 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 13:13 | Denetçi kuru tur | ✅ 1 mühür (#2), 1 emir eşleşti, 0 eşleşmeyen, net −0,008 USDT, tez bekliyor |
 | 17 Ekim 13:14 | **İlk attest** (denetçi cüzdanı) | ✅ `reports/1792232075.json`, tx `0x44a02282ac5ebaee6f81fc4f530ebdffbdd0098b409d8c2f0b9a4643838c1767`; SicilBozuldu yok |
 | 17 Ekim 13:15 | Denetçi birim testleri (`node --test denetci/denetci.test.mjs`) | ✅ 10/10: sabahki `sicil000002x` (algo sicil öncesi) reddedilir, sahte algoId, ordIdList, mühürsüz, mühür emirden sonra, tutar aşımı, fazla satış, net getiri |
+| 17 Ekim 13:24 | **İlk ERC-8004 Reputation notu** (denetçi → trader agentId 258) | ✅ net-getiri −5 (valueDecimals 2 = −%0,05), feedbackURI `raw.githubusercontent.com/krsmer/sicil/main/reports/1792232666.json`, feedbackHash = attest'teki rapor hash'i; tx `0xbdd99ffbbefa9087b9736f6e3ea21d54fff4f01e164814412ff8c7147c66ec49`. Zincirden `getSummary(258,[denetçi],"net-getiri","sicil") = (1, −5, 2)`. Kalibrasyon notu: henüz puanlanmış tez yok (Brier null) → ilk tez sonuçlanınca |
+| 17 Ekim 13:24 | Denetçinin rapor commit+push'u | ✅ `fb1f44a denetçi: 1 rapor` (sadece `reports/`) |
