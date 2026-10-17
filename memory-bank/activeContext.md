@@ -55,6 +55,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~12:35:** ERC-8004 kayıtları yapıldı: **trader agentId 258** (sahibi sahip cüzdanı), **denetçi agentId 259** (sahibi denetçi). `isAuthorizedOrOwner(denetçi, 258) = false` doğrulandı. agentURI'ler data URI olarak zincirde (`agents/registration/`). Sıradaki: `SicilKasasi`.
 - **17 Ekim ~12:25 · K-12:** Trader agentId'sini sahip kaydedecek (agentURI'de trader adresi), denetçi kendini; denetçi asla sahibin operatörü değil; `validationRequest` sahipten; `setAgentWallet` vakit kalırsa en sona (≤20 dk). demoScript'teki "10 hesap" cevabı geçerli.
 - **17 Ekim ~12:15:** ERC-8004 kayıtlarının doğrulanmış kaynak kodu okundu; imzalar planla uyumlu, `Self-feedback not allowed` kontrolü var, `value` negatif olabilir. ABI'ler `agents/shared/abi/`.
 - **17 Ekim ~12:00:** `contracts/` Foundry projesi kuruldu; `SicilPing` Fuji'ye deploy edildi (`0xDf769dE9Fc427863C8CC4cf7231226a93c2435f6`) ve Builder Hub + Snowtrace'te verify edildi. Deploy/verify hattı hazır; sıradaki: ERC-8004 imzaları, sonra `SicilKasasi`.

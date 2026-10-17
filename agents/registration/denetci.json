@@ -2,8 +2,8 @@
   "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
   "name": "SİCİL Denetçi",
   "description": "LLM kullanmayan, sadece okuma anahtarlı denetçi ajan. OKX TR hesabının bütün dolumlarını SicilKasasi mühürleriyle eşler, tezleri puanlar, sonucu Reputation ve Validation kayıtlarına yazar.",
-  "endpoints": [
-    { "name": "agentWallet", "endpoint": "eip155:43113:0x963261691606dCe9C4C9Bd0a5181371BB4eE3D02" }
-  ],
+  "services": [],
+  "active": true,
+  "x402Support": false,
   "supportedTrust": ["reputation", "validation"]
 }

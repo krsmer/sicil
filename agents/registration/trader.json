@@ -2,10 +2,11 @@
   "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
   "name": "SİCİL Trader",
   "description": "OKX TR spot (BTC-USDT, ETH-USDT) otonom AI trader. Her emirden önce kararını ve tezini SicilKasasi'na mühürler; notunu bağımsız SİCİL Denetçi verir.",
-  "endpoints": [
-    { "name": "agentWallet", "endpoint": "eip155:43113:0x7c9931802977377aa62315DaebE1D455a2874E07" }
-  ],
+  "services": [],
+  "active": true,
+  "x402Support": false,
+  "supportedTrust": ["reputation", "validation"],
+  "tradingWallet": "eip155:43113:0x7c9931802977377aa62315DaebE1D455a2874E07",
   "owner": "eip155:43113:0x8394359d719ccD2cf037Edde7c50011D3cB690A8",
-  "auditor": "eip155:43113:0x963261691606dCe9C4C9Bd0a5181371BB4eE3D02",
-  "supportedTrust": ["reputation", "validation"]
+  "auditor": "eip155:43113:0x963261691606dCe9C4C9Bd0a5181371BB4eE3D02"
 }

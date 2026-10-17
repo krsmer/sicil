@@ -73,6 +73,16 @@ Not: ATK'nin npm kurulumu `~/.okx/bin/` altına OKX'in kendi yardımcı binary'l
 | Reputation | `0x8004B663056A597Dffe9eCcC1965A193B7388713` | `0x16e0fa7f7c56b9a767e34b192b51f921be31da34` |
 | Validation | `0x8004Cb1BF31DAf7788923b405b754f57acEB4272` | `0xdb31f5d9167f8ebc8b30fbbf814c4d297c2d7f99` |
 
+**SİCİL agentId'leri (17 Ekim ~12:35, K-12):**
+
+| Ajan | agentId | Sahip (`ownerOf`) | Kayıt tx | agentURI |
+|---|---|---|---|---|
+| SİCİL Trader | **258** | sahip `0x8394…90A8` | `0xdcd083ac031dc89a3176adb6b591b4872d74aa877b1be57913846753fb3448bd` | `data:application/json;base64,…` ← `agents/registration/trader.json` (`tradingWallet` = trader `0x7c99…4E07`) |
+| SİCİL Denetçi | **259** | denetçi `0x9632…3D02` | `0x2b31497a68af79ba588b92c8208fc6c5ccc0f5da53f1f82d8b0d6d43fa160575` | `data:application/json;base64,…` ← `agents/registration/denetci.json` |
+
+Kontroller: `isAuthorizedOrOwner(denetçi, 258) = false` (denetçi trader'a not verebilir), `isApprovedForAll(sahip, denetçi) = false`, `isAuthorizedOrOwner(sahip, 258) = true`, `getAgentWallet(258) = sahip` (beklenen; `setAgentWallet` yapılmadı), `balanceOf(sahip) = 1`.
+agentURI biçimi: ERC-8004 registration-v1 (`type`, `name`, `description`, `services`, `active`, `x402Support`, `supportedTrust`) + bizim alanlarımız `tradingWallet`, `owner`, `auditor`. `agentWallet` dosyada yok; zincirde tutulan değer.
+
 **17 Ekim'de doğrulandı** (implementasyonlar 16 Ekim'le aynı, Routescan'de verified, solc 0.8.24, `getVersion()` = `"2.0.0"`). ABI'ler: `agents/shared/abi/erc8004-{identity,reputation,validation}.json`.
 
 | Kayıt | Fonksiyon | Kural (kaynak koddan) |
