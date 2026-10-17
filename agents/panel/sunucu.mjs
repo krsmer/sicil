@@ -106,6 +106,7 @@ async function durum() {
 let onbellek = { ms: 0, veri: null };
 let sonKuralMs = 0;
 createServer(async (req, res) => {
+  req.url = (req.url ?? "/").split("?")[0]; // ?onizleme=… sadece tarayıcıda okunur
   try {
     if (req.url === "/" || req.url === "/index.html") {
       res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
