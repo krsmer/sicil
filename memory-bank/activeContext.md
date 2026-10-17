@@ -37,7 +37,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 | Karar | Seçenekler | Öneri / not |
 |---|---|---|
-| Fren cüzdanı | (a) Telefondaki Core'da yeni cüzdan, adresi kontrata verilir · (b) `sicil-fren` keystore'u | (a) tercih ediliyor (ekip de onayladı): özel anahtar telefona taşınmaz. Seçilirse adresi `systemPatterns.md` §3 ve `techContext.md` §3'e yazılır ve az miktar AVAX gönderilir |
+| ~~Fren cüzdanı~~ | **K-14 (17 Ekim): bilgisayardaki Core tarayıcı eklentisi hesabı**; panelde "Freni çek" → EIP-1193 ile `pause()`, jüri Core penceresinde onaylar | Adres `0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e` (~0,01 AVAX). `SicilKasasi` bununla deploy edildi |
 | Tez süresi | Plandaki örnek 4 saat · 60–120 dakika | 60–120 dk: 4 saatlik tezler teslime kadar sonuçlanmayabilir, kalibrasyon için akşama 10+ tez gerekir |
 | LLM sağlayıcısı ve modeli | Ekip seçecek | Tool use desteği olan, hızlı bir model; zaman aşımı 10 sn civarı |
 | ~~Trader agentId'sini kim `register` eder~~ | **K-12 (17 Ekim): sahip kaydeder**, agentURI'de trader adresi; denetçi kendini kaydeder, asla sahibin operatörü olmaz; saatlik `validationRequest` sahipten; `setAgentWallet` en sona (≤20 dk) | Önceki not: **Kaynak koddan (17 Ekim):** `register` çağıranı sahip yapar ve `agentWallet`'ı otomatik çağıran adres yapar. Trader kendini kaydederse kimlik doğrudan mühürleyen cüzdana bağlanır, `validationRequest`'i trader çağırır. Sahip kaydederse `agentWallet` için ayrıca imzalı `setAgentWallet` gerekir, `validationRequest`'i sahip çağırır, ama "sahibin bütün ajanları" (`balanceOf(sahip)`) görünür. İki durumda da denetçi not verebilir |
@@ -55,6 +55,8 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~13:25:** **`SicilKasasi` Fuji'de: `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8`** (tx `0x75eeb4ca34…`), fren = Core `0xFD056f…`. Zincirden okunan ayarlar doğru (BTC-USDT/ETH-USDT, 2000/300/5000/10800, `sicilBaslangic = 0`). Builder Hub `exact_match` ve Snowtrace verified. Sıradaki: trader yürütücüsü (seal → emir → reveal döngüsü); `setSicilBaslangic` trader canlıya geçince.
+- **17 Ekim ~12:50 · K-14:** Fren = Core tarayıcı eklentisi hesabı; panelde EIP-1193 "Freni çek" butonu. `SicilKasasi` deploy'u Core adresini bekliyor.
 - **17 Ekim ~12:45 · K-13:** `SicilKasasi` yazıldı (`contracts/src/SicilKasasi.sol`), 28/28 Foundry testi geçiyor (viem hash eşleşmesi `ffi` ile kanıtlı). Sıradaki: Fuji deploy + verify (Builder Hub + Snowtrace), sonra `setSicilBaslangic`.
 - **17 Ekim ~12:35:** ERC-8004 kayıtları yapıldı: **trader agentId 258** (sahibi sahip cüzdanı), **denetçi agentId 259** (sahibi denetçi). `isAuthorizedOrOwner(denetçi, 258) = false` doğrulandı. agentURI'ler data URI olarak zincirde (`agents/registration/`). Sıradaki: `SicilKasasi`.
 - **17 Ekim ~12:25 · K-12:** Trader agentId'sini sahip kaydedecek (agentURI'de trader adresi), denetçi kendini; denetçi asla sahibin operatörü değil; `validationRequest` sahipten; `setAgentWallet` vakit kalırsa en sona (≤20 dk). demoScript'teki "10 hesap" cevabı geçerli.

@@ -145,3 +145,4 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 12:01 | Verify: Snowtrace (Routescan Etherscan API) | ✅ forge: `Pass - Verified`. Routescan `getsourcecode` API'si birkaç dk sonra hâlâ boş → Snowtrace sayfasından gözle doğrula |
 | 17 Ekim 12:15 | ERC-8004 imzaları (Routescan verified kaynak, v2.0.0) | ✅ Planla uyumlu. Self-feedback engeli kontratta; `validationRequest` sadece sahip/operatör; `validationResponse` sadece validator, ≤100 |
 | 17 Ekim 12:35 | ERC-8004 `register`: sahip → trader (258), denetçi → kendisi (259) | ✅ ownerOf doğru; `isAuthorizedOrOwner(denetçi,258)=false`; tokenURI zincirden çözüldü |
+| 17 Ekim 13:25 | `SicilKasasi` Fuji deploy `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8` | ✅ Zincirden okunan ayarlar doğru; Builder Hub `exact_match`, Snowtrace verified (SicilKasasi, v0.8.24) |

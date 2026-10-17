@@ -38,9 +38,9 @@ Panel      ← 1–8'in bütün olayları + reports/*.json
 | Sahip (ekip) | `0x8394359d719ccD2cf037Edde7c50011D3cB690A8` | Deploy'da limitleri belirler, `unpause`, `report` (WorkshopHub kaydı); ERC-8004: trader agentId'sinin **sahibi**, saatlik `validationRequest` (K-12) |
 | Trader | `0x7c9931802977377aa62315DaebE1D455a2874E07` | `seal`, `reveal` |
 | Denetçi | `0x963261691606dCe9C4C9Bd0a5181371BB4eE3D02` | `attest`; ERC-8004 Reputation/Validation yazımı; kendi agentId'sinin sahibi; **asla sahibin operatörü değil** (K-12) |
-| Fren (guardian) | `0x9F37AaAeA7a216C2d6fB790707841B39086FCFE3` (keystore) | `pause` |
+| Fren (guardian) | `0xFD056f1A62c5316767Ec0ee36874bAeE1271c35e` (Core tarayıcı eklentisi, K-14; eski `sicil-fren` keystore'u kullanılmıyor) | `pause` (panelde EIP-1193 "Freni çek") |
 
-Fren için açık karar: telefondaki Core'da yeni bir cüzdan açılırsa onun adresi kullanılır ve bu tablo güncellenir.
+Fren kararı K-14 ile kapandı.
 
 ## 4. SicilKasasi kontratı
 

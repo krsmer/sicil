@@ -2,6 +2,14 @@
 
 OKX TR spotta işlem yapan otonom bir yapay zekâ ajanı her kararını Avalanche'a işlemden önce mühürler; bağımsız bir denetçi ajan hesabın bütün işlemlerini mühürlerle karşılaştırır. Agentic Hackathon (OKX TR × Team1 Türkiye, Ankara, 17 Ekim 2026) projesi.
 
+## Zincirdeki adresler (Avalanche Fuji)
+
+| | Adres |
+|---|---|
+| SicilKasasi | [`0x60735035CC6f4d810f4878f9A4a1993F534fe6a8`](https://testnet.snowtrace.io/address/0x60735035CC6f4d810f4878f9A4a1993F534fe6a8) |
+| ERC-8004 trader agentId | 258 (Identity `0x8004A818BFB912233c491871b3d84c89A494BD9e`) |
+| ERC-8004 denetçi agentId | 259 |
+
 **Önce oku:** [`memory-bank/`](memory-bank/README.md). Proje özeti, ürün, mimari, teknoloji, aktif görevler, ilerleme, sunum ve kararlar orada.
 
 ## Başlangıç kiti
