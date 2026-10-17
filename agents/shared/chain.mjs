@@ -22,6 +22,22 @@ export function readKasa(functionName, args = []) {
   return publicClient.readContract({ address: SICIL_KASASI, abi: KASA_ABI, functionName, args });
 }
 
+export const KASA_DEPLOY_BLOGU = 59592241n;
+
+/// SicilKasasi olaylarını okur. Fuji genel RPC'si getLogs'ta en fazla 100 blok kabul eder: 100'lük parçalar, 5'li paralel.
+export async function kasaOlaylari(fromBlock, toBlock) {
+  const parcalar = [];
+  for (let b = fromBlock; b <= toBlock; b += 100n) parcalar.push([b, b + 99n > toBlock ? toBlock : b + 99n]);
+  const olaylar = [];
+  for (let i = 0; i < parcalar.length; i += 5) {
+    const sonuc = await Promise.all(
+      parcalar.slice(i, i + 5).map(([f, t]) => publicClient.getContractEvents({ address: SICIL_KASASI, abi: KASA_ABI, fromBlock: f, toBlock: t })),
+    );
+    olaylar.push(...sonuc.flat());
+  }
+  return olaylar;
+}
+
 /// Ret anı: limit aşan mührü simülasyonsuz ve sabit gas limitiyle gönderir, böylece revert eden işlem zincirde kalır
 /// ve Snowtrace'te görünür. (writeContract gas verilmezse önce estimateGas çağırır; revert edecek işlemi hiç göndermez.)
 export async function sealRetGoster(wallet, commitHash, pair, notionalCent, gas = 200_000n) {

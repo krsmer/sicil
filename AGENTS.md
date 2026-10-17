@@ -74,5 +74,8 @@ Stack, run commands and demo script: `memory-bank/techContext.md`, `memory-bank/
 - `node trader/ajan.mjs` — autonomous trader loop (every 15m candle close). `--tek-tur` runs one tour and exits.
 - `node trader/sicil-baslat.mjs` — checks no open orders / pending algo orders; `--onayla` then calls `setSicilBaslangic()` (once, irreversible).
 - `node trader/executor.mjs --pair BTC-USDT --usdt 15 --tp-pct 0.5 --sl-pct 0.3` — one manual seal → order → reveal → OCO cycle (testing only; before `sicilBaslangic`).
+- `nohup trader/calistir.sh &` / `nohup denetci/calistir.sh &` — production runners: `caffeinate -ims` + auto-restart. Stop: `touch logs/DUR` (trader) or `logs/DUR-DENETCI`, then `pkill -TERM -f "node trader/ajan.mjs"` / `"node denetci/denetci.mjs"`.
+- `node denetci/denetci.mjs [--tek-tur] [--kuru] [--aralik 15]` — LLM-free auditor: matches every fill after `sicilBaslangic` to seals, net PnL from sealed fills only, thesis scoring + Brier, writes `reports/<upToTs>.json` and `attest`. `--kuru` = no chain writes.
+- Tests: `node --test denetci/denetci.test.mjs` (10 matching/PnL tests).
 - Contracts: `cd contracts && forge test` (29 tests; `ffi` runs `agents/shared/commit.mjs`).
 - Logs: `agents/logs/*.jsonl` (gitignored).

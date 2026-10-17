@@ -4,7 +4,7 @@
 
 ## Şu anki durum (17 Ekim 2026, ~13:05)
 
-**SİCİL CANLI.** `sicilBaslangic` 13:01:34 (TR). Trader ajan `agents/trader/calistir.sh` ile çalışıyor: `caffeinate -ims` (Mac uyumaz) + çökerse 15 sn sonra yeniden başlatır. Log: `agents/logs/ajan.out`, `trader.jsonl`. **Durdurmak:** `touch agents/logs/DUR && pkill -TERM -f "node trader/ajan.mjs"` (tur ortasındaysa tur bitince çıkar). **Demo hesapta elle işlem YOK** (canlı yakalama hariç). Sıradaki: denetçi ajan.
+**SİCİL CANLI.** `sicilBaslangic` 13:01:34 (TR). Trader ajan `agents/trader/calistir.sh` ile çalışıyor: `caffeinate -ims` (Mac uyumaz) + çökerse 15 sn sonra yeniden başlatır. Log: `agents/logs/ajan.out`, `trader.jsonl`. **Durdurmak:** `touch agents/logs/DUR && pkill -TERM -f "node trader/ajan.mjs"` (tur ortasındaysa tur bitince çıkar). **Demo hesapta elle işlem YOK** (canlı yakalama hariç). **Denetçi de canlı** (`agents/denetci/calistir.sh`, 60 sn; log `agents/logs/denetci.out`, durum `denetci-durum.json`; raporlar `reports/`). Sıradaki: ERC-8004 (saatlik Reputation + Validation), sonra panel.
 
 ## Önceki durum (16 Ekim 2026, ~21:00)
 
@@ -68,6 +68,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~13:16:** Denetçi canlı: ilk attest zincirde (sicil temiz). Eşleştirme etiket + algoId + ordIdList + zaman ile (10 birim testi). Attest: yapısal değişiklikte hemen, getiri için 10 dk kalp atışı, zarar limitinde hemen. Açıklanmamış mühürler Brier'e güven = 100 ile girer (gizlemek kalibrasyonu güzelleştiremez) — **Arif'in onayına sunuldu**.
 - **17 Ekim ~13:10:** Ajan `calistir.sh` (caffeinate + otomatik yeniden başlatma) ile, boşta iken yeniden başlatıldı. SIGTERM'de tur bitince çıkar. Aynı turda mühür atıldıysa 300 sn bekleme dolunca diğer parite değerlendirilir.
 - **17 Ekim ~13:03:** Sicil başlatıldı (ön kontrol temiz) ve ajan canlı: ilk otonom döngü mühür #2 ile tamamlandı (ret anı dahil). Not: sabahki manuel test OCO'su da `sicil000002x` etiketliydi ama `sicilBaslangic`'ten önce; denetçi dolumları `begin = sicilBaslangic` ile çektiği için çakışmaz. Ajan ilk 2 saatlik arka plan sınırına takılmasın diye nohup ile çalışıyor.
 - **17 Ekim ~13:20 · K-16:** LLM Gemini `gemini-3.8-flash`'e geçti; sahte adayla doğrulandı (3 araç, 20 sn, geçerli JSON). Sıradaki: `sicil-baslat --onayla` (Arif'in son onayıyla) → ajanı arka planda başlat.
