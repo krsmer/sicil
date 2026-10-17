@@ -6,6 +6,7 @@ import { createServer } from "node:http";
 import { existsSync, readFileSync, statSync, openSync, readSync, closeSync } from "node:fs";
 import { KASA_ABI, SICIL_KASASI, publicClient, readKasa } from "../shared/chain.mjs";
 import { kuralCevir } from "./kural-gosterim.mjs";
+import { kontratiKandir, muhuruDogrula } from "./kendin-dene.mjs";
 
 // .env (GEMINI_API_KEY) sadece sunucuda okunur; tarayıcıya hiçbir yanıtta gitmez
 const ENV = new URL("../../.env", import.meta.url);
@@ -105,7 +106,9 @@ async function durum() {
 
 let onbellek = { ms: 0, veri: null };
 let sonKuralMs = 0;
+let kandirOnbellek = { ms: 0, veri: null };
 createServer(async (req, res) => {
+  const sorgu = new URL(req.url ?? "/", "http://127.0.0.1").searchParams;
   req.url = (req.url ?? "/").split("?")[0]; // ?onizleme=… sadece tarayıcıda okunur
   try {
     if (req.url === "/" || req.url === "/index.html") {
@@ -116,6 +119,23 @@ createServer(async (req, res) => {
       if (Date.now() - onbellek.ms > 3000) onbellek = { ms: Date.now(), veri: await durum() };
       res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
       return res.end(JSON.stringify(onbellek.veri));
+    }
+    if (req.url === "/mimari.png") {
+      res.writeHead(200, { "content-type": "image/png", "cache-control": "max-age=3600" });
+      return res.end(readFileSync(new URL("../../memory-bank/assets/mimari.png", import.meta.url)));
+    }
+    if (req.url === "/api/muhur-dogrula") {
+      const id = Number(sorgu.get("id"));
+      if (!Number.isInteger(id) || id < 1) { res.writeHead(400, { "content-type": "application/json" }); return res.end(JSON.stringify({ hata: "geçersiz mühür no" })); }
+      const d = jsonOku(new URL("denetci-durum.json", LOGS)) ?? {};
+      const sonuc = await muhuruDogrula(id, d.aciklamalar?.[id]?.tx);
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+      return res.end(JSON.stringify(sonuc, (_, v) => (typeof v === "bigint" ? v.toString() : v)));
+    }
+    if (req.url === "/api/kandir") {
+      if (Date.now() - kandirOnbellek.ms > 15_000) kandirOnbellek = { ms: Date.now(), veri: await kontratiKandir() };
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+      return res.end(JSON.stringify(kandirOnbellek.veri));
     }
     if (req.url === "/api/kural" && req.method === "POST") {
       // Gösterim: Türkçe kural → Gemini → KOD aralık kontrolü. Gerçek deploy yok.

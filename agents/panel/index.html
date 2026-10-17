@@ -155,6 +155,65 @@
   .onay h4 { margin: 0 0 8px; font: 700 18px var(--serif); }
   .onay ul { margin: 6px 0 0; padding-left: 18px; }
   @media (max-width: 1100px) { .gosterim { grid-template-columns: 1fr; } }
+
+  /* ---- tanıtım sayfası ---- */
+  html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+  .menu { position: sticky; top: 0; z-index: 9; display: flex; align-items: center; gap: 28px; padding: 14px clamp(24px, 3vw, 56px); background: rgba(243,238,226,.94); backdrop-filter: blur(6px); border-bottom: 1.5px solid var(--murekkep); }
+  .menu-marka { font: 800 26px/1 var(--serif); letter-spacing: .05em; text-decoration: none; }
+  .menu-linkler { display: flex; gap: 18px; flex-wrap: wrap; flex: 1; font: 500 14px var(--sans); }
+  .menu-linkler a { text-decoration: none; color: var(--soluk); }
+  .menu-linkler a:hover { color: var(--murekkep); }
+  .menu .canli { font: 12.5px var(--mono); color: var(--soluk); white-space: nowrap; }
+  .deneme-serit { display: flex; gap: 22px; align-items: center; justify-content: center; flex-wrap: wrap; padding: 10px 16px; background: var(--murekkep); color: var(--kagit); font: 500 15px var(--sans); }
+  .deneme-serit a { color: var(--kagit); text-decoration: none; }
+  .deneme-serit a span { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--muhur); font: 700 12px var(--sans); margin-right: 6px; }
+  .hero { display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: center; padding: 56px 0 40px; border-bottom: 2px solid var(--murekkep); }
+  .hero h1 { margin: 0; font: 500 clamp(28px, 2.7vw, 46px)/1.25 var(--serif); letter-spacing: -.005em; }
+  .hero h1 em { font-style: italic; color: var(--muhur); font-weight: 600; }
+  .hero-alt { margin: 22px 0 0; font: 400 clamp(18px, 1.4vw, 23px)/1.5 var(--sans); color: #3a342b; max-width: 60ch; }
+  .hero-butonlar { display: flex; gap: 14px; margin-top: 30px; }
+  .btn { display: inline-block; font: 600 16px/1 var(--sans); letter-spacing: .04em; padding: 16px 22px; border: 2px solid var(--murekkep); color: var(--murekkep); text-decoration: none; background: transparent; cursor: pointer; }
+  .btn-ana { background: var(--murekkep); color: var(--kagit); }
+  .btn-kucuk { font: 600 14px/1 var(--sans); padding: 11px 16px; background: var(--murekkep); color: var(--kagit); border: 0; cursor: pointer; }
+  .btn-kucuk:disabled { opacity: .5; cursor: wait; }
+  .hero-rozet { display: grid; place-items: center; text-align: center; aspect-ratio: 1; border: 6px double var(--defter); border-radius: 50%; color: var(--defter); text-decoration: none; transform: rotate(-8deg); padding: 24px; background: rgba(220,235,223,.35); }
+  .hero-rozet.bozuk { color: var(--muhur); border-color: var(--muhur); background: rgba(244,220,214,.5); }
+  .hero-rozet .hr-durum { font: 800 34px/1.05 var(--serif); letter-spacing: .04em; }
+  .hero-rozet .hr-alt { font: 600 13px/1.45 var(--sans); letter-spacing: .14em; text-transform: uppercase; margin-top: 10px; }
+  .bolum { padding: 18px 0 30px; }
+  .bolum > h2 { font-size: 32px; margin-top: 30px; }
+  .iki-sutun { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .duz-metin { font: 400 18px/1.6 var(--serif); }
+  .duz-metin p:first-child { margin-top: 0; }
+  .karsilastir td:first-child { color: var(--soluk); font-size: 13px; }
+  .karsilastir td:last-child { background: rgba(220,235,223,.35); }
+  .adimlar { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1.5px solid var(--murekkep); }
+  .adimlar li { padding: 18px 20px 20px; border-right: 1px solid var(--cizgi); position: relative; }
+  .adimlar li:last-child { border-right: 0; }
+  .adimlar h3 { font: 700 24px var(--serif); margin: 10px 0 8px; }
+  .adimlar p { margin: 0 0 12px; font-size: 15px; line-height: 1.5; }
+  .adimlar a { font: 500 13px var(--mono); }
+  .adim-no { display: inline-grid; place-items: center; width: 34px; height: 34px; border: 2px solid var(--muhur); color: var(--muhur); border-radius: 50%; font: 700 16px var(--serif); }
+  .ne { font: italic 400 14px/1.4 var(--serif); color: var(--soluk); margin: -4px 0 10px; }
+  .rakam .ne { margin: 0 0 8px; font-size: 13px; }
+  .canli-meta { font-size: 13px; color: var(--soluk); margin: -4px 0 6px; }
+  .dene-izgara { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .dene-kart { border: 1.5px solid var(--murekkep); padding: 18px 22px; background: rgba(255,255,255,.22); }
+  .dene-kart .etiket, #dene .etiket { font: 600 12px/1.2 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--soluk); }
+  .dene-kart .satir { display: flex; gap: 10px; margin: 10px 0; }
+  .dene-kart select { font: 500 15px var(--sans); padding: 8px 10px; background: var(--kagit); border: 1px solid var(--cizgi); color: var(--murekkep); }
+  .sonuc-kutu { margin-top: 12px; padding: 12px 14px; border: 2px solid var(--defter); background: rgba(220,235,223,.5); }
+  .sonuc-kutu.ret { border-color: var(--muhur); background: rgba(244,220,214,.5); }
+  .hash-satir { font: 12.5px/1.6 var(--mono); word-break: break-all; }
+  .kandir-satir { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; padding: 10px 0; border-bottom: 1px solid var(--cizgi); }
+  .kandir-satir:last-child { border-bottom: 0; }
+  .mimari-img { width: 100%; border: 1px solid var(--cizgi); background: #fff; }
+  .tek-izgara { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .tek-izgara > div { border-top: 2px solid var(--murekkep); padding-top: 10px; }
+  .tek-izgara h3 { font: 700 19px var(--serif); margin: 4px 0 6px; }
+  .tek-izgara ul { padding-left: 18px; margin: 6px 0; } .tek-izgara li { margin-bottom: 6px; line-height: 1.45; }
+  #fren-bolum .fren { margin-top: 10px; }
+  @media (max-width: 1100px) { .hero, .iki-sutun, .dene-izgara { grid-template-columns: 1fr; } .adimlar { grid-template-columns: 1fr 1fr; } .hero-rozet { max-width: 260px; } .menu-linkler { display: none; } }
   .onizleme-serit { position: sticky; top: 0; z-index: 10; text-align: center; background: var(--altin); color: var(--kagit); font: 800 clamp(15px, 1.5vw, 26px)/1.2 var(--sans); letter-spacing: .16em; padding: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .eslesmeyen { border: 2px solid var(--muhur); background: var(--muhur-acik); padding: 12px 16px; margin: 10px 0; }
   footer { margin-top: 40px; font: 12px/1.7 var(--mono); color: var(--soluk); border-top: 1px solid var(--cizgi); padding-top: 12px; }
@@ -164,16 +223,58 @@
 </head>
 <body>
 <div id="onizleme-serit" class="onizleme-serit" hidden>ÖNİZLEME · sadece arayüz · zincire hiçbir şey yazılmadı</div>
+<nav class="menu">
+  <a class="menu-marka" href="#hero">SİCİL</a>
+  <div class="menu-linkler"><a href="#sorun">Sorun</a><a href="#nasil">Nasıl çalışır</a><a href="#canli-sicil">Canlı sicil</a><a href="#dene">Kendin dene</a><a href="#mimari">Mimari</a><a href="#teknoloji">Teknoloji</a><a href="#fren-bolum">Jüri freni</a></div>
+  <div class="canli" id="canli"><i></i><span id="canli-yazi">bağlanıyor…</span></div>
+</nav>
+<div class="deneme-serit"><b>3 adımda dene:</b>
+  <a href="#canli-sicil"><span>1</span> Canlı sicile bak</a>
+  <a href="#dene-dogrula"><span>2</span> Bir mührü kendin doğrula</a>
+  <a href="#dene-kandir"><span>3</span> Kontratı kandırmayı dene</a>
+</div>
 <div class="sayfa">
-  <header>
-    <div class="marka">SİCİL<small>Uydurulamayan işlem sicili · OKX TR spot · Avalanche Fuji</small></div>
-    <div class="ust-bilgi">
-      <div class="canli" id="canli"><i></i><span id="canli-yazi">bağlanıyor…</span></div>
-      <div>Kasa <a id="kasa-link" target="_blank" rel="noopener"><b id="kasa"></b></a></div>
-      <div>Sicil başlangıcı <b id="baslangic">–</b> · blok <b id="blok">–</b></div>
+  <section id="hero" class="hero">
+    <div class="hero-metin">
+      <h1>Türkiye'de bir işe girerken sizden istenen ilk belgelerden biri adli sicil kaydıdır. Bugün paramızı yapay zekâ ajanlarına emanet ediyoruz, ama kimse onların sicilini sormuyor. <em>SİCİL'i bunun için yaptık.</em></h1>
+      <p class="hero-alt">Ajan her işlemden önce kararını Avalanche'a mühürler, bağımsız bir denetçi her işlemi sayar. Kaybettiği günleri bile saklayamaz.</p>
+      <div class="hero-butonlar"><a class="btn btn-ana" href="#canli-sicil">Canlı sicili gör</a><a class="btn" href="#dene">Kendin dene</a></div>
     </div>
-  </header>
+    <a class="hero-rozet" id="hero-rozet" href="#canli-sicil"><span class="hr-durum">…</span><span class="hr-alt">yükleniyor</span></a>
+  </section>
 
+  <section id="sorun" class="bolum">
+    <h2>Sorun</h2>
+    <div class="iki-sutun">
+      <div class="duz-metin">
+        <p>Telegram'daki "VIP sinyal grupları" yüzde 300 kâr ekran görüntüsü paylaşıyor. Ekran görüntüsü düzenlenebilir, kaybettiren işlemler gizlenebilir, backtest geriye dönük ayarlanabilir.</p>
+        <p>Yapay zekâ ajanları çoğaldıkça aynı soru onlar için de soruluyor: <b>"Bu ajanın kâr ettiğini nereden bileceğim?"</b> İşlemleri sonradan zincire yazmak yetmez: yazılanın değişmediğini kanıtlar ama <b>yazılmayanı göstermez</b>.</p>
+      </div>
+      <table class="karsilastir">
+        <thead><tr><th></th><th>Zincire kayıt</th><th>SİCİL</th></tr></thead>
+        <tbody>
+          <tr><td>Kayıt ne zaman</td><td>İşlemden sonra</td><td><b>İşlemden önce</b>, hash olarak</td></tr>
+          <tr><td>Hangi işlemler</td><td>Seçilenler</td><td><b>Hepsi</b>; denetçi hesabın tamamını tarar</td></tr>
+          <tr><td>Notu kim verir</td><td>Ajanın kendisi</td><td><b>Bağımsız denetçi</b> (ERC-8004)</td></tr>
+          <tr><td>Neyi kanıtlar</td><td>Yazılanın değişmediğini</td><td><b>Hiçbir işlemin gizlenmediğini</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="nasil" class="bolum">
+    <h2>Nasıl çalışır</h2>
+    <ol class="adimlar">
+      <li><span class="adim-no">1</span><h3>Karar</h3><p>Kural motoru aday üretir (giriş, stop, hedef, tavan). Yapay zekâ okuma araçlarıyla araştırır, <b>AL / BEKLE / PAS</b> der ve yanlışlanabilir bir tez yazar.</p><a id="kanit-karar" href="#kararlar-bolum">kanıtı gör ↓</a></li>
+      <li><span class="adim-no">2</span><h3>Mühür</h3><p>Kararın hash'i emirden <b>önce</b> Avalanche'a yazılır. Kontrat pariteyi ve tutarı kontrol eder; limit aşan mührü reddeder.</p><a id="kanit-muhur" target="_blank" rel="noopener">kanıtı gör ↗</a></li>
+      <li><span class="adim-no">3</span><h3>Emir</h3><p>Mühür onaylanınca OKX TR spotta emir gider; emrin etiketi mühür numarasıdır. Dolunca tez zincirde açılır.</p><a id="kanit-emir" target="_blank" rel="noopener">kanıtı gör ↗</a></li>
+      <li><span class="adim-no">4</span><h3>Denetim</h3><p>LLM'siz denetçi hesabın <b>bütün</b> dolumlarını mühürlerle eşler, tezleri puanlar. Mühürsüz tek işlem sicili <b>kalıcı</b> bozar.</p><a id="kanit-denetim" target="_blank" rel="noopener">kanıtı gör ↗</a></li>
+    </ol>
+  </section>
+
+  <section id="canli-sicil" class="bolum">
+    <h2>Canlı sicil <span class="say">5 sn'de bir zincirden güncellenir</span></h2>
+    <div class="canli-meta mono">Kasa <a id="kasa-link" target="_blank" rel="noopener"><b id="kasa"></b></a> · sicil başlangıcı <b id="baslangic">–</b> · blok <b id="blok">–</b></div>
   <div class="ust">
     <div class="damga-alani">
       <div class="damga" id="damga"><div class="bas" id="damga-bas">SİCİL</div><div class="alt" id="damga-alt">yükleniyor</div></div>
@@ -182,6 +283,7 @@
     <div class="rakamlar" id="rakamlar"></div>
   </div>
 
+  <div class="ne">Bu ne? Kullanıcının kuralı ve kasa kurulurken kontrata yazılan, bir daha değiştirilemeyen limitler.</div>
   <section class="kurallar" aria-label="Kurallar">
     <div class="kural-soz">
       <div class="etiket">Kullanıcının kuralı (Türkçe)</div>
@@ -195,7 +297,57 @@
     </div>
   </section>
 
-  <section class="gosterim" aria-label="Kuralını yaz (gösterim)">
+  <div id="eslesmeyenler"></div>
+
+  <div class="izgara">
+    <div>
+      <section>
+        <h2>Mühür defteri <span class="say" id="muhur-say"></span></h2>
+        <div class="ne">Bu ne? Ajanın her işlemi: mühür zamanı emirden önce, tez açılınca görünür, sonucu denetçi puanlar.</div>
+        <table>
+          <thead><tr><th>No</th><th>Mühür → emir</th><th>Tez (yapay zekâ)</th><th>Sonuç</th><th>Kanıt</th></tr></thead>
+          <tbody id="muhurler"></tbody>
+        </table>
+      </section>
+      <section>
+        <h2>Zincir reddetti <span class="say">simülasyonsuz gönderilip revert eden mühürler</span></h2>
+        <div class="ne">Bu ne? Kural motorunun limit üstü tutarı zincire sunuldu; kontrat reddetti, ajan tutarı küçülttü.</div>
+        <div id="retler"></div>
+      </section>
+    </div>
+    <div>
+      <section>
+        <h2 id="kararlar-bolum">Yapay zekâ kararları <span class="say" id="karar-say"></span></h2>
+        <div class="kucuk soluk" style="margin:-4px 0 6px">Yerel ajan kaydı. İşlem yapılan (AL) kararların tezi zincirde mühürlü; PAS ve BEKLE kararları zincire yazılmıyor.</div>
+        <div id="kararlar"></div>
+      </section>
+      <section>
+        <h2>Denetçi ve ERC-8004</h2>
+        <div class="ne">Bu ne? LLM kullanmayan denetçinin zincire yazdığı raporlar ve trader'a verdiği itibar notları.</div>
+        <div id="denetim"></div>
+      </section>
+    </div>
+  </div>
+  </section>
+
+  <section id="dene" class="bolum">
+    <h2>Kendin dene <span class="say">işlem gönderilmez, cüzdan gerekmez</span></h2>
+    <div class="dene-izgara">
+      <div class="dene-kart" id="dene-dogrula">
+        <div class="etiket">1 · Mührü doğrula</div>
+        <p class="kucuk">Bir mühür seç. Açılıştaki verilerden <span class="mono">keccak256(abi.encode(pair, side, priceE8, sizeE8, thesis, confidence, salt))</span> yeniden hesaplanır ve kasadaki mühürle karşılaştırılır.</p>
+        <div class="satir"><select id="dogrula-sec"></select><button id="dogrula-btn" class="btn-kucuk">Doğrula</button></div>
+        <div id="dogrula-sonuc"></div>
+      </div>
+      <div class="dene-kart" id="dene-kandir">
+        <div class="etiket">2 · Kontratı kandırmayı dene</div>
+        <p class="kucuk">Kurallara aykırı dört çağrı kontrata <span class="mono">eth_call</span> ile denenir; kontratın verdiği hata Türkçe açıklanır.</p>
+        <button id="kandir-btn" class="btn-kucuk">Dört denemeyi çalıştır</button>
+        <div id="kandir-sonuc"></div>
+      </div>
+    </div>
+    <div class="etiket" style="margin:22px 0 8px">3 · Kendi kuralını yaz</div>
+  <section class="gosterim dene-kart" id="dene-kural" aria-label="Kuralını yaz (gösterim)">
     <div>
       <div class="etiket">Kuralını yaz <span class="rozet-gosterim">GÖSTERİM</span></div>
       <textarea id="kural-metin" maxlength="500" placeholder="Örn: Sadece ETH, işlem başı 10 USDT, günde en fazla 30 USDT zarar"></textarea>
@@ -204,36 +356,40 @@
     </div>
     <div id="kural-sonuc"><div class="bos">Onay kartı burada görünecek.</div></div>
   </section>
+  </section>
 
-  <div id="eslesmeyenler"></div>
-
-  <div class="izgara">
-    <div>
-      <section>
-        <h2>Mühür defteri <span class="say" id="muhur-say"></span></h2>
+  <section id="mimari" class="bolum">
+    <h2>Mimari</h2>
+    <div class="iki-sutun">
+      <img class="mimari-img" src="/mimari.png" alt="SİCİL mimarisi: trader ve denetçi ajanlar, OKX TR, SicilKasasi ve ERC-8004">
+      <div>
+        <p class="duz-metin">İki ajan birbirine doğrudan mesaj göndermez; birbirine <b>sadece zincir üzerinden</b> güvenir. Trader işlem yapar, denetçi kanıtlar.</p>
         <table>
-          <thead><tr><th>No</th><th>Mühür → emir</th><th>Tez (yapay zekâ)</th><th>Sonuç</th><th>Kanıt</th></tr></thead>
-          <tbody id="muhurler"></tbody>
+          <thead><tr><th>Rol</th><th>Kontratta yetkisi</th></tr></thead>
+          <tbody>
+            <tr><td><b>Trader</b> · <span class="mono kucuk">0x7c99…4E07</span></td><td><span class="mono">seal</span>, <span class="mono">reveal</span></td></tr>
+            <tr><td><b>Denetçi</b> · <span class="mono kucuk">0x9632…3D02</span></td><td><span class="mono">attest</span>; ERC-8004 notu (trader'ın sahibi/operatörü olamaz)</td></tr>
+            <tr><td><b>Fren</b> · <span class="mono kucuk">0xFD05…c35e</span></td><td><span class="mono">pause</span></td></tr>
+            <tr><td><b>Sahip</b> · <span class="mono kucuk">0x8394…90A8</span></td><td>kurulum, <span class="mono">unpause</span>, <span class="mono">setSicilBaslangic</span> (bir kez)</td></tr>
+            <tr><td><b>Yapay zekâ</b></td><td class="soluk">Hiçbiri: anahtarı ve emir aracı yok</td></tr>
+          </tbody>
         </table>
-      </section>
-      <section>
-        <h2>Zincir reddetti <span class="say">simülasyonsuz gönderilip revert eden mühürler</span></h2>
-        <div id="retler"></div>
-      </section>
+      </div>
     </div>
-    <div>
-      <section>
-        <h2>Yapay zekâ kararları <span class="say" id="karar-say"></span></h2>
-        <div class="kucuk soluk" style="margin:-4px 0 6px">Yerel ajan kaydı. İşlem yapılan (AL) kararların tezi zincirde mühürlü; PAS ve BEKLE kararları zincire yazılmıyor.</div>
-        <div id="kararlar"></div>
-      </section>
-      <section>
-        <h2>Denetçi ve ERC-8004</h2>
-        <div id="denetim"></div>
-      </section>
-    </div>
-  </div>
+  </section>
 
+  <section id="teknoloji" class="bolum">
+    <h2>Teknoloji</h2>
+    <div class="tek-izgara">
+      <div><h3>OKX Agent Trade Kit</h3><p class="kucuk">Üç ayrı süreç, en az yetki.</p><ul class="mono kucuk"><li>yürütücü: market_get_candles, market_get_ticker, market_get_orderbook, spot_place_order, spot_cancel_order, spot_get_order, spot_place_algo_order, spot_amend_algo_order</li><li>LLM (<b>--read-only</b>, anahtarsız): market_get_funding_rate, market_get_open_interest, market_filter_oi_change, market_filter, market_get_indicator</li><li>denetçi (<b>--read-only</b>): spot_get_fills, spot_get_order, spot_get_algo_orders, market_get_candles</li></ul></div>
+      <div><h3>Yapay zekâ</h3><ul class="kucuk"><li><span class="mono">gemini-3.8-flash</span>, en fazla 4 araç, 45 sn, JSON şeması</li><li>LLM'in bağlandığı süreçte <b>yazma aracı yok</b>; emri sadece yürütücü kodu gönderir</li><li>Hata / zaman aşımı → BEKLE</li></ul></div>
+      <div><h3>Avalanche Fuji</h3><ul class="kucuk"><li><span class="mono">SicilKasasi</span>: mühür, açılış, limitler, denetim, fren (verified)</li><li>ERC-8004 Identity: trader #258, denetçi #259</li><li>ERC-8004 Reputation: denetçinin saatlik notu</li></ul></div>
+      <div><h3>Testler</h3><ul class="kucuk"><li><span class="mono">forge test</span>: 29 (limitler, hash eşleşmesi viem ile, fren, kalıcı bozulma)</li><li><span class="mono">node --test</span>: 33 (denetçi eşleştirme, kurtarma, süre çıkışı, kural aralıkları)</li></ul></div>
+      <div><h3>Kod</h3><ul class="kucuk dosyalar"><li><a href="https://github.com/krsmer/sicil/blob/main/contracts/src/SicilKasasi.sol" target="_blank" rel="noopener">contracts/src/SicilKasasi.sol</a></li><li><a href="https://github.com/krsmer/sicil/blob/main/agents/trader/ajan.mjs" target="_blank" rel="noopener">agents/trader/ajan.mjs</a></li><li><a href="https://github.com/krsmer/sicil/blob/main/agents/trader/karar.mjs" target="_blank" rel="noopener">agents/trader/karar.mjs</a></li><li><a href="https://github.com/krsmer/sicil/blob/main/agents/denetci/denetci.mjs" target="_blank" rel="noopener">agents/denetci/denetci.mjs</a></li><li><a href="https://github.com/krsmer/sicil/blob/main/reports" target="_blank" rel="noopener">reports/ (denetçi raporları)</a></li></ul></div>
+    </div>
+  </section>
+
+  <section id="fren-bolum" class="bolum">
   <div class="fren">
     <div>
       <h3>Jüri freni</h3>
@@ -242,6 +398,7 @@
     </div>
     <button class="fren-btn" id="fren-btn">Freni çek</button>
   </div>
+  </section>
 
   <footer>
     Sicil durumu, mühürler, kurallar ve ERC-8004 notları zincirden (SicilKasasi, ERC-8004); eşleşme, net getiri ve tez sonuçları bağımsız denetçinin raporundan (hash'i zincirde) gelir. Yapay zekâ kararları listesi ajanın yerel kaydıdır. Denetçi LLM kullanmaz; sadece-okuma anahtarıyla hesabın bütün dolumlarını mühürlerle eşler.<br>
@@ -264,8 +421,16 @@ const tr = (x, en = 2) => (x == null || x === "" || isNaN(Number(x)) ? "–" : N
 const $ = (id) => document.getElementById(id);
 let son = null;
 
+const NE = {
+  "Mühür": "Bu ne? Sicil başladıktan sonra zincire yazılan karar sayısı.",
+  "Eşleşen / mühürsüz": "Bu ne? Denetçinin hesaptaki her emri mühürle eşleştirme sonucu.",
+  "Net getiri": "Bu ne? Sadece mühürlü işlemlerden, ücretler dahil, eksiyse eksi.",
+  "Tezler · tuttu / tutmadı": "Bu ne? Süresi dolan tezlerin fiyat verisiyle kurallı puanı.",
+  "Kalibrasyon": "Bu ne? Yapay zekânın güveni ne kadar isabetli (Brier).",
+  "ERC-8004 itibar": "Bu ne? Denetçinin zincirdeki itibar kaydına verdiği not.",
+};
 function rakam(etiket, deger, not = "", sinif = "") {
-  return `<div class="rakam"><div class="etiket">${etiket}</div><div class="deger ${sinif}">${deger}</div><div class="not">${not}</div></div>`;
+  return `<div class="rakam"><div class="ne">${NE[etiket] ?? ""}</div><div class="etiket">${etiket}</div><div class="deger ${sinif}">${deger}</div><div class="not">${not}</div></div>`;
 }
 
 const ONIZLEME = new URLSearchParams(location.search).get("onizleme"); // "bozuk" | "durdu" | null — sadece arayüz, zincire yazmaz
@@ -302,6 +467,21 @@ function ciz(d) {
     rakam("ERC-8004 itibar", ni?.adet ? `${sayi(ni.deger / 10 ** ni.ondalik, 2)}%` : "–", ni?.adet ? `trader #258 · denetçinin ${ni.adet} net getiri notunun ortalaması · son not ${d.notlar[0] ? saat(Date.parse(d.notlar[0].ts)).slice(0, 5) : "–"} itibarıyla (saatlik)` : "trader #258 · henüz not yok"),
   ].join("");
   if (!$("rakamlar").classList.contains("hazir")) setTimeout(() => $("rakamlar").classList.add("hazir"), 900);
+
+  // tanıtım: hero rozeti, "kanıtı gör" linkleri, doğrulama listesi
+  const rozet = $("hero-rozet");
+  rozet.classList.toggle("bozuk", !!z.sicilBozuk);
+  rozet.querySelector(".hr-durum").textContent = z.sicilBozuk ? "SİCİL BOZUK" : "SİCİL TEMİZ";
+  rozet.querySelector(".hr-alt").textContent = `${d.muhurler.length} mühür · ${o.eslesen ?? 0} işlem · mühürsüz ${o.eslesmeyen ?? 0}${z.durduruldu ? " · fren çekili" : " · canlı"}`;
+  const sonM = d.muhurler[0];
+  if (sonM) {
+    $("kanit-muhur").href = tx(sonM.sealTx); $("kanit-muhur").textContent = `kanıtı gör: mühür #${sonM.id} ↗`;
+    if (sonM.revealTx) { $("kanit-emir").href = tx(sonM.revealTx); $("kanit-emir").textContent = `kanıtı gör: ${sonM.clOrdId} açılışı ↗`; }
+  }
+  if (d.attestler[0]) { $("kanit-denetim").href = d.attestler[0].url; $("kanit-denetim").textContent = `kanıtı gör: son denetim ${saat(Date.parse(d.attestler[0].ts)).slice(0, 5)} ↗`; }
+  const sec = $("dogrula-sec"), secili = sec.value;
+  const secenekler = d.muhurler.filter((m) => m.acik).map((m) => `<option value="${m.id}">#${m.id} · ${esc(m.pair)} · ${saat(m.ts * 1000).slice(0, 5)}</option>`).join("");
+  if (sec.dataset.son !== secenekler) { sec.innerHTML = secenekler || "<option>açılmış mühür yok</option>"; sec.dataset.son = secenekler; if (secili) sec.value = secili; }
 
   // kurallar (kontrattan okunan immutable değerler)
   const kural = (deger, ad, kaynak) => `<div class="kural"><div class="d">${deger}</div><div class="a">${ad}</div><span class="k ${kaynak === "kullanıcı" ? "kullanici" : "sistem"}">${kaynak === "kullanıcı" ? "kullanıcının kuralından" : "SİCİL sistem kuralı"}</span></div>`;
@@ -434,6 +614,36 @@ $("fren-btn").addEventListener("click", async () => {
     $("fren-btn").disabled = !!son?.zincir?.durduruldu;
     frenYaz(e.code === 4001 ? "İşlem cüzdanda reddedildi." : `Hata: ${esc(e.message ?? e)}`, "eksi");
   }
+});
+
+// ---- Kendin dene: mührü doğrula (sunucuda viem ile, sadece okuma) ----
+$("dogrula-btn").addEventListener("click", async () => {
+  const id = $("dogrula-sec").value, btn = $("dogrula-btn");
+  btn.disabled = true;
+  try {
+    const r = await (await fetch(`/api/muhur-dogrula?id=${encodeURIComponent(id)}`)).json();
+    if (r.hata) { $("dogrula-sonuc").innerHTML = `<div class="sonuc-kutu ret">${esc(r.hata)}</div>`; return; }
+    const g = r.girdiler;
+    $("dogrula-sonuc").innerHTML = `<div class="sonuc-kutu ${r.eslesiyor ? "" : "ret"}"><b style="font:700 19px var(--serif)">${r.eslesiyor ? "✓ Eşleşiyor: mühür, açılan verinin aynısı" : "✗ EŞLEŞMİYOR"}</b>
+      <div class="hash-satir" style="margin-top:8px">zincirdeki mühür&nbsp;&nbsp;${esc(r.zincirdeki)}<br>yeniden hesaplanan ${esc(r.hesaplanan)}</div>
+      <div class="kucuk soluk" style="margin-top:8px">Girdiler (açılış işleminden): ${esc(g.pair)} · yön ${g.side === 0 ? "al" : "sat"} · fiyat ${tr(Number(g.priceE8) / 1e8, 2)} · miktar ${tr(Number(g.sizeE8) / 1e8, 8)} · güven ${g.confidence} · salt ${esc(g.salt.slice(0, 10))}…</div>
+      <div class="kucuk soluk">Tez: ${esc(g.thesis).slice(0, 180)}${g.thesis.length > 180 ? "…" : ""}</div>
+      <div class="linkler" style="margin-top:6px"><a href="${tx(r.revealTx)}" target="_blank" rel="noopener">açılış tx ↗</a></div></div>`;
+  } catch (e) { $("dogrula-sonuc").innerHTML = `<div class="sonuc-kutu ret">${esc(e.message)}</div>`; }
+  finally { btn.disabled = false; }
+});
+
+// ---- Kendin dene: kontratı kandırmayı dene (eth_call simülasyonu; işlem yok, cüzdan yok) ----
+$("kandir-btn").addEventListener("click", async () => {
+  const btn = $("kandir-btn");
+  btn.disabled = true; btn.textContent = "Kontrata soruluyor…";
+  try {
+    const r = await (await fetch("/api/kandir")).json();
+    $("kandir-sonuc").innerHTML = r.sonuclar.map((x) => `<div class="kandir-satir"><span class="rozet ${x.reddedildi ? "pas" : "bekle"}">${x.reddedildi ? "REDDETTİ" : "GEÇTİ"}</span>
+      <div><b>${esc(x.ad)}</b> <span class="mono kucuk soluk">${esc(x.fn)}() · kimden ${kisa(x.kimden)}</span><div class="kucuk">${x.hata ? `<span class="mono">${esc(x.hata)}${x.argumanlar?.length ? "(" + x.argumanlar.map(esc).join(", ") + ")" : ""}</span>: ` : ""}${esc(x.aciklama)}</div></div></div>`).join("")
+      + `<div class="kucuk soluk" style="margin-top:8px">${esc(r.not)}</div>`;
+  } catch (e) { $("kandir-sonuc").innerHTML = `<div class="sonuc-kutu ret">${esc(e.message)}</div>`; }
+  finally { btn.disabled = false; btn.textContent = "Dört denemeyi çalıştır"; }
 });
 
 // ---- Kuralını yaz (gösterim): yapay zekâ sunucuda çalışır, anahtar tarayıcıya gelmez ----
