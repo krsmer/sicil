@@ -172,8 +172,8 @@ her tur (normalde 60 sn; sunum sırasında 15 sn):
 | Reputation | `0x8004B663056A597Dffe9eCcC1965A193B7388713` | Denetçi → trader: `giveFeedback(agentId, value, valueDecimals, tag1, tag2, endpoint, feedbackURI, feedbackHash)`; `value` baz puan, `valueDecimals = 2`; iki ayrı not: net getiri ve kalibrasyon |
 | Validation | `0x8004Cb1BF31DAf7788923b405b754f57acEB4272` | Trader'ın sahibi her saat `validationRequest(validator, agentId, requestURI, requestHash)`; denetçi `validationResponse(requestHash, response, responseURI, responseHash, tag)` ile 0–100 puan verir |
 
-- Kayıtlar yükseltilebilir proxy; imzaları sabah Snowtrace'ten tekrar kontrol et [doğrula].
-- Ajan sahibinin kendi ajanına not vermesi büyük ihtimalle engelli; denetçinin ayrı cüzdan olması bunu çözüyor.
+- Kayıtlar yükseltilebilir proxy; imzalar ve kurallar 17 Ekim'de kaynak koddan doğrulandı (`techContext.md` §3, ABI'ler `agents/shared/abi/`).
+- Ajan sahibinin (ve onaylı operatörün) kendi ajanına not vermesi **kontratta engelli** (`"Self-feedback not allowed"`, doğrulandı); denetçinin ayrı cüzdan olması bunu çözüyor. Denetçi trader agentId'sinin sahibi/operatörü yapılmamalı.
 - Trader agentId'sini hangi cüzdanın `register` edeceği (trader mı, sahip mi) sabah netleşecek; `validationRequest`'i agentId'nin sahibi çağırır [doğrula].
 - Not verme engellenirse yedek: kontrattaki `Attested` olayı kullanılır.
 

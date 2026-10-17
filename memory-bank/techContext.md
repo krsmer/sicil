@@ -73,7 +73,17 @@ Not: ATK'nin npm kurulumu `~/.okx/bin/` altına OKX'in kendi yardımcı binary'l
 | Reputation | `0x8004B663056A597Dffe9eCcC1965A193B7388713` | `0x16e0fa7f7c56b9a767e34b192b51f921be31da34` |
 | Validation | `0x8004Cb1BF31DAf7788923b405b754f57acEB4272` | `0xdb31f5d9167f8ebc8b30fbbf814c4d297c2d7f99` |
 
-Yükseltilebilir oldukları için fonksiyon imzalarını sabah tekrar kontrol et.
+**17 Ekim'de doğrulandı** (implementasyonlar 16 Ekim'le aynı, Routescan'de verified, solc 0.8.24, `getVersion()` = `"2.0.0"`). ABI'ler: `agents/shared/abi/erc8004-{identity,reputation,validation}.json`.
+
+| Kayıt | Fonksiyon | Kural (kaynak koddan) |
+|---|---|---|
+| Identity | `register(string agentURI) → uint256 agentId` (ayrıca `register()` ve `register(string, MetadataEntry[])`) | Çağıran **sahip** olur (ERC-721 mint) ve `agentWallet` metadata'sı otomatik `msg.sender` olur. Olay: `Registered(agentId indexed, agentURI, owner indexed)` |
+| Identity | `isAuthorizedOrOwner(spender, agentId)`, `ownerOf`, `balanceOf`, `getAgentWallet` | Panel için okuma |
+| Reputation | `giveFeedback(uint256 agentId, int128 value, uint8 valueDecimals, string tag1, string tag2, string endpoint, string feedbackURI, bytes32 feedbackHash)` | **`require(!isAuthorizedOrOwner(msg.sender, agentId), "Self-feedback not allowed")`**: ajanın sahibi ve onaylı operatörü not veremez → denetçi cüzdanı trader agentId'sinin sahibi/onaylısı **olmamalı**. `value` **int128, negatif olabilir** (eksi getiri yazılabilir), `valueDecimals ≤ 18`, \|value\| ≤ 1e38 |
+| Reputation | `getSummary(agentId, address[] clients, tag1, tag2) → (count, int128 summaryValue, uint8 decimals)`, `readAllFeedback(...)` | Panel: `clients = [denetçi]` ile sadece denetçinin notları |
+| Validation | `validationRequest(address validator, uint256 agentId, string requestURI, bytes32 requestHash)` | Çağıran agentId'nin **sahibi** veya onaylı operatörü olmalı (`"Not authorized"`). `requestHash` benzersiz (`"exists"`) → her saat yeni hash |
+| Validation | `validationResponse(bytes32 requestHash, uint8 response, string responseURI, bytes32 responseHash, string tag)` | Sadece istekte adı geçen validator (`"not validator"`), `response ≤ 100`. Aynı isteğe tekrar yanıt verilebilir (üzerine yazar, `lastUpdate` güncellenir) |
+| Validation | `getSummary(agentId, address[] validators, tag) → (count, uint8 avgResponse)`, `getValidationStatus(requestHash)` | Panel için okuma |
 
 **WorkshopHub** (Team1 atölye kaydı): `0x0a5aa2e3809fa20350182ac481dae69a043bc95d`. Kaynak: `omeraksu/autonomy-workshop` şablonundaki `config.ts`. 16 Ekim'de adreste kontrat kodu olduğu doğrulandı. Aynı adresten ikinci kayıt reddedilir: deneme `checkIn` yapma.
 

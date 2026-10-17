@@ -83,7 +83,7 @@ Dört kişiyseniz her kola bir kişi; üç kişiyseniz kontratı bitiren kişi 1
 **Avalanche Fuji:**
 - [ ] Dört cüzdanda AVAX var mı? (16 Ekim: var)
 - [x] Boş bir kontrat deploy + verify (cancun) ✅ 12:00 (`SicilPing`)
-- [ ] `register` ile iki agentId (trader, denetçi); Reputation ve Validation imzaları Snowtrace'te kontrol
+- [ ] `register` ile iki agentId (trader, denetçi); ~~Reputation ve Validation imzaları Snowtrace'te kontrol~~ ✅ imzalar 12:15 doğrulandı
 - [ ] Denetçi cüzdanından deneme `giveFeedback`
 - [ ] Salon Wi-Fi'sinde olay dinleme gecikmesi; yedek RPC ve telefon hotspot'u
 - [ ] İkinci telefonda Core kurulu, fren adresi fonlu
@@ -143,3 +143,4 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 12:00 | Fuji deploy (`sicil-sahip`): `SicilPing` → `0xDf769dE9Fc427863C8CC4cf7231226a93c2435f6`, tx `0x4ad1bd17…6a09` | ✅ ~4 sn (gönderim + onay) |
 | 17 Ekim 12:00 | Verify: Builder Hub Sourcify | ✅ iş `exact_match` (Builder Hub explorer). Not: `/v2/contract/...` sorgusu hemen `match: null` döndü |
 | 17 Ekim 12:01 | Verify: Snowtrace (Routescan Etherscan API) | ✅ forge: `Pass - Verified`. Routescan `getsourcecode` API'si birkaç dk sonra hâlâ boş → Snowtrace sayfasından gözle doğrula |
+| 17 Ekim 12:15 | ERC-8004 imzaları (Routescan verified kaynak, v2.0.0) | ✅ Planla uyumlu. Self-feedback engeli kontratta; `validationRequest` sadece sahip/operatör; `validationResponse` sadece validator, ≤100 |
