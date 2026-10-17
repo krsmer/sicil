@@ -156,6 +156,18 @@ agentURI biçimi: ERC-8004 registration-v1 (`type`, `name`, `description`, `serv
 
 Alternatif: `spot_place_order` doğrudan `tpTriggerPx`/`slTriggerPx` alarak giriş emrine TP/SL iliştirebilir; ayrı OCO yerine kullanılabilir.
 
+### Denetçinin dolum eşleştirme prosedürü (17 Ekim'de iki gerçek OCO çıkışıyla doğrulanan alanlara göre)
+
+Dolum kaydında (`spot_get_fills`) sadece `ordId`, `clOrdId`, `tradeId`, `fillPx`, `fillSz`, `fee` güvenilir; **`algoClOrdId`/`algoId` dolumda yok (null)**. Bu yüzden eşleştirme her zaman **emir** üzerinden yapılır:
+
+1. `spot_get_fills` (`begin = sicilBaslangic` ms, gerekirse `archive: true`) → dolumları **`ordId`'ye göre grupla** (bir emir birden çok dolum olabilir).
+2. Her `ordId` için emir kaydını al: `spot_get_order {instId, ordId}` (ya da `spot_get_orders status: history` toplu).
+3. **Giriş emri:** `emir.clOrdId` `^sicil(\d{6})$` ise mühür no = o sayı.
+4. **Çıkış emri (OCO):** `emir.clOrdId` borsa üretimi (`O…`) olur; `emir.algoClOrdId` `^sicil(\d{6})x$` ise mühür no = o sayı. Çapraz kontrol: `spot_get_algo_orders {status: "history", state: "effective"}` içindeki aynı `algoId`'nin `ordIdList`'inde bu `ordId` olmalı.
+5. Eşleşme geçerlilik şartları (hepsi): mühür zincirde `Sealed` olarak var; mühür `ts ≥ sicilBaslangic`; mühür `ts` < giriş emrinin `cTime` (çıkış için: < algo emrinin `cTime`); giriş emrinin gerçek dolum tutarı Σ(fillPx×fillSz) ≤ mühür `notionalCent` + 1 cent (K-13); çıkış miktarı ≤ girişte dolan miktar.
+6. Bu şartlardan biri tutmayan ya da hiçbir mühre bağlanamayan her emir = **unmatched** → `attest(unmatched > 0)` → kalıcı `SicilBozuldu`.
+7. Etiket tek başına kanıt değildir: `algoClOrdId`'yi emri veren herkes yazabilir; bu yüzden 5. maddedeki zincir kontrolleri zorunludur.
+
 ### Bilinen tuzaklar ve düzeltmeler
 
 | Konu | Doğrusu |
