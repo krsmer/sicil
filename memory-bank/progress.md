@@ -78,7 +78,7 @@ Dört kişiyseniz her kola bir kişi; üç kişiyseniz kontratı bitiren kişi 1
 - [x] `spot_place_algo_order` OCO kabul ediliyor mu? ✅ (12:05; ayrıntı doğrulama kaydında) `algoClOrdId` ile işaretlenebiliyor mu? Tetiklenen çıkış emrinde `algoId`/`algoClOrdId` görünüyor mu?
 - [x] Denetçi için sadece okuma anahtarı çalışıyor mu? ✅ (smart registration gizlemiyor → `--read-only` zorunlu)
 - [x] `news_get_by_coin` TR anahtarıyla çalışıyor mu? ❌ demo modda kapalı; canlı Read anahtarı ya da OAuth gerekir
-- [ ] BTC-TRY'de 20 USDT'lik emir ne kadar kayıyor?
+- [x] BTC-TRY'de 20 USDT'lik emir ne kadar kayıyor? Canlı 5,8 bps; demo defteri bozuk → BTC-TRY eklenmedi
 
 **Avalanche Fuji:**
 - [ ] Dört cüzdanda AVAX var mı? (16 Ekim: var)
@@ -136,3 +136,5 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 11:50 | OCO (4a, tetiklenmeyen): sell 0,00012 BTC, TP +%5 / SL −%5 (piyasa), `algoClOrdId=sicil000001x` → algoId 4017257012736667649 | ✅ Kabul edildi; denetçi anahtarıyla `spot algo orders` içinde `algoClOrdId` geri okundu; iptal edildi (pending boş). CLI'da algoClOrdId bayrağı `--clOrdId`; `--tpOrdPx=-1` `=` ile yazılmalı. `--history` varsayılan olarak sadece `effective` (tetiklenmiş) olanları gösteriyor |
 | 17 Ekim 12:05 | OCO (4b): `algoClOrdId=sicil000002x`, SL −%0,02 → doğal tetiklendi (SL tarafı), market satış dolumu | ✅ **Bağlantı kurulabiliyor, ama sadece emir üzerinden.** Tetiklenen emir: ordId 4017280697166049281, `clOrdId="O4017280697042617344"` (**borsa üretiyor, bizim değil**), `algoId` + `algoClOrdId=sicil000002x` **emirde dolu**, `source="7"`. **Dolum kaydında `algoClOrdId` yok** (sadece ordId, clOrdId=O…). Tek emir **2 dolum** olarak geldi. Taker ücreti %0,10 (`feeRate -0.001`). Algo geçmişinde `ordIdList` + `actualSide: "sl"` var |
 | 17 Ekim 12:05 | `news` modülü TR demo anahtarıyla | ❌ "News features are not available in demo/simulated trading mode." Demo anahtar + `--live` → 50101 (ortam uyuşmazlığı). Anahtarsız çalışmıyor (`okx-auth` istiyor). Açmanın yolu: **canlı** TR anahtarı (sadece Read) ya da `okx-auth login --site tr` (OAuth) |
+
+| 17 Ekim 12:30 | 20 USDT (988 TRY) emrin kayması, emir defterinden (emir yok) | BTC-USDT canlı ve demo: makas ~0, kayma 0 bps (1 kademe) ✅. BTC-TRY **canlı**: makas 11,5 bps, piyasa emri kayması 5,8 bps (1 kademe), ilk 5 kademe ~0,9–1,2 M TRY. BTC-TRY **demo: kullanılamaz** (orta fiyat 130 TRY, satış tarafında 6 TRY derinlik) ❌ |

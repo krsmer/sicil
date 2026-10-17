@@ -43,7 +43,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 | Trader agentId'sini kim `register` eder | Trader cüzdanı · Sahip cüzdanı | `validationRequest`'i agentId'nin sahibi çağırıyor; sabah netleştir |
 | PAS kararları ve adaylar zincire yazılsın mı | Hayır (plan) · Ucuz bir olayla evet | Plan "PAS dediği aday gösterilir" diyor ama PAS kararları zincire yazılmıyor; jüri "sonradan seçtiniz" diyebilir. Zaman kalırsa küçük bir olayla mühürlenebilir |
 | Canlı hesap (Bonus 1) | Sadece demo · Küçük canlı alt hesap (10–20 USDT) | Organizatöre "demo sayılıyor mu" sorulacak. Canlıysa: alt hesap, para çekme kapalı, IP kısıtlı |
-| BTC-TRY paritesi | Ekle · Ekleme | Sabah 20 USDT'lik emrin kayması ölçülecek |
+| ~~BTC-TRY paritesi~~ | **Eklenmedi (17 Ekim 12:30)** | Canlı TR'de kayma kabul edilebilir (5,8 bps, makas 11,5 bps) ama **demo BTC-TRY defteri bozuk** (orta fiyat 130 TRY); demoda işlem yapılamaz. Canlıya geçilirse yeniden değerlendirilir |
 | Canlı yakalama nerede | Ana hesap (plan: kalıcı kırmızı) · İkinci hesap | Plan ana hesap. TR demo'da uygulamadan elle işlem yapılamıyorsa mühürsüz emir gönderen küçük bir script yedek |
 
 ## Bilinen riskler (aktif)
@@ -55,6 +55,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~12:30:** BTC-TRY ölçüldü: canlıda kayma 5,8 bps, demo defteri kullanılamaz → BTC-TRY eklenmedi; pariteler BTC-USDT, ETH-USDT. Sabah listesinin OKX bölümü bitti. Sıradaki: Avalanche (boş kontrat deploy + verify, ERC-8004 imzaları).
 - **17 Ekim ~12:25:** Repo açıldı: https://github.com/krsmer/sicil (**private**), `main`, ilk commit `3ad78cd`. Teslimde public'e çevrilecek; öncesinde commit e-postası ve `ai-docs/sources/` lisansı gözden geçirilecek.
 - **17 Ekim ~12:15 · K-11:** `news` kaldırıldı. LLM araştırma süreci: `okx-trade-mcp --profile piyasa --read-only --modules market` (anahtarsız, global; `~/.okx/config.toml`'a `piyasa` profili eklendi). Funding (BTC/ETH-USDT-SWAP), OI, OI değişim taraması, market_filter, indikatörler (ema/atr/adx) anahtarsız doğrulandı. Global veri sadece bağlam; emir fiyatı TR demo'dan. `.mcp.json` güncellendi. (a) seçeneği vakit kalırsa.
 - **17 Ekim ~12:05:** OCO riski çözüldü: tetiklenen çıkış emrinde `algoClOrdId` var (dolumda yok) → denetçi dolum→ordId→emir zinciriyle eşler. `news` demo modda kapalı; karar bekliyor (canlı Read-only anahtar / OAuth / haberi bırak).
