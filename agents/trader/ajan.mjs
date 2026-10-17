@@ -43,14 +43,23 @@ for (const sinyal of ["SIGTERM", "SIGINT"]) {
 }
 const uyu = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/// LLM'e verilecek son 10 tez (yerel log'dan). Sonuçlar denetçi raporlarından gelecek; şimdilik "bekliyor".
+/// LLM'e verilecek son 10 tez ve kalibrasyon: bağımsız denetçinin son raporundan (tuttu / tutmadı / bekliyor, Brier).
+/// Sonuçları ajan kendisi değil denetçi belirler; ajan sadece okur.
+const DENETCI_DURUM = new URL("../logs/denetci-durum.json", import.meta.url);
+const RAPORLAR = new URL("../../reports/", import.meta.url);
 function sonTezler() {
-  if (!existsSync(LOG_DOSYASI)) return [];
-  const satirlar = readFileSync(LOG_DOSYASI, "utf8").trim().split("\n").map((l) => { try { return JSON.parse(l); } catch { return null; } });
-  return satirlar
-    .filter((s) => s?.adim === "aday" && s.tez?.kaynak === "ajan")
-    .slice(-10)
-    .map((s) => ({ ts: s.ts, pair: s.pair, guven: s.tez.guven, hedefPct: s.tez.hedefPct, gecersizlikPct: s.tez.gecersizlikPct, sureDk: s.tez.sureDk, sonuc: "bekliyor" }));
+  try {
+    const d = JSON.parse(readFileSync(DENETCI_DURUM, "utf8"));
+    const r = JSON.parse(readFileSync(new URL(`${d.sonAttest.upToTs}.json`, RAPORLAR), "utf8"));
+    return {
+      kaynak: `denetçi raporu reports/${d.sonAttest.upToTs}.json`,
+      brier: r.ozet?.brier ?? null,
+      ozet: r.ozet?.tez ?? null,
+      tezler: (r.tezler ?? []).slice(-10).map((t) => ({ id: t.id, pair: t.pair, guven: t.guven, sureDk: t.sureDk, sonuc: t.sonuc, neden: t.neden || undefined })),
+    };
+  } catch {
+    return { kaynak: "denetçi raporu henüz yok", tezler: [] };
+  }
 }
 
 /// Paritede ajanın açık pozisyonu (bekleyen sicil OCO'su) var mı?

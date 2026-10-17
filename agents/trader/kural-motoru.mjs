@@ -1,7 +1,8 @@
 // Kural motoru: BTC-USDT / ETH-USDT için rejim + ATR'den ADAY üretir. Sayıları (giriş, stop, hedef, tavan tutar) sadece
 // burası belirler; LLM bunları değiştiremez, yalnızca boyutu küçültebilir ve AL / BEKLE / PAS der.
 // Spotta pozisyon SADECE ALIŞ ile açılır: aşağı trendde aday yoktur (açığa satış tasarlanmaz).
-// Veri: TR demo piyasası (demo: true). Rejim 1 saatlikten, aday tetikleyicisi 15 dakikalıktan (K-15); stop/hedef 1H ATR.
+// Veri: TR demo piyasası (demo: true). Rejim 1 saatlikten, aday tetikleyicisi 15 dakikalıktan (K-15).
+// Stop/hedef 15 dakikalık ATR'den (60–120 dk'lık teze uygun; 1H ATR seviyeleri saatlerce açık kalıp pariteyi kilitliyordu).
 
 export const AYAR = {
   bar: "1H",
@@ -13,8 +14,8 @@ export const AYAR = {
   egimBar: 3, // EMA20 eğimi: son 3 mum
   egimEsik: 0.0005, // |eğim| bundan küçükse yatay
   donusAtr: 0.5, // yatayda: 15m kapanış, 15m EMA20 − 0.5×ATR15 altındaysa ortalamaya dönüş adayı
-  stopAtr: 1.5,
-  hedefAtr: 2.0,
+  stopAtr: 2.0, // × 15m ATR
+  hedefAtr: 3.0, // × 15m ATR (gidiş-dönüş demo ücreti ~%0,18; hedef bunun belirgin üstünde kalsın)
   riskButceUsdt: 0.3, // işlem başı kabul edilen zarar (stopa gelirse)
 };
 
@@ -88,8 +89,8 @@ export async function adayUret(okx, pair, { maxTutarUsdt, ayar = AYAR } = {}) {
   else neden = "yatay, 15m'de dönüş seviyesi yok";
   if (!tur) return { durum, aday: null, neden };
 
-  const stop = giris - ayar.stopAtr * atr14;
-  const hedef = giris + ayar.hedefAtr * atr14;
+  const stop = giris - ayar.stopAtr * atr15;
+  const hedef = giris + ayar.hedefAtr * atr15;
   const stopPct = (giris - stop) / giris;
   const hamTutarUsdt = ayar.riskButceUsdt / stopPct; // volatiliteye göre boyut
   return {

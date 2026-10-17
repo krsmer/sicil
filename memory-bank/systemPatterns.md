@@ -98,7 +98,7 @@ her tur (saatlik mum kapanışı; sakin piyasada 15 dakika):
   5. salt üret → commitHash hesapla → seal() → Sealed(id) onayını bekle
   6. spot_place_order: ordType=post_only, px, sz, clOrdId="sicil" + id (6 hane)
   7. Belirli sürede dolmazsa spot_cancel_order
-  8. Dolunca: reveal(...okxOrdId) → spot_place_algo_order (OCO: TP + SL, ATR katları)
+  8. Dolunca: reveal(...okxOrdId) → spot_place_algo_order (OCO: TP + SL; [17 Ekim] 15m ATR × 3,0 / × 2,0)
   9. Yerel log'a (JSONL) yaz: aday, LLM girdisi/çıktısı, araç çağrıları, tx hash'leri
 ```
 
@@ -115,7 +115,7 @@ her tur (saatlik mum kapanışı; sakin piyasada 15 dakika):
 ```
 
 - LLM **sayı uydurmaz**: fiyat, stop ve tavan kural motorundan gelir; LLM sadece `boyutCarpani ≤ 1` verebilir.
-- LLM her kararda **son 10 tezinin sonucunu ve kalibrasyonunu** görür ve güvenini buna göre ayarlar [karar].
+- LLM her kararda **son 10 tezinin sonucunu ve kalibrasyonunu** görür ve güvenini buna göre ayarlar [karar; 17 Ekim: kaynak denetçinin son raporu, ajan sonucu kendisi belirlemez].
 - Zaman aşımı, bozuk JSON veya hata → **BEKLE**. Yeni işlem açılmaz; açık pozisyonların OCO'su borsada durduğu için korunur [karar].
 - Tez süresi [öneri]: **60–120 dakika**. 4 saatlik tezler 19:00 teslimine ve 20:00 sunumuna kadar sonuçlanmayabilir; kalibrasyon için akşama 10+ sonuçlanmış tez gerekir.
 

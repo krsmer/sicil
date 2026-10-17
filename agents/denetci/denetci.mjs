@@ -320,10 +320,13 @@ async function tur(ctx) {
 /// reports/ klasörünü commit + push (sadece bu klasör). feedbackURI'nin çözülebilmesi için not vermeden önce çağrılır.
 function raporlariYayinla() {
   const git = (...a) => execFileSync("git", ["-C", REPO_KOK, ...a], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  // Kodlama oturumuyla çakışmasın: git meşgulse bu saati atla
+  if (existsSync(new URL("../../.git/index.lock", import.meta.url))) throw new Error("git meşgul (index.lock)");
   git("add", "reports");
   const bekleyen = git("diff", "--cached", "--name-only", "--", "reports").trim();
   if (!bekleyen) return { yeni: 0 };
   git("commit", "-m", `denetçi: ${bekleyen.split("\n").length} rapor`, "--", "reports");
+  git("pull", "--rebase", "--autostash", "-q");
   git("push", "-q");
   return { yeni: bekleyen.split("\n").length, commit: git("rev-parse", "--short", "HEAD").trim() };
 }
@@ -336,7 +339,15 @@ async function itibarNotu(ctx) {
   if (opt.kuru || !a?.reportHash) return;
   if (d.sonNot && Date.now() - d.sonNot.ms < NOT_ARALIGI_MS) return;
   let yayin;
-  try { yayin = raporlariYayinla(); } catch (e) { log("rapor-yayin-hata", { hata: e.message.slice(0, 300) }); }
+  try {
+    yayin = raporlariYayinla();
+  } catch (e) {
+    // Push olmadan feedbackURI çözülmez: bu saati atla, bir sonraki saatte tekrar dene
+    log("rapor-yayin-hata", { hata: e.message.slice(0, 300), not: "bir sonraki saate bırakıldı" });
+    d.sonNot = { ...(d.sonNot ?? {}), ms: Date.now(), atlandi: true };
+    durumKaydet(d);
+    return;
+  }
   const uri = RAPOR_URL(a.upToTs);
   const endpoint = `eip155:43113:${SICIL_KASASI}`;
   const notlar = [];
