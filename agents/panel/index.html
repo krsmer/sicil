@@ -214,6 +214,64 @@
   .tek-izgara ul { padding-left: 18px; margin: 6px 0; } .tek-izgara li { margin-bottom: 6px; line-height: 1.45; }
   #fren-bolum .fren { margin-top: 10px; }
   @media (max-width: 1100px) { .hero, .iki-sutun, .dene-izgara { grid-template-columns: 1fr; } .adimlar { grid-template-columns: 1fr 1fr; } .hero-rozet { max-width: 260px; } .menu-linkler { display: none; } }
+
+  /* sicil kaydı kartları (mühür defteri) */
+  .kayit { border: 1.5px solid var(--murekkep); background: rgba(255,255,255,.3); margin-bottom: 14px; position: relative; }
+  .kayit::before { content: ""; position: absolute; left: -1.5px; top: -1.5px; bottom: -1.5px; width: 6px; background: var(--cizgi); }
+  .kayit.s-tuttu::before { background: var(--defter); } .kayit.s-tutmadi::before { background: var(--muhur); } .kayit.s-suruyor::before { background: var(--altin); }
+  .kayit > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 16px; padding: 14px 18px 14px 24px; }
+  .kayit > summary::-webkit-details-marker { display: none; }
+  .kayit > summary::after { content: "▸"; color: var(--soluk); font-size: 18px; transition: transform .15s; }
+  .kayit[open] > summary::after { transform: rotate(90deg); }
+  .kayit[open] > summary { border-bottom: 1px solid var(--cizgi); }
+  .kayit-baslik { flex: 1; font: 600 23px/1.25 var(--serif); font-variant-numeric: tabular-nums; }
+  .kayit-baslik .no { font-weight: 800; }
+  .kayit-baslik .tur { display: block; font-weight: 400; font-style: italic; color: var(--soluk); }
+  .kayit:not([open]) .kayit-baslik .tur { display: inline; } .kayit:not([open]) .kayit-baslik .tur::before { content: "· "; font-style: normal; }
+  .kayit:not([open]) .kayit-baslik { font-size: 18px; }
+  .kayit-sonuc { text-align: right; white-space: nowrap; }
+  .kayit-sonuc .rozet { font-size: 13px; padding: 6px 9px 5px; }
+  .kayit-sonuc .rozet.suruyor { color: var(--altin); background: rgba(138,106,31,.08); }
+  .kayit-sonuc .pnl { display: block; margin-top: 5px; font: 500 13px var(--mono); }
+  .kayit-govde { padding: 16px 20px 18px 24px; }
+  .serit { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .serit-adim { border-top: 5px solid var(--cizgi); padding: 8px 4px 0; color: var(--soluk); }
+  .serit-adim .ad { font: 700 13px/1.2 var(--sans); letter-spacing: .12em; text-transform: uppercase; }
+  .serit-adim .ad::before { content: "○ "; }
+  .serit-adim .ay { font: 500 15px/1.4 var(--mono); margin-top: 3px; }
+  .serit-adim .ay2 { font: 500 13px/1.3 var(--sans); }
+  .serit-adim.tamam { border-top-color: var(--defter); color: var(--murekkep); }
+  .serit-adim.tamam .ad { color: var(--defter); } .serit-adim.tamam .ad::before { content: "✓ "; }
+  .serit-adim.hata { border-top-color: var(--muhur); color: var(--muhur); } .serit-adim.hata .ad::before { content: "✕ "; }
+  .once-satir { display: inline-block; margin-top: 12px; font: 600 15px var(--sans); color: var(--defter); background: var(--defter-acik); padding: 5px 10px; border-radius: 3px; }
+  .tez-cumle { margin: 16px 0 6px; font: 400 21px/1.5 var(--serif); }
+  .tez-cumle b { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tez-cumle .yanildi { color: var(--muhur); }
+  .fiyat-cubuk { position: relative; height: 96px; margin: 8px 0 4px; }
+  .fc-hat { position: absolute; left: 0; right: 0; top: 40px; height: 10px; background: var(--kagit-2); border-radius: 5px; }
+  .fc-bolge { position: absolute; top: 40px; height: 10px; }
+  .fc-bolge.zarar { background: #e6b4ab; border-radius: 5px 0 0 5px; } .fc-bolge.kar { background: #a9cdb3; border-radius: 0 5px 5px 0; }
+  .fc-tik { position: absolute; top: 34px; width: 2px; height: 22px; background: var(--murekkep); margin-left: -1px; }
+  .fc-etiket { position: absolute; top: 60px; font: 500 13px/1.3 var(--mono); white-space: nowrap; text-align: center; }
+  .fc-etiket small { display: block; font: 600 11px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--soluk); }
+  .fc-isaret { position: absolute; top: 0; font: 600 13px/1.25 var(--sans); white-space: nowrap; text-align: center; }
+  .fc-isaret::after { content: ""; display: block; width: 0; height: 0; margin: 2px auto 0; border: 7px solid transparent; border-top: 10px solid var(--murekkep); border-bottom: 0; }
+  .fc-isaret.sol::after { margin-left: -7px; } .fc-isaret.sag::after { margin-right: -7px; }
+  .gerekce-ac { margin-top: 10px; }
+  .gerekce-ac > summary { cursor: pointer; font: 600 14px var(--sans); color: var(--soluk); list-style: none; }
+  .gerekce-ac > summary::-webkit-details-marker { display: none; }
+  .gerekce-ac > summary::before { content: "▸ "; } .gerekce-ac[open] > summary::before { content: "▾ "; }
+  .gerekce-ac .gerekce { margin: 8px 0 8px; font: 400 17px/1.55 var(--serif); }
+  .gerekce-ac .araclar span { font: 500 12px var(--mono); color: var(--soluk); border: 1px solid var(--cizgi); padding: 2px 6px; border-radius: 3px; margin: 3px 5px 0 0; display: inline-block; }
+  .kanitlar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .kanit-btn { font: 500 13px var(--mono); color: var(--murekkep); border: 1.5px solid var(--murekkep); padding: 6px 10px; text-decoration: none; background: var(--kagit); }
+  a.kanit-btn:hover { background: var(--murekkep); color: var(--kagit); }
+  span.kanit-btn { cursor: help; border-style: dashed; }
+  .karar-sayilar { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--cizgi); border-left: 1px solid var(--cizgi); margin-bottom: 8px; }
+  .karar-sayilar div { border-right: 1px solid var(--cizgi); border-bottom: 1px solid var(--cizgi); padding: 10px 12px; }
+  .karar-sayilar b { display: block; font: 600 34px/1.1 var(--serif); }
+  .karar-sayilar span { font: 600 11px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--soluk); }
+  @media (max-width: 700px) { .serit { grid-template-columns: 1fr 1fr; } .kayit > summary { flex-wrap: wrap; } }
   .onizleme-serit { position: sticky; top: 0; z-index: 10; text-align: center; background: var(--altin); color: var(--kagit); font: 800 clamp(15px, 1.5vw, 26px)/1.2 var(--sans); letter-spacing: .16em; padding: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .eslesmeyen { border: 2px solid var(--muhur); background: var(--muhur-acik); padding: 12px 16px; margin: 10px 0; }
   footer { margin-top: 40px; font: 12px/1.7 var(--mono); color: var(--soluk); border-top: 1px solid var(--cizgi); padding-top: 12px; }
@@ -265,7 +323,7 @@
   <section id="nasil" class="bolum">
     <h2>Nasıl çalışır</h2>
     <ol class="adimlar">
-      <li><span class="adim-no">1</span><h3>Karar</h3><p>Kural motoru aday üretir (giriş, stop, hedef, tavan). Yapay zekâ okuma araçlarıyla araştırır, <b>AL / BEKLE / PAS</b> der ve yanlışlanabilir bir tez yazar.</p><a id="kanit-karar" href="#kararlar-bolum">kanıtı gör ↓</a></li>
+      <li><span class="adim-no">1</span><h3>Karar</h3><p>Kural motoru aday üretir (giriş, stop, hedef, tavan). Yapay zekâ okuma araçlarıyla araştırır, <b>AL / BEKLE / PAS</b> der ve yanlışlanabilir bir tez yazar.</p><a id="kanit-karar" href="#defter">kanıtı gör ↓</a></li>
       <li><span class="adim-no">2</span><h3>Mühür</h3><p>Kararın hash'i emirden <b>önce</b> Avalanche'a yazılır. Kontrat pariteyi ve tutarı kontrol eder; limit aşan mührü reddeder.</p><a id="kanit-muhur" target="_blank" rel="noopener">kanıtı gör ↗</a></li>
       <li><span class="adim-no">3</span><h3>Emir</h3><p>Mühür onaylanınca OKX TR spotta emir gider; emrin etiketi mühür numarasıdır. Dolunca tez zincirde açılır.</p><a id="kanit-emir" target="_blank" rel="noopener">kanıtı gör ↗</a></li>
       <li><span class="adim-no">4</span><h3>Denetim</h3><p>LLM'siz denetçi hesabın <b>bütün</b> dolumlarını mühürlerle eşler, tezleri puanlar. Mühürsüz tek işlem sicili <b>kalıcı</b> bozar.</p><a id="kanit-denetim" target="_blank" rel="noopener">kanıtı gör ↗</a></li>
@@ -302,12 +360,9 @@
   <div class="izgara">
     <div>
       <section>
-        <h2>Mühür defteri <span class="say" id="muhur-say"></span></h2>
-        <div class="ne">Bu ne? Ajanın her işlemi: mühür zamanı emirden önce, tez açılınca görünür, sonucu denetçi puanlar.</div>
-        <table>
-          <thead><tr><th>No</th><th>Mühür → emir</th><th>Tez (yapay zekâ)</th><th>Sonuç</th><th>Kanıt</th></tr></thead>
-          <tbody id="muhurler"></tbody>
-        </table>
+        <h2 id="defter">Mühür defteri <span class="say" id="muhur-say"></span></h2>
+        <div class="ne">Bu ne? Ajanın her işlemi bir sicil kaydı: karar → mühür → emir → denetim. Mühür emirden önce atılır, tez emirden sonra açılır, sonucu denetçi puanlar.</div>
+        <div id="muhurler"></div>
       </section>
       <section>
         <h2>Zincir reddetti <span class="say">simülasyonsuz gönderilip revert eden mühürler</span></h2>
@@ -318,7 +373,7 @@
     <div>
       <section>
         <h2 id="kararlar-bolum">Yapay zekâ kararları <span class="say" id="karar-say"></span></h2>
-        <div class="kucuk soluk" style="margin:-4px 0 6px">Yerel ajan kaydı. İşlem yapılan (AL) kararların tezi zincirde mühürlü; PAS ve BEKLE kararları zincire yazılmıyor.</div>
+        <div class="kucuk soluk" style="margin:-4px 0 10px"><b>Yerel kayıt</b> (ajanın günlüğü, zincirde değil). AL kararlarının tezi zincirde mühürlü; gerekçesi ve araştırması soldaki sicil kayıtlarında. PAS ve BEKLE kararları zincire yazılmıyor.</div>
         <div id="kararlar"></div>
       </section>
       <section>
@@ -433,6 +488,110 @@ function rakam(etiket, deger, not = "", sinif = "") {
   return `<div class="rakam"><div class="ne">${NE[etiket] ?? ""}</div><div class="etiket">${etiket}</div><div class="deger ${sinif}">${deger}</div><div class="not">${not}</div></div>`;
 }
 
+// ---- sicil kaydı kartı (mühür defteri). Veri /api/durum'dan aynen; burada sadece biçim.
+const TUR = { "ortalamaya-donus": "ortalamaya dönüş", "trend-takip": "trend takibi" };
+const BIRLER = { 1: "e", 2: "ye", 3: "e", 4: "e", 5: "e", 6: "ya", 7: "ye", 8: "e", 9: "a", 0: "a" };
+const ONLAR = { 1: "a", 2: "ye", 3: "a", 4: "a", 5: "ye", 6: "a", 7: "e", 8: "e", 9: "a" };
+/// "2.451,9" → "2.451,9'a" (yönelme eki, sayının okunuşuna göre)
+function yonelme(yazi) {
+  const [tam, kesir] = yazi.replace(/\./g, "").split(",");
+  let ek;
+  if (kesir) ek = BIRLER[kesir.at(-1)];
+  else if (tam.at(-1) !== "0") ek = BIRLER[tam.at(-1)];
+  else if (tam.length > 1 && tam.at(-2) !== "0") ek = ONLAR[tam.at(-2)];
+  else ek = "e"; // yüz'e, bin'e
+  return `${yazi}'${ek}`;
+}
+const acikDurum = new Map(); // kullanıcının açıp kapattığı kartlar 5 sn'lik yenilemede korunur
+document.addEventListener("toggle", (e) => { if (e.target.dataset?.anahtar) acikDurum.set(e.target.dataset.anahtar, e.target.open); }, true);
+const acikMi = (anahtar, varsayilan) => (acikDurum.has(anahtar) ? acikDurum.get(anahtar) : varsayilan);
+
+/// Mühürden önceki son AL kararı (aynı parite, en fazla 15 dk önce): saat ve araç listesi için (yerel kayıt).
+function alKarari(m, d) {
+  return d.kararlar.find((k) => k.karar === "AL" && k.pair === m.pair && Date.parse(k.ts) <= m.ts * 1000 && m.ts * 1000 - Date.parse(k.ts) < 15 * 60e3) ?? null;
+}
+
+function fiyatCubugu(t, isaret) {
+  const fiyatlar = [t.stop, t.giris, t.hedef, isaret?.fiyat].filter((x) => x != null && !isNaN(x));
+  if (fiyatlar.length < 3) return "";
+  const lo = Math.min(...fiyatlar), hi = Math.max(...fiyatlar), pay = (hi - lo) * 0.1 || 1;
+  const yuzde = (x) => ((x - (lo - pay)) / (hi - lo + 2 * pay)) * 100;
+  const konum = (x) => { const y = yuzde(x); return y < 14 ? `left:${y}%` : y > 86 ? `left:${y}%;transform:translateX(-100%)` : `left:${y}%;transform:translateX(-50%)`; };
+  const yon = (x) => { const y = yuzde(x); return y < 14 ? "sol" : y > 86 ? "sag" : ""; };
+  const tik = (x, ad) => `<div class="fc-tik" style="left:${yuzde(x)}%"></div><div class="fc-etiket" style="${konum(x)}"><small>${ad}</small>${tr(x, 2)}</div>`;
+  return `<div class="fiyat-cubuk">
+    <div class="fc-hat"></div>
+    <div class="fc-bolge zarar" style="left:${yuzde(t.stop)}%;width:${yuzde(t.giris) - yuzde(t.stop)}%"></div>
+    <div class="fc-bolge kar" style="left:${yuzde(t.giris)}%;width:${yuzde(t.hedef) - yuzde(t.giris)}%"></div>
+    ${tik(t.stop, "stop")}${tik(t.giris, "giriş")}${tik(t.hedef, "hedef")}
+    ${isaret?.fiyat != null ? `<div class="fc-isaret ${yon(isaret.fiyat)}" style="${konum(isaret.fiyat)}">${isaret.etiket} ${tr(isaret.fiyat, 2)}</div>` : ""}
+  </div>`;
+}
+
+function kayitKarti(m, d, sira) {
+  const t = m.tez ?? {};
+  const p = m.puan ?? {};
+  const k = alKarari(m, d);
+  const coin = m.pair.split("-")[0];
+  const doldu = ["filled", "partially_filled"].includes(m.dolum?.state) || m.eslesti;
+  const eylem = doldu ? `${coin} alındı` : m.emirZamani ? `${coin} emri dolmadı` : `${coin} mühürlendi`;
+  const tur = m.acik ? (TUR[t.tur] ?? t.tur ?? "tez") : "tez gizli";
+  const pnl = m.pnlUsdt != null ? `<span class="pnl ${m.pnlUsdt < 0 ? "eksi" : "arti"}">net ${m.pnlUsdt >= 0 ? "+" : "−"}${sayi(Math.abs(m.pnlUsdt), 3)} USDT${m.acikMiktar > 0 ? " · pozisyon açık" : ""}</span>` : "";
+
+  // sonuç rozeti
+  const bitis = p.bitisTs ?? (t.sureDk ? m.ts + t.sureDk * 60 : null);
+  const kalanDk = bitis ? Math.ceil((bitis - d.simdi / 1000) / 60) : null;
+  let durum, rozet;
+  if (!m.acik) { durum = "gizli"; rozet = `<span class="rozet bekliyor">tez henüz açılmadı</span>`; }
+  else if (p.sonuc === "tuttu") { durum = "tuttu"; rozet = `<span class="rozet tuttu">TUTTU</span>`; }
+  else if (p.sonuc === "tutmadi") { durum = "tutmadi"; rozet = `<span class="rozet tutmadi">TUTMADI</span>`; }
+  else { durum = "suruyor"; rozet = `<span class="rozet suruyor">${kalanDk > 0 ? `tez sürüyor · ${kalanDk} dk kaldı` : "süre doldu · puanlanıyor"}</span>`; }
+
+  // 4 adımlı şerit
+  const eslesmedi = d.eslesmeyenler.some((e) => e.ordId && e.ordId === m.okxOrdId);
+  const adim = (ad, ay, ay2, sinif) => `<div class="serit-adim ${sinif}"><div class="ad">${ad}</div><div class="ay">${ay}</div><div class="ay2">${ay2}</div></div>`;
+  const serit = [
+    adim("Karar", k ? saat(Date.parse(k.ts)) : "–", "AL", "tamam"),
+    adim("Mühür", saat(m.ts * 1000), "zincirde", "tamam"),
+    m.emirZamani ? adim("Emir", saat(m.emirZamani), doldu ? "OKX · doldu" : "OKX · dolmadı", "tamam") : adim("Emir", "–", "gönderilmedi", ""),
+    m.eslesti ? adim("Denetim", "eşleşti", "mühürle", "tamam") : eslesmedi ? adim("Denetim", "eşleşmedi", "mühürsüz işlem", "hata") : adim("Denetim", "–", doldu ? "sıradaki turda" : "dolum yok", ""),
+  ].join("");
+  const fark = m.emirZamani ? (m.emirZamani - m.ts * 1000) / 1000 : null;
+
+  // tez cümlesi + fiyat çubuğu
+  const tez = m.acik && t.hedef != null
+    ? `<div class="tez-cumle">Yapay zekâ <b>%${m.guven ?? t.guven}</b> emin: fiyat <b>${t.sureDk} dakika</b> içinde <b>${yonelme(tr(t.hedef, 2))}</b> çıkar. <span class="yanildi"><b>${yonelme(tr(t.stop, 2))}</b> düşerse yanıldı sayılır.</span></div>`
+    : m.acik ? `<div class="tez-cumle">${esc(t.ham ?? "Tez açıldı.")}</div>`
+    : `<div class="tez-cumle soluk">Yön, fiyat ve tez hash'in içinde gizli; emirden sonra zincirde açılacak.</div>`;
+  const isaret = m.cikisFiyati != null && !(m.acikMiktar > 0) ? { fiyat: m.cikisFiyati, etiket: "çıkış" }
+    : m.isaretFiyati != null ? { fiyat: m.isaretFiyati, etiket: `son fiyat${d.sonAttest?.ms ? ` (${saat(d.sonAttest.ms).slice(0, 5)})` : ""}` } : null;
+  const cubuk = m.acik ? fiyatCubugu({ stop: t.stop, giris: m.dolum?.avgPx ? Number(m.dolum.avgPx) : t.giris, hedef: t.hedef }, isaret) : "";
+
+  const gerekce = m.acik && (t.gerekce || k) ? `<details class="gerekce-ac" data-anahtar="g${m.id}"${acikMi(`g${m.id}`, false) ? " open" : ""}>
+      <summary>Gerekçeyi ve araştırmayı göster</summary>
+      ${t.gerekce ? `<div class="gerekce">${esc(t.gerekce)}</div>` : ""}
+      ${k ? `<div class="araclar">${(k.araclar.length ? k.araclar : ["araç yok"]).map((a) => `<span>${esc(a)}</span>`).join("")}<span>${esc(k.model ?? "")} · ${tr(k.sureMs / 1000, 0)} sn · boyut ×${tr(k.boyutCarpani)}</span></div>
+        <div class="kucuk soluk" style="margin-top:6px">Gerekçe zincirde açılan tezin içinde; araç listesi ajanın yerel kaydı.</div>` : ""}
+    </details>` : "";
+
+  const kanitlar = `<div class="kanitlar">
+      <a class="kanit-btn" href="${tx(m.sealTx)}" target="_blank" rel="noopener">mühür ↗</a>
+      ${m.revealTx ? `<a class="kanit-btn" href="${tx(m.revealTx)}" target="_blank" rel="noopener">açıklama ↗</a>` : ""}
+      ${m.okxOrdId ? `<span class="kanit-btn" title="OKX emir no: ${esc(m.okxOrdId)} · etiket (clOrdId): ${esc(m.clOrdId)}">OKX emri · ${esc(m.clOrdId)}</span>` : ""}
+      ${m.eslesti && d.attestler[0] ? `<a class="kanit-btn" href="${esc(d.attestler[0].url)}" target="_blank" rel="noopener">denetim ↗</a>` : ""}
+    </div>`;
+
+  return `<details class="kayit s-${durum}" id="kayit-${m.id}" data-anahtar="k${m.id}"${acikMi(`k${m.id}`, sira === 0) ? " open" : ""}>
+    <summary><div class="kayit-baslik"><span class="no">#${m.id}</span> · ${eylem} · ${sayi(m.notionalUsdt)} USDT · ${saat(m.ts * 1000).slice(0, 5)} <span class="tur">${esc(tur)}</span></div>
+      <div class="kayit-sonuc">${rozet}${pnl}</div></summary>
+    <div class="kayit-govde">
+      <div class="serit">${serit}</div>
+      ${fark != null ? `<span class="once-satir">Karar, emirden ${sayi(fark, 1)} saniye önce mühürlendi</span>` : ""}
+      ${tez}${cubuk}${p.neden && p.sonuc !== "bekliyor" ? `<div class="kucuk" style="margin-top:2px"><b>Denetçinin puanı:</b> ${esc(p.neden)}${p.mumSayisi ? ` · ${p.mumSayisi} adet 1 dk mum incelendi` : ""}</div>` : ""}${gerekce}${kanitlar}
+    </div>
+  </details>`;
+}
+
 const ONIZLEME = new URLSearchParams(location.search).get("onizleme"); // "bozuk" | "durdu" | null — sadece arayüz, zincire yazmaz
 function ciz(d) {
   son = d;
@@ -499,23 +658,10 @@ function ciz(d) {
     ? d.eslesmeyenler.map((e) => `<div class="eslesmeyen"><b>Mühürsüz işlem:</b> <span class="mono">${esc(e.instId)} ${esc(e.side)} · ordId ${esc(e.ordId)} · ${sayi(e.dolumUsdt)} USDT</span> — ${esc(e.neden)}</div>`).join("")
     : "";
 
-  // mühür defteri
+  // mühür defteri: sicil kaydı kartları
   $("muhur-say").textContent = `${d.muhurler.length} kayıt`;
-  $("muhurler").innerHTML = d.muhurler.length ? d.muhurler.map((m) => {
-    const t = m.tez ?? {};
-    const fark = m.emirZamani ? sayi((m.emirZamani - m.ts * 1000) / 1000, 1) : null;
-    const p = m.puan ?? {};
-    const sonuc = !m.acik ? `<span class="rozet bekliyor">açıklanmadı</span>` : p.sonuc === "tuttu" ? `<span class="rozet tuttu">TUTTU</span>` : p.sonuc === "tutmadi" ? `<span class="rozet tutmadi">TUTMADI</span>` : `<span class="rozet bekliyor">süresi dolmadı</span>`;
-    return `<tr>
-      <td><div class="no">#${m.id}</div><div class="mono soluk">${esc(m.pair)}</div></td>
-      <td><div class="mono">${saat(m.ts * 1000)} mühür</div><div class="mono">${m.emirZamani ? saat(m.emirZamani) + " emir" : "<span class='soluk'>emir yok</span>"}</div>${fark ? `<span class="once">emirden ${fark} sn önce mühürlendi</span>` : ""}<div class="kucuk soluk">${sayi(m.notionalUsdt)} USDT</div></td>
-      <td>${m.acik ? `<div><b>${esc(t.tur ?? "tez")}</b> · güven <b>${m.guven ?? "–"}</b> · ${t.sureDk ?? "–"} dk</div>
-        <div class="mono kucuk">giriş ${tr(t.giris, 1)} · hedef ${tr(t.hedef, 1)} · stop ${tr(t.stop, 1)}</div>
-        ${t.gerekce ? `<div class="kucuk soluk" style="margin-top:4px">${esc(t.gerekce).slice(0, 220)}${t.gerekce.length > 220 ? "…" : ""}</div>` : ""}` : `<span class="soluk">hash'te gizli · açıklama bekleniyor</span>`}</td>
-      <td>${sonuc}${p.neden ? `<div class="kucuk soluk" style="margin-top:6px">${esc(p.neden)}</div>` : ""}${m.pnlUsdt != null ? `<div class="mono kucuk ${m.pnlUsdt < 0 ? "eksi" : "arti"}" style="margin-top:4px">${m.pnlUsdt >= 0 ? "+" : ""}${sayi(m.pnlUsdt, 4)} USDT</div>` : ""}</td>
-      <td class="linkler"><a href="${tx(m.sealTx)}" target="_blank" rel="noopener">mühür ↗</a>${m.revealTx ? `<a href="${tx(m.revealTx)}" target="_blank" rel="noopener">açıklama ↗</a>` : ""}<div class="mono soluk kucuk" style="margin-top:6px">OKX ${esc(m.okxOrdId ?? "–")}</div><div class="mono soluk kucuk">${esc(m.clOrdId)}</div></td>
-    </tr>`;
-  }).join("") : `<tr><td colspan="5" class="bos">Sicil başladıktan sonra henüz mühür yok.</td></tr>`;
+  const defterHtml = d.muhurler.length ? d.muhurler.map((m, i) => kayitKarti(m, d, i)).join("") : `<div class="bos">Sicil başladıktan sonra henüz mühür yok.</div>`;
+  if ($("muhurler").dataset.son !== defterHtml) { $("muhurler").innerHTML = defterHtml; $("muhurler").dataset.son = defterHtml; }
 
   // ret kayıtları
   $("retler").innerHTML = d.retler.length ? d.retler.map((r) => `<div class="ret">
@@ -523,15 +669,21 @@ function ciz(d) {
       <div class="kucuk soluk" style="margin-top:4px">${saat(Date.parse(r.ts))} · ${esc(r.pair)} · ajan tutarı limite indirip yeniden mühürledi · <a href="${esc(r.url)}" target="_blank" rel="noopener">reverted tx ↗</a></div>
     </div>`).join("") : `<div class="bos">Henüz ret yok.</div>`;
 
-  // kararlar
+  // kararlar: AL gerekçeleri sicil kayıtlarında; burada sadece sayılar + PAS/BEKLE listesi
   const sayac = d.kararlar.reduce((a, k) => ((a[k.karar] = (a[k.karar] ?? 0) + 1), a), {});
-  $("karar-say").textContent = `AL ${sayac.AL ?? 0} · BEKLE ${sayac.BEKLE ?? 0} · PAS ${sayac.PAS ?? 0} · aday yok ${d.turSayisi.adayYok}`;
-  $("kararlar").innerHTML = d.kararlar.length ? d.kararlar.map((k) => `<div class="karar">
-      <div class="ust-satir"><span class="rozet ${k.karar === "AL" ? "al" : k.karar === "PAS" ? "pas" : "bekle"}">${esc(k.karar)}</span>
-        <span class="mono">${saat(Date.parse(k.ts))} · ${esc(k.pair)}</span><span class="soluk kucuk">güven ${k.guven} · boyut ×${tr(k.boyutCarpani)} · ${k.sureDk} dk · ${tr(k.sureMs / 1000, 0)} sn</span></div>
-      <div class="gerekce">${esc(k.gerekce)}</div>
-      <div class="araclar">${(k.araclar.length ? k.araclar : ["araç yok"]).map((a) => `<span>${esc(a)}</span>`).join("")}<span>${esc(k.model ?? "")}</span></div>
-    </div>`).join("") : `<div class="bos">Henüz karar yok: piyasa yatay, kural motoru aday üretmedi.</div>`;
+  $("karar-say").textContent = "yerel kayıt";
+  const digerleri = d.kararlar.filter((k) => k.karar !== "AL");
+  const alNolar = d.muhurler.filter((m) => alKarari(m, d)).map((m) => `<a href="#kayit-${m.id}">#${m.id}</a>`).join(", ");
+  $("kararlar").innerHTML = `<div class="karar-sayilar">
+      <div><b class="arti">${sayac.AL ?? 0}</b><span>AL</span></div><div><b style="color:var(--altin)">${sayac.BEKLE ?? 0}</b><span>BEKLE</span></div>
+      <div><b class="${sayac.PAS ? "eksi" : ""}">${sayac.PAS ?? 0}</b><span>PAS</span></div><div><b class="soluk">${d.turSayisi.adayYok}</b><span>aday yok (tur)</span></div></div>
+    ${sayac.AL ? `<div class="kucuk soluk" style="margin-bottom:6px">AL kararları mühürlendi: ${alNolar || "sicil kayıtlarında"}</div>` : ""}
+    ${digerleri.length ? digerleri.map((k) => `<div class="karar">
+      <div class="ust-satir"><span class="rozet ${k.karar === "PAS" ? "pas" : "bekle"}">${esc(k.karar)}</span>
+        <span class="mono">${saat(Date.parse(k.ts))} · ${esc(k.pair)}</span><span class="soluk kucuk">${k.gecerli === false ? "geçersiz cevap / zaman aşımı" : `güven ${k.guven ?? "–"}`} · ${tr(k.sureMs / 1000, 0)} sn</span></div>
+      ${k.gerekce ? `<div class="gerekce">${esc(k.gerekce)}</div>` : ""}
+      <div class="araclar">${(k.araclar.length ? k.araclar : ["araç yok"]).map((a) => `<span>${esc(a)}</span>`).join("")}</div>
+    </div>`).join("") : `<div class="bos">Henüz PAS ya da BEKLE kararı yok. Aday çıkmayan turlarda yapay zekâya sorulmaz.</div>`}`;
 
   // denetim
   const a = d.attestler, n = d.notlar;

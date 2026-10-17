@@ -82,6 +82,9 @@ async function durum() {
       emirZamani: emir?.cTime ?? null, dolum: traderMuhur[m.id]?.dolum ?? null, oco: traderMuhur[m.id]?.oco ?? null,
       tez, guven: ac?.confidence ?? null, puan: d.puanlar?.[m.id] ?? rapor?.tezler?.find((t) => t.id === m.id) ?? null,
       pnlUsdt: islem?.pnlUsdt ?? null,
+      // sicil kaydı kartı için rapordan aynen aktarılır (hesap yok): eşleşme, rapor anındaki fiyat, çıkış ortalaması
+      eslesti: islem ? true : null, isaretFiyati: islem?.isaretFiyati ?? null, acikMiktar: islem?.acikMiktar ?? null,
+      cikisFiyati: islem?.cikislar?.length ? islem.cikislar.reduce((t, c) => t + c.usdt, 0) / islem.cikislar.reduce((t, c) => t + c.qty, 0) : null,
     };
   });
 
