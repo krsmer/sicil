@@ -136,7 +136,7 @@ agentURI biçimi: ERC-8004 registration-v1 (`type`, `name`, `description`, `serv
 | Trader | `market_get_candles` | `bar`: `1m…1H…1D`; varsayılan `1m`, `limit` varsayılan 100. **`demo: true`** demo piyasa verisini döndürür |
 | Trader | `market_get_indicator`, `market_list_indicators` | Bilinmeyen indikatör adı sessizce boş döner; önce listeyi çağır |
 | Trader | `market_get_orderbook`, `market_get_ticker` | Orderbook `sz` = kademe sayısı (en fazla 400); `demo` parametresi var |
-| Trader | `account_get_balance`, `account_get_trade_fee` | `account_get_trade_fee` için `instType: "SPOT"` zorunlu |
+| Trader | `account_get_balance`, `account_get_trade_fee` | `account_get_trade_fee` için `instType: "SPOT"` zorunlu. **17 Ekim, TR demo:** kademe Lv1, BTC-USDT/ETH-USDT (feeGroup 12) maker **%0,08**, taker **%0,10** (ilk dolumda da 0,08% görüldü). Ücretler eksi işaretli döner; alışta taban birimde (BTC) kesilir |
 | Trader | `spot_place_order` | `tdMode: "cash"`, `ordType: "post_only"` için `px` zorunlu; `clOrdId` en fazla 32 karakter, harf+rakam |
 | Trader | `spot_place_algo_order` | `ordType: "oco"`, `tpTriggerPx`/`tpOrdPx`, `slTriggerPx`/`slOrdPx` (`-1` = piyasa); `algoClOrdId` 1–32 harf+rakam; `sz` taban birimde |
 | Trader | `spot_cancel_order`, `spot_get_order` | `spot_get_order`: `ordId` veya `clOrdId` |
@@ -148,7 +148,7 @@ agentURI biçimi: ERC-8004 registration-v1 (`type`, `name`, `description`, `serv
 | ~~LLM (okuma)~~ | ~~`news_*`~~ | **Kaldırıldı (K-11, 17 Ekim):** demo modda kapalı. Canlı Read-only anahtarla sonra denenebilir |
 | Denetçi | `spot_get_fills` | Varsayılan son **3 gün**; `archive: true` ile 3 aya kadar; `begin`/`end` ms |
 | Denetçi | `spot_get_orders` | `status: open | history (7 gün) | archive (3 ay)` |
-| Denetçi | `account_get_balance`, `market_get_ticker` | Net getiri |
+| Denetçi | `spot_get_fills`, `market_get_ticker` (`demo: true`) | Net getiri **sadece mühürlü işlemlerin dolumlarından** (bakiyeden değil; demo bakiyeleri ajanın değil) |
 | Her ikisi | `system_get_capabilities` | Hangi modüller yüklü, demo mu, read-only mi |
 | İz kaydı | `trade_get_history` | ATK MCP sunucusunun **yerel araç çağrısı kaydı** (audit log). İşlem geçmişi değildir; LLM'in araştırma izini kanıtlamak için kullanılabilir |
 

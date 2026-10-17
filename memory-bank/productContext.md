@@ -64,7 +64,7 @@ Kullanıcı bir ajanı takip etmeden önce sicilini zincirde görür: kaç işle
 
 - **Pariteler:** BTC-USDT, ETH-USDT. TRY paritelerinin derinliğine sabah bakılır; kayma kabul edilebilirse BTC-TRY eklenir.
 - **Rejim:** Saatlik mumlarda trend gücü (EMA eğimi veya ADX) ve ATR. Trend varsa kırılım, yataysa ortalamaya dönüş adayı.
-- **Yürütme:** `post_only` limit emir; OKX TR'de piyasa yapıcı (maker) ücreti sıfır, doğrudan maliyet avantajı. Belli sürede dolmayan emir iptal edilir. Her emrin ücreti ve kayması sicile yazılır, getiri **net** hesaplanır.
+- **Yürütme:** `post_only` limit emir (maker). OKX TR canlıda maker ücretinin sıfır olduğunu duyuruyor (bunu canlı hesapta kendimiz ölçmedik); **demo hesapta maker %0,08, taker %0,10** (17 Ekim, `account_get_trade_fee`). Sicile her zaman OKX'in yazdığı **gerçek ücret** girer; getiri net hesaplanır. Belli sürede dolmayan emir iptal edilir. Her emrin ücreti ve kayması sicile yazılır, getiri **net** hesaplanır.
 - **Boyut:** Volatiliteye göre (risk bütçesi / ATR). Kontrat limiti aşılırsa reddeder, ajan tutarı yeniden hesaplar.
 - **Çıkış:** `spot_place_algo_order` ile OCO (kâr al + zarar durdur), seviyeler ATR katları.
 - **LLM yanıt vermezse:** karar BEKLE, yeni işlem açılmaz; açık pozisyonların OCO emirleri borsada durduğu için korunur.

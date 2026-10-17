@@ -25,7 +25,7 @@
 3  Trader   → SicilKasasi.reveal(id, side, priceE8, sizeE8, thesis, confidence, salt, okxOrdId)
 4  Denetçi  ← OKX TR: bütün dolan işlemler (spot_get_fills) + emirler (spot_get_orders)
 5  Denetçi  ← SicilKasasi olayları (Sealed, Revealed)
-6  Denetçi  → SicilKasasi.attest(upToTs, matched, unmatched, dayPnlBps, reportHash)
+6  Denetçi  → SicilKasasi.attest(upToTs, matched, unmatched, unrevealedExpired, dayPnlCent, reportHash)
 7  Denetçi  → ERC-8004: Reputation.giveFeedback (net getiri, kalibrasyon) + Validation.validationResponse
 8  Fren     → SicilKasasi.pause()
 Panel      ← 1–8'in bütün olayları + reports/*.json
@@ -61,7 +61,7 @@ Kod: `contracts/src/SicilKasasi.sol` (K-13). Birimler: tutar **USDT cent** (1 US
 | `setSicilBaslangic()` | Sahip, bir kez | `block.timestamp` | `SicilBaslangicAyarlandi(ts)` |
 | `seal(bytes32 commitHash, string pair, uint256 notionalCent) → id` | Trader | Durdurulmuş mu, parite izinli mi (kontrat içinde hash'lenir), `0 < tutar ≤ maxTutarCent`, bekleme süresi | `Sealed(id, commitHash, pair` **düz metin**`, notionalCent, ts)`; ret: `PariteIzinsiz`, `TutarAsildi`, `BeklemeDolmadi`, `Durduruldu` |
 | `reveal(id, uint8 side, priceE8, sizeE8, string thesis, uint8 confidence, bytes32 salt, string okxOrdId)` | Trader | Hash eşleşmesi; tek sefer; pencere içinde; `side ≤ 1`, `confidence ≤ 100`; **[K-13] `priceE8 × sizeE8 ≤ (notionalCent + 1) × 1e14`** (1 cent yuvarlama payı). Durdurulmuş kontratta da yapılabilir | `Revealed(id, side, priceE8, sizeE8, thesis, confidence, salt, okxOrdId)` (herkes hash'i yeniden hesaplayabilsin diye salt da yayınlanır) |
-| `attest(uint64 upToTs, matched, unmatched, unrevealedExpired, int256 dayPnlCent, bytes32 reportHash)` | Denetçi | `sicilBaslangic` ayarlı; `sonDenetimTs < upToTs ≤ now`, `upToTs ≥ sicilBaslangic`; `unmatched > 0` → sicil kalıcı bozuk; `dayPnlCent ≤ −maxGunlukZararCent` → otomatik fren. `dayPnlCent` işaretli, `sicilBaslangic`'ten beri, ücretler dahil | `Attested`, `SicilBozuldu`, `Paused` |
+| `attest(uint64 upToTs, matched, unmatched, unrevealedExpired, int256 dayPnlCent, bytes32 reportHash)` | Denetçi | `sicilBaslangic` ayarlı; `sonDenetimTs < upToTs ≤ now`, `upToTs ≥ sicilBaslangic`; `unmatched > 0` → sicil kalıcı bozuk; `dayPnlCent ≤ −maxGunlukZararCent` → otomatik fren. `dayPnlCent` işaretli, `sicilBaslangic`'ten beri, ücretler dahil, **sadece mühürlü işlemlerin dolumlarından** (§6) | `Attested`, `SicilBozuldu`, `Paused` |
 | `pause()` | Fren veya sahip | — | `Paused(by)` |
 | `unpause()` | Sahip | — | `Unpaused` |
 | `report(hub, name, agentId)` | Sahip | WorkshopHub'a `checkIn`; hub sadece kontrattan gelen çağrıyı kabul ediyor | — |
@@ -71,6 +71,8 @@ Kod: `contracts/src/SicilKasasi.sol` (K-13). Birimler: tutar **USDT cent** (1 US
 **Tipler [karar K-13, kodda]:** `pair: string`, `side: uint8` (0 = al, 1 = sat), `priceE8, sizeE8: uint256` (1e8 ölçekli), `thesis: string` (kısa JSON veya düz metin), `confidence: uint8` (0–100), `salt: bytes32` (her mühür için rastgele), `okxOrdId: string`. Hash'i hem zincir dışında (viem `encodeAbiParameters` + `keccak256`) hem kontratta **aynı sırayla** üret. **Kanıtlandı:** `test_CommitHash_ViemIleAyni`, `agents/shared/commit.mjs`'i `ffi` ile çalıştırıp `commitHashHesapla` ile karşılaştırıyor ve aynı hash'le seal+reveal yapıyor.
 
 **Açıklanmamış mühür kuralı [karar, 16 Ekim gece; K-13 ile pencere]:** `aciklamaPenceresiSn` (3 saat) içinde `reveal` edilmemiş her mühür **"tutmadı"** sayılır ve denetçi raporunda ayrı bir kalem olarak gösterilir. Böylece ajan kaybettiren tezleri hiç açıklamayarak kalibrasyonunu güzelleştiremez ("seçerek gösterme yok" kuralının mühür tarafı). Emir hiç gönderilemediyse bile `reveal` yapılır (`okxOrdId` boş).
+
+**Sicili başlatma kuralı [karar, 17 Ekim]:** `setSicilBaslangic()` çağrılmadan önce hesapta **hiç açık emir ve hiç bekleyen algo emir (OCO/conditional/trigger…)** kalmamalı. Aksi halde bir test mührünün OCO'su sicil başladıktan sonra tetiklenir; çıkış dolumu `sicilBaslangic`'ten sonra olduğu, ama mührü öncesine ait olduğu (yok sayıldığı) için denetçi onu mühürsüz sayar ve **kalıcı** `SicilBozuldu` yazar. Bu kontrol `agents/trader/sicil-baslat.mjs` içinde otomatik: açık emir/algo varsa script durur, `setSicilBaslangic` çağrılmaz.
 
 **`SicilBozuldu` kalıcıdır [karar]:** Bir kez yazılınca geri alınamaz. Sunumdaki cümle: "Bu kırmızı artık silinemez. Benim tarafımdan bile."
 
@@ -129,9 +131,16 @@ her tur (normalde 60 sn; sunum sırasında 15 sn):
      eşleşmeyen dolum = mühürsüz işlem
        [K-13] emrin OKX'teki gerçek dolum tutarı (Σ fillPx × fillSz) mühürdeki notionalCent'i
        (+1 cent payla) aşıyorsa o emir de eşleşmemiş sayılır → unmatched
-  4. Net getiri: account_get_balance + market_get_ticker (gün başı özsermayeye göre, ücret dahil)
+  4. Net getiri [düzeltildi 17 Ekim]: SADECE mühürlü işlemlerin dolumlarından, hesap bakiyesinden DEĞİL.
+     Demo hesapta büyük bakiyeler var (1 BTC, 1 ETH, 5000 USDT…); bakiyeden hesaplanan getiri ajanın değil
+     hesabın getirisi olur ve fiyat düşüşü tek başına otomatik freni tetikleyebilir.
+       gerçekleşen  = Σ (çıkış dolumları fillPx×fillSz) − Σ (o pozisyonun giriş dolumları fillPx×fillSz)
+       ücretler     = Σ |fee| (taban birimde kesilenler o andaki fillPx ile USDT'ye çevrilir)
+       açık pozisyon = kalan miktar × (market_get_ticker demo:true last − giriş ort. fiyatı)
+       dayPnlCent   = (gerçekleşen + açık − ücretler) × 100, sicilBaslangic'ten beri, işaretli
+     Eşleşmeyen (mühürsüz) dolumlar getiriye katılmaz; onlar ayrıca sicili bozar
   5. Süresi dolan tezleri puanla (bkz. §7); süresi dolup açıklanmamış mühürleri "tutmadı" say ve raporda ayrıca listele
-  6. reports/<zaman>.json yaz → keccak256 → attest(upToTs, matched, unmatched, dayPnlBps, reportHash)
+  6. reports/<zaman>.json yaz → keccak256 → attest(upToTs, matched, unmatched, unrevealedExpired, dayPnlCent, reportHash)
   7. Saatte bir: Reputation.giveFeedback (net getiri, kalibrasyon) + Validation.validationResponse
 ```
 

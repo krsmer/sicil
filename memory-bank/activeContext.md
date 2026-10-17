@@ -55,6 +55,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~12:40:** İlk uçtan uca döngü: mühür #1 → `sicil000001` post_only alış (~29 sn'de doldu) → reveal → OCO `sicil000001x`. Düzeltmeler (Arif): (1) dayPnl **sadece mühürlü işlemlerin dolumlarından** (bakiyeden değil) → systemPatterns §6; (2) **sicili başlatmadan önce açık emir/algo emir olmamalı** → kural systemPatterns §4 + `agents/trader/sicil-baslat.mjs` otomatik kontrol (kuru modda bekleyen OCO'yu yakaladı, exit 2); (3) demo ücret Lv1: maker %0,08 / taker %0,10 → productContext + demoScript dürüstleştirildi. Sıradaki: OCO tetiklenme doğrulaması → kural motoru + LLM → simülasyonsuz ret mührü → canlıya alma (~14:00).
 - **17 Ekim ~13:25:** **`SicilKasasi` Fuji'de: `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8`** (tx `0x75eeb4ca34…`), fren = Core `0xFD056f…`. Zincirden okunan ayarlar doğru (BTC-USDT/ETH-USDT, 2000/300/5000/10800, `sicilBaslangic = 0`). Builder Hub `exact_match` ve Snowtrace verified. Sıradaki: trader yürütücüsü (seal → emir → reveal döngüsü); `setSicilBaslangic` trader canlıya geçince.
 - **17 Ekim ~12:50 · K-14:** Fren = Core tarayıcı eklentisi hesabı; panelde EIP-1193 "Freni çek" butonu. `SicilKasasi` deploy'u Core adresini bekliyor.
 - **17 Ekim ~12:45 · K-13:** `SicilKasasi` yazıldı (`contracts/src/SicilKasasi.sol`), 28/28 Foundry testi geçiyor (viem hash eşleşmesi `ffi` ile kanıtlı). Sıradaki: Fuji deploy + verify (Builder Hub + Snowtrace), sonra `setSicilBaslangic`.
