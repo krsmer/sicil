@@ -10,11 +10,13 @@ import { existsSync, readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { randomBytes } from "node:crypto";
 import { toHex } from "viem";
-import { readKasa, sealRetGoster, walletFor } from "../shared/chain.mjs";
+import { readKasa, sealRetGoster, walletFor, writeKasa } from "../shared/chain.mjs";
+import { bekleyenDeposu } from "../shared/bekleyen.mjs";
 import { commitHash } from "../shared/commit.mjs";
 import { log } from "../shared/log.mjs";
 import { connectOkx } from "../shared/okx.mjs";
-import { islemYap } from "./executor.mjs";
+import { islemYap, ocoKoy } from "./executor.mjs";
+import { bekleyenleriTamamla } from "./kurtarma.mjs";
 import { araclariHazirla, kararVer } from "./karar.mjs";
 import { adayUret } from "./kural-motoru.mjs";
 
@@ -137,6 +139,17 @@ async function main() {
     maxTutarCent: await readKasa("maxTutarCent"), beklemeSn: await readKasa("beklemeSn"),
   };
   log("ajan-basladi", { pariteler: PARITELER, llmAraclari: ctx.araclar.map((a) => a.name), maxTutarCent: Number(ctx.maxTutarCent) });
+  // Çökme sonrası: bekleyen açılışları tamamla (3 saatlik pencere içindekiler)
+  const kasa = {
+    muhurSayisi: () => readKasa("muhurSayisi"),
+    muhur: async (id) => {
+      const [commitHash, pair, notionalCent, ts, acik] = await readKasa("muhur", [BigInt(id)]);
+      return { commitHash, pair, notionalCent, ts, acik };
+    },
+    pencereSn: await readKasa("aciklamaPenceresiSn"),
+    reveal: (args) => writeKasa(ctx.trader, "reveal", args),
+  };
+  await bekleyenleriTamamla({ okx, kasa, depo: bekleyenDeposu(), ocoKoy, log });
   try {
     for (;;) {
       turda = true;

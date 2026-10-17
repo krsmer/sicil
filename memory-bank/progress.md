@@ -105,6 +105,7 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 
 ## Teslim ölçütleri (19:00)
 
+- [ ] **Repo public yapılmadan ÖNCE: git geçmişinin TAMAMINDA gizli bilgi taraması** (`git log -p --all` üzerinde anahtar/şifre/özel anahtar/passphrase/e-posta desenleri; ör. `gitleaks detect` veya `git log -p --all | grep -E ...`). Bulunursa geçmiş temizlenir (BFG/`git filter-repo`), sonra public. Commit e-postası ve `ai-docs/sources/` lisansı da kontrol edilir
 - [ ] Repo: tek komutla kurulum, gizli anahtar yok, `DRY_RUN` modu
 - [ ] README: jüri kriterlerine göre kanıt tablosu (her iddia → Snowtrace / OKX emir numarası), ATK araç çağrı zinciri, kullanılan model ve prompt'lar
 - [ ] Foundry test çıktısı

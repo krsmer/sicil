@@ -10,6 +10,7 @@ import { parseArgs } from "node:util";
 import { toHex } from "viem";
 import { walletFor, writeKasa, readKasa, snowtrace } from "../shared/chain.mjs";
 import { commitHash } from "../shared/commit.mjs";
+import { bekleyenDeposu } from "../shared/bekleyen.mjs";
 import { log } from "../shared/log.mjs";
 import { connectOkx } from "../shared/okx.mjs";
 
@@ -51,9 +52,32 @@ function fromE8(x) {
 }
 const floorTo = (x, stepE8) => (x / stepE8) * stepE8;
 
+/// OCO çıkışı (sadece satış = çıkış). Alış ücreti taban birimde kesildiyse satılabilir miktar azalır.
+/// ord: dolmuş giriş emri (accFillSz, avgPx, fee, feeCcy). Kurtarma da bunu kullanır.
+export async function ocoKoy(okx, { pair, id, clOrdId, ord, tpPct, slPct }) {
+  const [inst] = await okx.call("market_get_instruments", { instType: "SPOT", instId: pair, demo: true });
+  const tickE8 = toE8(inst.tickSz);
+  const lotE8 = toE8(inst.lotSz);
+  const fillE8 = toE8(ord.accFillSz || "0");
+  const baseCcy = pair.split("-")[0];
+  // OKX ücreti eksi işaretli döner (ör. "-0.000000146912" BTC); kesilen miktarı yukarı yuvarla
+  const feeE8 = ord.feeCcy === baseCcy ? -toE8(ord.fee || "0", true) : 0n;
+  const exitE8 = floorTo(fillE8 - (feeE8 > 0n ? feeE8 : 0n), lotE8);
+  const avgE8 = toE8(ord.avgPx);
+  const tpE8 = floorTo((avgE8 * BigInt(Math.round((100 + tpPct) * 1e6))) / 100_000_000n, tickE8);
+  const slE8 = floorTo((avgE8 * BigInt(Math.round((100 - slPct) * 1e6))) / 100_000_000n, tickE8);
+  const algoClOrdId = `${clOrdId}x`;
+  const [a] = await okx.call("spot_place_algo_order", {
+    instId: pair, tdMode: "cash", side: "sell", ordType: "oco", sz: fromE8(exitE8),
+    tpTriggerPx: fromE8(tpE8), tpOrdPx: "-1", slTriggerPx: fromE8(slE8), slOrdPx: "-1", algoClOrdId,
+  });
+  log("oco", { id: Number(id), algoId: a.algoId, algoClOrdId: a.algoClOrdId, sz: fromE8(exitE8), tp: fromE8(tpE8), sl: fromE8(slE8), sCode: a.sCode });
+  return a;
+}
+
 /// Tek aday için mühür → emir → açıklama → OCO. okx: yürütücü süreci (demo, emir yetkili); trader: viem cüzdanı.
 /// tez: mühürlenecek tez nesnesi (hedefPct, gecersizlikPct, sureDk, guven ...). Dönüş: { id, clOrdId, ordId, dolum, algoId }
-export async function islemYap(okx, trader, { pair, notionalCent, tez, fillTimeoutSn = 600, izleCikisSn = 0 }) {
+export async function islemYap(okx, trader, { pair, notionalCent, tez, fillTimeoutSn = 600, izleCikisSn = 0, depo = bekleyenDeposu() }) {
   const tpPct = Number(tez.hedefPct);
   const slPct = Number(tez.gecersizlikPct);
   const thesis = JSON.stringify(tez);
@@ -74,6 +98,11 @@ export async function islemYap(okx, trader, { pair, notionalCent, tez, fillTimeo
     const salt = toHex(randomBytes(32));
     const hash = commitHash({ pair, side: SIDE_AL, priceE8, sizeE8, thesis, confidence, salt });
     log("aday", { pair, px: fromE8(priceE8), sz: fromE8(sizeE8), notionalCent: Number(notionalCent), tez, commitHash: hash });
+    // Çökme güvencesi: açılış için gereken her şey seal'den ÖNCE yerel dosyaya
+    depo.ekle({
+      commitHash: hash, pair, notionalCent: String(notionalCent), side: SIDE_AL, priceE8: String(priceE8), sizeE8: String(sizeE8),
+      thesis, confidence, salt, olusturuldu: new Date().toISOString(),
+    });
 
     // 2. Mühür: Sealed onayı gelmeden emir yok
     const seal = await writeKasa(trader, "seal", [hash, pair, notionalCent]);
@@ -81,6 +110,7 @@ export async function islemYap(okx, trader, { pair, notionalCent, tez, fillTimeo
     const clOrdId = `sicil${String(id).padStart(6, "0")}`;
     log("muhur", { id: Number(id), clOrdId, tx: seal.hash, url: snowtrace(seal.hash) });
     Object.assign(sonuc, { id: Number(id), clOrdId, sealTx: seal.hash });
+    depo.guncelle(hash, { id: Number(id) });
 
     // 3. Emir: post_only alış, clOrdId = mühür no
     let ordId = "";
@@ -90,6 +120,7 @@ export async function islemYap(okx, trader, { pair, notionalCent, tez, fillTimeo
       });
       if (o.sCode !== "0") throw new Error(`emir reddedildi: ${o.sCode} ${o.sMsg}`);
       ordId = o.ordId;
+      depo.guncelle(hash, { ordId });
       log("emir", { id: Number(id), clOrdId, ordId });
     } catch (e) {
       log("emir-hata", { id: Number(id), clOrdId, hata: e.message, oneri: e.okx?.suggestion });
@@ -117,24 +148,13 @@ export async function islemYap(okx, trader, { pair, notionalCent, tez, fillTimeo
     // 5. Açıklama: emir gitmese/dolmasa da yapılır
     const rev = await writeKasa(trader, "reveal", [id, SIDE_AL, priceE8, sizeE8, thesis, confidence, salt, ordId]);
     log("aciklama", { id: Number(id), tx: rev.hash, url: snowtrace(rev.hash) });
+    depo.sil(hash);
     Object.assign(sonuc, { ordId, revealTx: rev.hash, state: ord?.state ?? "gonderilemedi", accFillSz: ord?.accFillSz ?? "0", avgPx: ord?.avgPx ?? "" });
 
-    // 6. OCO çıkış (sadece satış = çıkış). Alış ücreti taban birimde kesildiyse satılabilir miktar azalır.
+    // 6. OCO çıkış
     const fillE8 = ord ? toE8(ord.accFillSz || "0") : 0n;
     if (fillE8 > 0n) {
-      const baseCcy = pair.split("-")[0];
-      // OKX ücreti eksi işaretli döner (ör. "-0.000000146912" BTC); kesilen miktarı yukarı yuvarla
-      const feeE8 = ord.feeCcy === baseCcy ? -toE8(ord.fee || "0", true) : 0n;
-      const exitE8 = floorTo(fillE8 - (feeE8 > 0n ? feeE8 : 0n), lotE8);
-      const avgE8 = toE8(ord.avgPx);
-      const tpE8 = floorTo((avgE8 * BigInt(Math.round((100 + tpPct) * 1e6))) / 100_000_000n, tickE8);
-      const slE8 = floorTo((avgE8 * BigInt(Math.round((100 - slPct) * 1e6))) / 100_000_000n, tickE8);
-      const algoClOrdId = `${clOrdId}x`;
-      const [a] = await okx.call("spot_place_algo_order", {
-        instId: pair, tdMode: "cash", side: "sell", ordType: "oco", sz: fromE8(exitE8),
-        tpTriggerPx: fromE8(tpE8), tpOrdPx: "-1", slTriggerPx: fromE8(slE8), slOrdPx: "-1", algoClOrdId,
-      });
-      log("oco", { id: Number(id), algoId: a.algoId, algoClOrdId: a.algoClOrdId, sz: fromE8(exitE8), tp: fromE8(tpE8), sl: fromE8(slE8), sCode: a.sCode });
+      const a = await ocoKoy(okx, { pair, id, clOrdId, ord, tpPct, slPct });
       Object.assign(sonuc, { algoId: a.algoId, algoClOrdId: a.algoClOrdId });
 
       // 7. (test) OCO tetiklenene kadar izle; çıkış emrinde algoClOrdId/algoId görünüyor mu?

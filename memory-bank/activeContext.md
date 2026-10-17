@@ -68,6 +68,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~13:25:** Açıklanmamış mühür = güven 100 kuralı onaylandı + çökme güvencesi (bekleyen açılışlar dosyası, açılışta kurtarma, 6 test). Trader yeni kodla tur arasında yeniden başlatıldı. Sıradaki: ERC-8004 saatlik Reputation (≤30 dk), sonra panel. Validation panelden sonra.
 - **17 Ekim ~13:16:** Denetçi canlı: ilk attest zincirde (sicil temiz). Eşleştirme etiket + algoId + ordIdList + zaman ile (10 birim testi). Attest: yapısal değişiklikte hemen, getiri için 10 dk kalp atışı, zarar limitinde hemen. Açıklanmamış mühürler Brier'e güven = 100 ile girer (gizlemek kalibrasyonu güzelleştiremez) — **Arif'in onayına sunuldu**.
 - **17 Ekim ~13:10:** Ajan `calistir.sh` (caffeinate + otomatik yeniden başlatma) ile, boşta iken yeniden başlatıldı. SIGTERM'de tur bitince çıkar. Aynı turda mühür atıldıysa 300 sn bekleme dolunca diğer parite değerlendirilir.
 - **17 Ekim ~13:03:** Sicil başlatıldı (ön kontrol temiz) ve ajan canlı: ilk otonom döngü mühür #2 ile tamamlandı (ret anı dahil). Not: sabahki manuel test OCO'su da `sicil000002x` etiketliydi ama `sicilBaslangic`'ten önce; denetçi dolumları `begin = sicilBaslangic` ile çektiği için çakışmaz. Ajan ilk 2 saatlik arka plan sınırına takılmasın diye nohup ile çalışıyor.
