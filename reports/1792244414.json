@@ -1,0 +1,104 @@
+{
+ "surum": 1,
+ "kontrat": "0x60735035CC6f4d810f4878f9A4a1993F534fe6a8",
+ "zincir": "avalanche-fuji",
+ "denetci": "0x963261691606dCe9C4C9Bd0a5181371BB4eE3D02",
+ "sicilBaslangic": 1792231294,
+ "upToTs": 1792244414,
+ "uretildi": "2026-10-17T13:40:20.061Z",
+ "kural": "techContext.md: Denetçinin dolum eşleştirme prosedürü; net getiri sadece mühürlü dolumlardan; tez: 1m demo mumları, önce hedef mi stop mu",
+ "ozet": {
+  "islemHacmiUsdt": 25.9981,
+  "muhur": 2,
+  "aciklanan": 2,
+  "emir": 3,
+  "dolum": 3,
+  "eslesen": 3,
+  "eslesmeyen": 0,
+  "unrevealedExpired": 0,
+  "netPnlUsdt": -0.0786,
+  "dayPnlCent": -8,
+  "tez": {
+   "tuttu": 0,
+   "tutmadi": 1,
+   "bekliyor": 1
+  },
+  "brier": 0.4096
+ },
+ "eslesmeyenler": [],
+ "islemler": [
+  {
+   "id": 2,
+   "pair": "BTC-USDT",
+   "giris": {
+    "ordId": "4017437100212072450",
+    "qty": 0.00017162,
+    "usdt": 13.999420963999999,
+    "ucretBase": 1.37296e-7,
+    "ucretQuote": 0,
+    "ort": 81572.2,
+    "dolum": 1
+   },
+   "cikislar": [
+    {
+     "ordId": "4017691979140673537",
+     "algoId": "4017438767833788417",
+     "qty": 0.00017148,
+     "usdt": 13.985034252,
+     "ucretBase": 0,
+     "ucretQuote": 0.013985034252,
+     "ort": 81554.9,
+     "dolum": 1
+    }
+   ],
+   "acikMiktar": 0,
+   "isaretFiyati": 81492.1,
+   "pnlUsdt": -0.028151
+  },
+  {
+   "id": 3,
+   "pair": "ETH-USDT",
+   "giris": {
+    "ordId": "4017705195929448449",
+    "qty": 0.004933,
+    "usdt": 11.998683889999999,
+    "ucretBase": 0.0000039464,
+    "ucretQuote": 0,
+    "ort": 2432.33,
+    "dolum": 1
+   },
+   "cikislar": [],
+   "acikMiktar": 0.00492905,
+   "isaretFiyati": 2424.04,
+   "pnlUsdt": -0.050461
+  }
+ ],
+ "tezler": [
+  {
+   "id": 2,
+   "pair": "BTC-USDT",
+   "guven": 64,
+   "sureDk": 90,
+   "giris": 81572.2,
+   "hedef": 82211.7,
+   "stop": 81092.6,
+   "basTs": 1792231351,
+   "bitisTs": 1792236751,
+   "sonuc": "tutmadi",
+   "neden": "süre doldu, hedefe ulaşılmadı",
+   "mumSayisi": 91
+  },
+  {
+   "id": 3,
+   "pair": "ETH-USDT",
+   "guven": 56,
+   "sureDk": 90,
+   "giris": 2432.33,
+   "hedef": 2451.9,
+   "stop": 2418.7,
+   "basTs": 1792239343,
+   "bitisTs": 1792244743,
+   "sonuc": "bekliyor"
+  }
+ ]
+}
