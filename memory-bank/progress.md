@@ -82,7 +82,7 @@ Dört kişiyseniz her kola bir kişi; üç kişiyseniz kontratı bitiren kişi 1
 
 **Avalanche Fuji:**
 - [ ] Dört cüzdanda AVAX var mı? (16 Ekim: var)
-- [ ] Boş bir kontrat deploy + verify (cancun)
+- [x] Boş bir kontrat deploy + verify (cancun) ✅ 12:00 (`SicilPing`)
 - [ ] `register` ile iki agentId (trader, denetçi); Reputation ve Validation imzaları Snowtrace'te kontrol
 - [ ] Denetçi cüzdanından deneme `giveFeedback`
 - [ ] Salon Wi-Fi'sinde olay dinleme gecikmesi; yedek RPC ve telefon hotspot'u
@@ -138,3 +138,8 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 12:05 | `news` modülü TR demo anahtarıyla | ❌ "News features are not available in demo/simulated trading mode." Demo anahtar + `--live` → 50101 (ortam uyuşmazlığı). Anahtarsız çalışmıyor (`okx-auth` istiyor). Açmanın yolu: **canlı** TR anahtarı (sadece Read) ya da `okx-auth login --site tr` (OAuth) |
 
 | 17 Ekim 12:30 | 20 USDT (988 TRY) emrin kayması, emir defterinden (emir yok) | BTC-USDT canlı ve demo: makas ~0, kayma 0 bps (1 kademe) ✅. BTC-TRY **canlı**: makas 11,5 bps, piyasa emri kayması 5,8 bps (1 kademe), ilk 5 kademe ~0,9–1,2 M TRY. BTC-TRY **demo: kullanılamaz** (orta fiyat 130 TRY, satış tarafında 6 TRY derinlik) ❌ |
+
+| 17 Ekim 12:00 | Foundry projesi `contracts/` (forge-std v1.17.0 submodule, şablon `foundry.toml`: solc 0.8.24, cancun) + `SicilPing` test kontratı | ✅ `forge build`/`forge test` geçti, metadata `evmVersion: cancun` |
+| 17 Ekim 12:00 | Fuji deploy (`sicil-sahip`): `SicilPing` → `0xDf769dE9Fc427863C8CC4cf7231226a93c2435f6`, tx `0x4ad1bd17…6a09` | ✅ ~4 sn (gönderim + onay) |
+| 17 Ekim 12:00 | Verify: Builder Hub Sourcify | ✅ iş `exact_match` (Builder Hub explorer). Not: `/v2/contract/...` sorgusu hemen `match: null` döndü |
+| 17 Ekim 12:01 | Verify: Snowtrace (Routescan Etherscan API) | ✅ forge: `Pass - Verified`. Routescan `getsourcecode` API'si birkaç dk sonra hâlâ boş → Snowtrace sayfasından gözle doğrula |

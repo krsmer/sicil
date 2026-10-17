@@ -41,7 +41,8 @@ Not: ATK'nin npm kurulumu `~/.okx/bin/` altına OKX'in kendi yardımcı binary'l
 | Explorer | https://testnet.snowtrace.io |
 | Gas fiyatı (16 Ekim akşamı ölçüldü) | ~160 wei, base fee ~10 wei: işlem maliyeti pratikte sıfır |
 | EVM sürümü | **cancun** (C-Chain Pectra'yı desteklemez; solc ≥ 0.8.30 varsayılan olarak Pectra'ya derler) |
-| Verify | Sourcify / Builder Hub verifier (`ai-docs/docs/03-avalanche.md` §6) |
+| Verify | 17 Ekim'de ikisi de çalıştı (`contracts/` içinden): **Builder Hub** `forge verify-contract --chain-id 43113 --verifier sourcify --verifier-url https://build.avax.network/api/verify/sourcify <ADR> src/X.sol:X` · **Snowtrace** `forge verify-contract --chain-id 43113 --verifier etherscan --verifier-url https://api.routescan.io/v2/network/testnet/evm/43113/etherscan --etherscan-api-key verifyContract --watch <ADR> src/X.sol:X` |
+| Deploy | `forge create src/X.sol:X --rpc-url fuji --account sicil-sahip --password-file ~/.foundry/keystores/.sifreler/sicil-sahip.txt --broadcast` (~4 sn) |
 
 ### Cüzdanlar (şifreli Foundry keystore)
 

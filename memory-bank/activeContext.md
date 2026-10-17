@@ -55,6 +55,7 @@ Ayrıca: keystore şifreleri düz metin olduğu için cüzdanlar sadece test iç
 
 ## Son değişiklikler
 
+- **17 Ekim ~12:00:** `contracts/` Foundry projesi kuruldu; `SicilPing` Fuji'ye deploy edildi (`0xDf769dE9Fc427863C8CC4cf7231226a93c2435f6`) ve Builder Hub + Snowtrace'te verify edildi. Deploy/verify hattı hazır; sıradaki: ERC-8004 imzaları, sonra `SicilKasasi`.
 - **17 Ekim ~12:30:** BTC-TRY ölçüldü: canlıda kayma 5,8 bps, demo defteri kullanılamaz → BTC-TRY eklenmedi; pariteler BTC-USDT, ETH-USDT. Sabah listesinin OKX bölümü bitti. Sıradaki: Avalanche (boş kontrat deploy + verify, ERC-8004 imzaları).
 - **17 Ekim ~12:25:** Repo açıldı: https://github.com/krsmer/sicil (**private**), `main`, ilk commit `3ad78cd`. Teslimde public'e çevrilecek; öncesinde commit e-postası ve `ai-docs/sources/` lisansı gözden geçirilecek.
 - **17 Ekim ~12:15 · K-11:** `news` kaldırıldı. LLM araştırma süreci: `okx-trade-mcp --profile piyasa --read-only --modules market` (anahtarsız, global; `~/.okx/config.toml`'a `piyasa` profili eklendi). Funding (BTC/ETH-USDT-SWAP), OI, OI değişim taraması, market_filter, indikatörler (ema/atr/adx) anahtarsız doğrulandı. Global veri sadece bağlam; emir fiyatı TR demo'dan. `.mcp.json` güncellendi. (a) seçeneği vakit kalırsa.
