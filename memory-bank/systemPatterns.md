@@ -35,9 +35,9 @@ Panel      ← 1–8'in bütün olayları + reports/*.json
 
 | Rol | Fuji adresi | Kontratta yetkisi |
 |---|---|---|
-| Sahip (ekip) | `0x8394359d719ccD2cf037Edde7c50011D3cB690A8` | Deploy'da limitleri belirler, `unpause`, `report` (WorkshopHub kaydı) |
+| Sahip (ekip) | `0x8394359d719ccD2cf037Edde7c50011D3cB690A8` | Deploy'da limitleri belirler, `unpause`, `report` (WorkshopHub kaydı); ERC-8004: trader agentId'sinin **sahibi**, saatlik `validationRequest` (K-12) |
 | Trader | `0x7c9931802977377aa62315DaebE1D455a2874E07` | `seal`, `reveal` |
-| Denetçi | `0x963261691606dCe9C4C9Bd0a5181371BB4eE3D02` | `attest`; ERC-8004 Reputation/Validation yazımı |
+| Denetçi | `0x963261691606dCe9C4C9Bd0a5181371BB4eE3D02` | `attest`; ERC-8004 Reputation/Validation yazımı; kendi agentId'sinin sahibi; **asla sahibin operatörü değil** (K-12) |
 | Fren (guardian) | `0x9F37AaAeA7a216C2d6fB790707841B39086FCFE3` (keystore) | `pause` |
 
 Fren için açık karar: telefondaki Core'da yeni bir cüzdan açılırsa onun adresi kullanılır ve bu tablo güncellenir.
@@ -174,7 +174,7 @@ her tur (normalde 60 sn; sunum sırasında 15 sn):
 
 - Kayıtlar yükseltilebilir proxy; imzalar ve kurallar 17 Ekim'de kaynak koddan doğrulandı (`techContext.md` §3, ABI'ler `agents/shared/abi/`).
 - Ajan sahibinin (ve onaylı operatörün) kendi ajanına not vermesi **kontratta engelli** (`"Self-feedback not allowed"`, doğrulandı); denetçinin ayrı cüzdan olması bunu çözüyor. Denetçi trader agentId'sinin sahibi/operatörü yapılmamalı.
-- Trader agentId'sini hangi cüzdanın `register` edeceği (trader mı, sahip mi) sabah netleşecek; `validationRequest`'i agentId'nin sahibi çağırır [doğrula].
+- [karar K-12] Trader agentId'sini **sahip** kaydeder (agentURI JSON'unda trader adresi); `validationRequest`'i sahip çağırır. `agentWallet` kayıtta sahip adresi olur; trader'a bağlayan `setAgentWallet` vakit kalırsa en sona.
 - Not verme engellenirse yedek: kontrattaki `Attested` olayı kullanılır.
 
 **WorkshopHub:** Ömer Aksu'nun atölye kontratı, Fuji adresi `0x0a5aa2e3809fa20350182ac481dae69a043bc95d` (şablonun `config.ts` dosyasında yazıyor; 16 Ekim'de adreste kontrat kodu olduğu doğrulandı). Aynı adresten ikinci kaydı reddediyor; `checkIn`'i sabah deneme olarak **yapma**, sadece final kontrattan, gerçek isimle çağır. Repo lisanssız: kod kopyalanmaz, sadece arayüz kullanılır ve sunumda atıf yapılır.

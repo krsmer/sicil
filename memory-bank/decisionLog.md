@@ -64,6 +64,17 @@
 **Sınır:** Global veri sadece bağlam; emir fiyatı/stop/tavan TR demo verisinden gelir.
 **Açık kalan:** Vakit kalırsa canlı TR hesabında sadece Read anahtarla `news` denenecek (seçenek a).
 
+## K-12 · ERC-8004 kimlikleri: trader'ı sahip kaydeder, denetçi kendini (17 Ekim, ~12:25)
+
+**Karar:**
+- Trader'ın agentId'sini **sahip cüzdanı** (`0x8394…90A8`) `register(agentURI)` ile kaydeder. `agentURI` JSON'unda trader adresi (`0x7c99…4E07`) yazılır.
+- `setAgentWallet` (agentWallet'ı imzalı olarak trader'a bağlamak) **şimdi yapılmaz**; vakit kalırsa en sona, en fazla 20 dakika.
+- **Denetçi** kendi cüzdanıyla (`0x9632…3D02`) kendini kaydeder. Denetçi **hiçbir zaman** sahibin operatörü yapılmaz (`approve` / `setApprovalForAll` yok): kontrattaki `Self-feedback not allowed` kontrolü ancak böyle anlamlı kalır.
+- Saatlik `validationRequest`'i **sahip** çağırır; `validationResponse`'u denetçi verir.
+
+**Gerekçe:** Identity kaydında sahibin bütün ajanları `balanceOf(sahip)` ile görünür; demoScript'teki "10 hesap" cevabı ("Identity Registry sahibin bütün ajanlarını gösteriyor, bu kısmi bir cevap") bu kararla doğru kalır.
+**Bedel:** Kayıttan otomatik gelen `agentWallet` sahip adresi olur; trader bağlantısı `setAgentWallet` yapılana kadar sadece agentURI JSON'unda (imzasız beyan) durur. Sunumda bu dürüstçe söylenir.
+
 ---
 
 ## Araştırma özeti (kararların arka planı)
