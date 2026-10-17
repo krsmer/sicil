@@ -100,11 +100,17 @@ Limitler: 20 USDT/işlem, 50 USDT/gün, 300 sn bekleme.
 ## K-15 · LLM karar katmanı: Claude Sonnet 5.5, 1H rejim + 15m giriş (17 Ekim, ~13:00)
 
 **Karar:**
-- Model **`claude-sonnet-5-5`** (Anthropic SDK `@anthropic-ai/sdk`), adaptive thinking, effort `medium`. Anahtar `.env` içinde `ANTHROPIC_API_KEY` (gitignore'da).
+- ~~Model `claude-sonnet-5-5`~~ → **K-16 ile Gemini `gemini-3.8-flash`**. Anahtar `.env` içinde (gitignore'da).
 - Kural motoru: **rejim 1 saatlikten** (EMA20/50 + eğim), **aday tetikleyicisi 15 dakikalıktan**; stop/hedef 1H ATR'den.
 - LLM en fazla **4 araç çağrısı**, toplam en fazla **45 sn**; aşılırsa, şemaya uymayan cevap, ret (refusal) veya hata → **BEKLE**.
 - Tez süresi **60–120 dk** (LLM bu aralıkta seçer; dışındaysa kod sınırlar).
 **Uygulama (Claude):** elle yazılmış araç döngüsü (bütçe ve süre kontrolü için); bütçe dolunca son istek `tool_choice: none`; her istek kalan süreyle `timeout`, `maxRetries: 0`; final cevap `output_config.format` JSON şeması; sunucu tarafı yedek model `fallbacks: "default"` (beta `server-side-fallback-2026-07-01`, Claude API) açık.
+
+## K-16 · LLM modeli: Claude Sonnet 5.5 yerine Gemini (17 Ekim, ~13:20)
+
+**Karar:** Arif Gemini API anahtarı aldı; LLM karar katmanı **`gemini-3.8-flash`** ile çalışır (Google `@google/genai` 2.30.0). `.env` → `GEMINI_API_KEY`; model `GEMINI_MODEL` ile değiştirilebilir. K-15'in diğer kuralları aynen geçerli: 1H rejim + 15m giriş, en fazla 4 araç, toplam 45 sn, aşım/şema dışı/boş cevap/hata → BEKLE, tez 60–120 dk.
+**Uygulama (Claude):** araçlar `functionDeclarations` + `parametersJsonSchema` (MCP şemasından), modelin turu değiştirilmeden geri gönderilir (thought signature'lar), bütçe dolunca `FunctionCallingConfigMode.NONE` + `responseJsonSchema`, `httpOptions.timeout` = kalan süre. `gemini-flash-latest` takma adı da 3.8-flash'a çıkıyor; tekrarlanabilirlik için sürüm sabitlendi. Sistem talimatı LLM'den karar öncesi **en az bir** araçla bağımsız işaret aramasını ister (ilk sürümde hiç araç çağırmıyordu).
+**Doğrulama (17 Ekim, sahte aday, emir yok):** 3 araç (funding, OI, RSI), 20 sn, geçerli JSON, AL 0,7 çarpan / güven 64; araçsız sürüm 8–11 sn; NONE + JSON şeması birlikte çalışıyor (5,5 sn).
 
 ---
 

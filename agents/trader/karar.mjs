@@ -1,12 +1,12 @@
-// LLM karar katmanı (K-15): kural motorunun adayını Claude Sonnet 5.5 araştırır ve AL / BEKLE / PAS der.
+// LLM karar katmanı (K-15, K-16): kural motorunun adayını Gemini araştırır ve AL / BEKLE / PAS der.
 // - LLM'in araçları, anahtarı OLMAYAN ayrı bir `okx-trade-mcp --profile piyasa --read-only --modules market` sürecinden
 //   gelir (K-11): emir aracı yok, hesap anahtarı yok.
 // - Sayıları (giriş, stop, hedef, tavan) kural motoru verir; LLM sadece boyutCarpani (0–1, sadece küçültür), güven ve
 //   tez süresi (60–120 dk) seçer.
 // - En fazla 4 araç çağrısı, toplam en fazla 45 sn. Aşım, şemaya uymayan cevap, ret veya hata → BEKLE.
-import Anthropic from "@anthropic-ai/sdk";
+import { FunctionCallingConfigMode, GoogleGenAI } from "@google/genai";
 
-export const MODEL = "claude-sonnet-5-5";
+export const MODEL = process.env.GEMINI_MODEL ?? "gemini-3.8-flash";
 export const ARAC_BUTCESI = 4;
 export const SURE_MS = 45_000;
 const TEZ_MIN_DK = 60;
@@ -40,24 +40,24 @@ Görevin: bu kurulumun işleme değip değmediğine karar vermek.
 - AL: Tez, kural motorunun hedefine stoptan ÖNCE ulaşılacağıdır. Bu tez işlemden önce zincire mühürlenir ve süre dolunca bağımsız bir denetçi tarafından kurallı olarak puanlanır.
 - BEKLE: Şimdilik karar vermek için yeterli işaret yok.
 - PAS: Kurulum kötü; bu adayı reddet.
-Araştırma için en fazla ${ARAC_BUTCESI} araç çağrısı yapabilirsin (global OKX türev verisi: funding, açık pozisyon, OI değişimi, piyasa taraması, indikatörler). Gerekmiyorsa hiç araç çağırma.
+Karar vermeden önce adayı araştır: en az bir, en fazla ${ARAC_BUTCESI} araç çağrısıyla global OKX türev ve indikatör bağlamını kontrol et (ör. ilgili -USDT-SWAP funding oranı, açık pozisyon, OI değişim taraması, başka zaman dilimi indikatörleri). Kural motorunun verdiği sayıları tekrar hesaplamak için araç çağırma; tezi destekleyen ya da çürüten bağımsız işaret ara.
 "guven" tezin tutma olasılığına dair dürüst tahminindir (0-100); geçmiş tezlerinin sonuçlarına göre kalibre et. Aşırı güven Brier skorunla zincirde görünür.
 "boyutCarpani" 0 ile 1 arasıdır ve sadece boyutu küçültür. "sureDk" ${TEZ_MIN_DK}-${TEZ_MAX_DK} arasıdır.
 Son cevabın yalnızca istenen JSON nesnesi olsun.`;
 
-let _client;
-const client = () => (_client ??= new Anthropic({ maxRetries: 0 }));
+let _ai;
+const ai = () => (_ai ??= new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }));
 
 function bekle(neden, ek = {}) {
   return { karar: "BEKLE", boyutCarpani: 0, guven: 0, sureDk: TEZ_MIN_DK, gerekce: neden, gecerli: false, ...ek };
 }
 
-/// MCP araç tanımlarını Claude araç biçimine çevirir (sadece izinli olanlar).
+/// MCP araç tanımlarını Gemini functionDeclarations biçimine çevirir (sadece izinli, sadece-okuma olanlar).
 export async function araclariHazirla(piyasaOkx) {
   const { tools } = await piyasaOkx.client.listTools();
   return tools
     .filter((t) => LLM_ARACLARI.includes(t.name) && t.annotations?.readOnlyHint)
-    .map((t) => ({ name: t.name, description: (t.description ?? "").slice(0, 1000), input_schema: t.inputSchema }));
+    .map((t) => ({ name: t.name, description: (t.description ?? "").slice(0, 1000), parametersJsonSchema: t.inputSchema }));
 }
 
 /// @returns {{karar, boyutCarpani, guven, sureDk, gerekce, gecerli, aracCagrilari, sureMs, kullanim}}
@@ -66,67 +66,74 @@ export async function kararVer({ aday, durum, baglam, gecmis, araclar, piyasaOkx
   const aracCagrilari = [];
   const kullanim = { input: 0, output: 0 };
   const kullanici = JSON.stringify({ aday, piyasaDurumu: durum, trDemoBaglam: baglam, sonTezlerim: gecmis }, null, 1);
-  const messages = [{ role: "user", content: `Aday ve piyasa durumu:\n${kullanici}\n\nKararını ver.` }];
+  const contents = [{ role: "user", parts: [{ text: `Aday ve piyasa durumu:\n${kullanici}\n\nKararını ver.` }] }];
+  const sonuc = (ek) => ({ aracCagrilari, sureMs: Date.now() - bas, kullanim, ...ek });
 
   try {
-    for (let tur = 0; tur <= ARAC_BUTCESI; tur++) {
+    for (let tur = 0; tur <= ARAC_BUTCESI + 1; tur++) {
       const kalan = SURE_MS - (Date.now() - bas);
-      if (kalan < 2_000) return bekle("zaman aşımı (45 sn)", { aracCagrilari, sureMs: Date.now() - bas, kullanim });
+      if (kalan < 2_000) return bekle("zaman aşımı (45 sn)", sonuc());
       const butceBitti = aracCagrilari.length >= ARAC_BUTCESI;
 
-      const res = await client().beta.messages.create(
-        {
-          model: MODEL,
-          max_tokens: 4000,
-          betas: ["server-side-fallback-2026-07-01"],
-          fallbacks: "default",
-          system: SISTEM,
-          thinking: { type: "adaptive" },
-          output_config: { effort: "medium", format: { type: "json_schema", schema: KARAR_SEMASI } },
-          tools: araclar,
-          tool_choice: butceBitti ? { type: "none" } : { type: "auto" },
-          messages,
+      const res = await ai().models.generateContent({
+        model: MODEL,
+        contents,
+        config: {
+          systemInstruction: SISTEM,
+          tools: [{ functionDeclarations: araclar }],
+          // Bütçe dolunca araç kapatılır ve cevap JSON şemasına zorlanır
+          toolConfig: { functionCallingConfig: { mode: butceBitti ? FunctionCallingConfigMode.NONE : FunctionCallingConfigMode.AUTO } },
+          ...(butceBitti ? { responseMimeType: "application/json", responseJsonSchema: KARAR_SEMASI } : {}),
+          maxOutputTokens: 4000,
+          httpOptions: { timeout: kalan },
         },
-        { timeout: kalan },
-      );
-      kullanim.input += res.usage?.input_tokens ?? 0;
-      kullanim.output += res.usage?.output_tokens ?? 0;
+      });
+      kullanim.input += res.usageMetadata?.promptTokenCount ?? 0;
+      kullanim.output += (res.usageMetadata?.candidatesTokenCount ?? 0) + (res.usageMetadata?.thoughtsTokenCount ?? 0);
 
-      if (res.stop_reason === "refusal") {
-        return bekle(`model reddetti (${res.stop_details?.category ?? "?"})`, { aracCagrilari, sureMs: Date.now() - bas, kullanim });
+      const aday0 = res.candidates?.[0];
+      if (!aday0?.content) {
+        return bekle(`boş cevap (${aday0?.finishReason ?? res.promptFeedback?.blockReason ?? "?"})`, sonuc());
       }
-      if (res.stop_reason === "tool_use") {
-        messages.push({ role: "assistant", content: res.content }); // değiştirmeden geri gönder (preserved thinking)
-        const sonuclar = [];
-        for (const b of res.content.filter((x) => x.type === "tool_use")) {
-          if (aracCagrilari.length >= ARAC_BUTCESI || !LLM_ARACLARI.includes(b.name)) {
-            sonuclar.push({ type: "tool_result", tool_use_id: b.id, is_error: true, content: "Araç bütçesi doldu veya araç izinli değil. Şimdi kararını JSON olarak ver." });
+      const cagrilar = res.functionCalls ?? [];
+      if (cagrilar.length) {
+        contents.push(aday0.content); // modelin turunu değiştirmeden geri gönder (thought signature'lar korunur)
+        const yanitlar = [];
+        for (const c of cagrilar) {
+          if (aracCagrilari.length >= ARAC_BUTCESI || !LLM_ARACLARI.includes(c.name)) {
+            yanitlar.push({ functionResponse: { id: c.id, name: c.name, response: { hata: "Araç bütçesi doldu veya araç izinli değil. Şimdi kararını JSON olarak ver." } } });
             continue;
           }
           const t0 = Date.now();
           try {
-            const veri = await piyasaOkx.call(b.name, b.input);
-            const metin = JSON.stringify(veri);
-            sonuclar.push({ type: "tool_result", tool_use_id: b.id, content: metin.slice(0, 6000) });
-            aracCagrilari.push({ arac: b.name, girdi: b.input, ms: Date.now() - t0 });
+            const veri = await piyasaOkx.call(c.name, c.args ?? {});
+            yanitlar.push({ functionResponse: { id: c.id, name: c.name, response: { sonuc: JSON.stringify(veri).slice(0, 6000) } } });
+            aracCagrilari.push({ arac: c.name, girdi: c.args, ms: Date.now() - t0 });
           } catch (e) {
-            sonuclar.push({ type: "tool_result", tool_use_id: b.id, is_error: true, content: e.message.slice(0, 500) });
-            aracCagrilari.push({ arac: b.name, girdi: b.input, ms: Date.now() - t0, hata: e.message.slice(0, 200) });
+            yanitlar.push({ functionResponse: { id: c.id, name: c.name, response: { hata: e.message.slice(0, 500) } } });
+            aracCagrilari.push({ arac: c.name, girdi: c.args, ms: Date.now() - t0, hata: e.message.slice(0, 200) });
           }
         }
-        messages.push({ role: "user", content: sonuclar });
+        contents.push({ role: "user", parts: yanitlar });
         continue;
       }
 
-      // Son cevap: JSON şeması + kod tarafı sınırlar
-      const metin = res.content.filter((b) => b.type === "text").map((b) => b.text).join("");
+      // Son cevap: JSON (gerekirse ```json çitini temizle) + kod tarafı sınırlar
+      const metin = (res.text ?? "").trim().replace(/^```(?:json)?\s*|\s*```$/g, "");
       let k;
       try {
         k = JSON.parse(metin);
       } catch {
-        return bekle("şemaya uymayan cevap", { aracCagrilari, sureMs: Date.now() - bas, kullanim, ham: metin.slice(0, 300) });
+        if (!butceBitti) {
+          // Şemaya zorlanmış son bir istek: araçlar kapalı, responseJsonSchema açık
+          contents.push(aday0.content);
+          contents.push({ role: "user", parts: [{ text: "Kararını yalnızca istenen JSON nesnesi olarak ver." }] });
+          aracCagrilari.push(...Array(Math.max(0, ARAC_BUTCESI - aracCagrilari.length)).fill(null).map(() => ({ arac: "(bütçe kapatıldı)" })));
+          continue;
+        }
+        return bekle("şemaya uymayan cevap", sonuc({ ham: metin.slice(0, 300) }));
       }
-      if (!["AL", "BEKLE", "PAS"].includes(k.karar)) return bekle("geçersiz karar", { aracCagrilari, sureMs: Date.now() - bas, kullanim });
+      if (!["AL", "BEKLE", "PAS"].includes(k.karar)) return bekle("geçersiz karar", sonuc());
       const boyutCarpani = k.karar === "AL" ? Math.min(1, Math.max(0, Number(k.boyutCarpani) || 0)) : 0;
       return {
         karar: k.karar,
@@ -135,15 +142,14 @@ export async function kararVer({ aday, durum, baglam, gecmis, araclar, piyasaOkx
         sureDk: Math.min(TEZ_MAX_DK, Math.max(TEZ_MIN_DK, Math.round(Number(k.sureDk) || TEZ_MIN_DK))),
         gerekce: String(k.gerekce ?? "").slice(0, 600),
         gecerli: true,
-        model: res.model,
-        aracCagrilari,
-        sureMs: Date.now() - bas,
-        kullanim,
+        model: res.modelVersion ?? MODEL,
+        ...sonuc(),
+        aracCagrilari: aracCagrilari.filter((a) => a.arac !== "(bütçe kapatıldı)"),
       };
     }
-    return bekle("araç döngüsü sonlanmadı", { aracCagrilari, sureMs: Date.now() - bas, kullanim });
+    return bekle("araç döngüsü sonlanmadı", sonuc());
   } catch (e) {
-    const tur = e instanceof Anthropic.APIConnectionTimeoutError ? "zaman aşımı" : e instanceof Anthropic.APIError ? `API hatası ${e.status ?? ""}` : "hata";
-    return bekle(`${tur}: ${e.message.slice(0, 200)}`, { aracCagrilari, sureMs: Date.now() - bas, kullanim });
+    const tur = e?.name === "AbortError" || /timeout|timed out|aborted/i.test(e?.message ?? "") ? "zaman aşımı" : e?.status ? `API hatası ${e.status}` : "hata";
+    return bekle(`${tur}: ${(e?.message ?? String(e)).slice(0, 200)}`, sonuc());
   }
 }

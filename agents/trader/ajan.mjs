@@ -1,11 +1,11 @@
 // SİCİL trader ajanı: insansız döngü. Her 15 dakikalık mum kapanışında (K-15):
-//   kural motoru (1H rejim + 15m giriş) → aday → LLM (Claude Sonnet 5.5, en fazla 4 araç / 45 sn) → AL / BEKLE / PAS
+//   kural motoru (1H rejim + 15m giriş) → aday → LLM (Gemini gemini-3.8-flash, en fazla 4 araç / 45 sn; K-16) → AL / BEKLE / PAS
 //   AL → boyut = tavan × boyutCarpani → mühür (Sealed onayı) → post_only alış → reveal → OCO çıkış
 // Fail-closed: LLM hatası/zaman aşımı → BEKLE; kasa durdurulmuşsa yeni mühür yok; açık pozisyonu olan pariteye yeni giriş yok.
 // Ret anı: kural motorunun ham tutarı kontrat limitini aşarsa, en fazla saatte bir, simülasyonsuz mühür gönderilir
 // (zincirde reverted kalır); ajan tutarı limite indirip devam eder.
 //
-// Çalıştırma: node trader/ajan.mjs [--tek-tur]   (ANTHROPIC_API_KEY repo kökündeki .env'den okunur)
+// Çalıştırma: node trader/ajan.mjs [--tek-tur]   (GEMINI_API_KEY repo kökündeki .env'den okunur)
 import { existsSync, readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { randomBytes } from "node:crypto";

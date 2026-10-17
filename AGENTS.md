@@ -70,7 +70,7 @@ SİCİL-specific hard rules (in addition to the ones above):
 
 Stack, run commands and demo script: `memory-bank/techContext.md`, `memory-bank/demoScript.md`.
 
-**Run commands** (from `agents/`, Node ESM; `npm install` once; LLM key in repo-root `.env` as `ANTHROPIC_API_KEY`):
+**Run commands** (from `agents/`, Node ESM; `npm install` once; LLM key in repo-root `.env` as `GEMINI_API_KEY` (model `gemini-3.8-flash`, K-16)):
 - `node trader/ajan.mjs` — autonomous trader loop (every 15m candle close). `--tek-tur` runs one tour and exits.
 - `node trader/sicil-baslat.mjs` — checks no open orders / pending algo orders; `--onayla` then calls `setSicilBaslangic()` (once, irreversible).
 - `node trader/executor.mjs --pair BTC-USDT --usdt 15 --tp-pct 0.5 --sl-pct 0.3` — one manual seal → order → reveal → OCO cycle (testing only; before `sicilBaslangic`).

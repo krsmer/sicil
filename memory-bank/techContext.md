@@ -13,7 +13,7 @@
 | Solidity derleyici | 0.8.24 (`foundry.toml` şablonu) | Foundry indirir | `forge build` |
 | viem | 2.57.7 (`agents/package.json`, ESM) | `agents/node_modules` | `node agents/shared/commit.mjs …` |
 | @modelcontextprotocol/sdk | 1.32.1 | `agents/node_modules` | ATK MCP istemcisi (`agents/shared/okx.mjs`) |
-| @anthropic-ai/sdk | 0.135.0 | `agents/node_modules` | LLM karar katmanı (`agents/trader/karar.mjs`, `claude-sonnet-5-5`) |
+| @google/genai | 2.30.0 | `agents/node_modules` | LLM karar katmanı (`agents/trader/karar.mjs`, **`gemini-3.8-flash`**, K-16); `.env` → `GEMINI_API_KEY` |
 | Foundry ayarları | `contracts/foundry.toml`: şablon + `via_ir = true` (stack too deep) + `ffi = true` (viem hash testi); forge-std v1.17.0 submodule | | `cd contracts && forge test` |
 
 Kurulum (diğer ekip üyeleri için):
