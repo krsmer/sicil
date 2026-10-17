@@ -1,0 +1,9 @@
+{
+  "name": "sicil-agents",
+  "private": true,
+  "type": "module",
+  "description": "SİCİL trader ve denetçi ajanları (zincir dışı)",
+  "dependencies": {
+    "viem": "^2.57.7"
+  }
+}

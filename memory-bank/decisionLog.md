@@ -75,6 +75,20 @@
 **Gerekçe:** Identity kaydında sahibin bütün ajanları `balanceOf(sahip)` ile görünür; demoScript'teki "10 hesap" cevabı ("Identity Registry sahibin bütün ajanlarını gösteriyor, bu kısmi bir cevap") bu kararla doğru kalır.
 **Bedel:** Kayıttan otomatik gelen `agentWallet` sahip adresi olur; trader bağlantısı `setAgentWallet` yapılana kadar sadece agentURI JSON'unda (imzasız beyan) durur. Sunumda bu dürüstçe söylenir.
 
+## K-13 · SicilKasasi ayrıntıları (17 Ekim, ~12:45)
+
+**Karar:**
+1. `setSicilBaslangic()` parametre almaz, `block.timestamp` yazar; sadece sahip, sadece bir kez (geriye tarih atılamaz).
+2. `attest` günlük sonucu **işaretli USDT cent** (`int256 dayPnlCent`) alır; "gün" = `sicilBaslangic`'ten beri. Baz puan rapor JSON'unda kalır. Limit 50 USDT (`-5000` ve altı → otomatik fren).
+3. **Tutar tutarlılığı:** `reveal`'de `priceE8 × sizeE8`, mühürdeki `notionalCent`'i 1 cent yuvarlama payından fazla aşarsa reddedilir. Denetçi de OKX'teki gerçek dolum tutarı mühürdeki tutarı aşan emri **eşleşmemiş** sayar.
+4. `seal` `pair`'i string alır, izin için kontrat içinde hash'ler, `Sealed`'da düz metin yayınlar. Zincir dışı hash (viem) ile kontrat hash'inin aynı olduğu Foundry'de `ffi` ile kanıtlandı.
+5. İzinli pariteler sadece BTC-USDT ve ETH-USDT.
+6. Açıklama penceresi 3 saat: pencere içinde açıklanmayan mühür "tutmadı"; kontrat geç `reveal`'i reddeder (planda süre tanımsızdı: tez süresi hash'te gizli olduğu için denetçi açıklanmamış mührün süresini bilemezdi).
+Limitler: 20 USDT/işlem, 50 USDT/gün, 300 sn bekleme.
+
+**Uygulama notları (Claude):** constructor denetçinin trader veya sahip olmasını reddeder (K-08/K-12 ile tutarlı); `reveal` durdurulmuş kontratta da çalışır (dürüstlük); `Revealed` olayı salt'ı da yayınlar (herkes hash'i yeniden hesaplayabilsin); `via_ir = true` (reveal'in 8 parametresi stack too deep veriyordu).
+**Gerekçe:** Mühürde küçük tutar gösterip büyük emir açmanın ve geriye tarihli sicil başlatmanın yolunu kapatmak; zarar limitinin kontratta gerçekten karşılaştırılabilmesi.
+
 ---
 
 ## Araştırma özeti (kararların arka planı)

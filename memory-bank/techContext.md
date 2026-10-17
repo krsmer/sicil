@@ -11,6 +11,8 @@
 | OKX ATK CLI | `@okx_ai/okx-trade-cli@1.4.8` | `/opt/homebrew/bin/okx` | `okx --version` → `1.4.8` |
 | Foundry (forge, cast, anvil, chisel) | 1.8.5 | `~/.foundry/bin` (PATH: `~/.zshenv`) | `forge --version` |
 | Solidity derleyici | 0.8.24 (`foundry.toml` şablonu) | Foundry indirir | `forge build` |
+| viem | 2.57.7 (`agents/package.json`, ESM) | `agents/node_modules` | `node agents/shared/commit.mjs …` |
+| Foundry ayarları | `contracts/foundry.toml`: şablon + `via_ir = true` (stack too deep) + `ffi = true` (viem hash testi); forge-std v1.17.0 submodule | | `cd contracts && forge test` |
 
 Kurulum (diğer ekip üyeleri için):
 ```bash

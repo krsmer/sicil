@@ -6,7 +6,9 @@ solc_version = "0.8.24"
 evm_version = "cancun"   # REQUIRED on Avalanche C-Chain (Pectra not supported)
 optimizer = true
 optimizer_runs = 200
+via_ir = true            # SicilKasasi.reveal: 8 parametre (2 string) → stack too deep
 build_info = true        # needed for Builder Hub / explorer verification
+ffi = true               # test_CommitHash_ViemIleAyni: agents/shared/commit.mjs (viem) ile karşılaştırma
 
 [rpc_endpoints]
 fuji = "https://api.avax-test.network/ext/bc/C/rpc"

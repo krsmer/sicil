@@ -45,33 +45,36 @@ Fren için açık karar: telefondaki Core'da yeni bir cüzdan açılırsa onun a
 ## 4. SicilKasasi kontratı
 
 **Immutable değerler [karar]:** Türkçe kuraldan gelir, deploy'da belirlenir, sonradan değişmez.
-- İzinli pariteler (ör. `BTC-USDT`, `ETH-USDT`)
-- İşlem başı maksimum tutar (USDT, ör. 20)
-- Bekleme süresi (iki mühür arası, saniye)
-- Günlük maksimum zarar (USDT veya baz puan, ör. 50 USDT)
-- Rol adresleri: sahip, trader, denetçi, fren
-- **`sicilBaslangic`** (zaman damgası) [karar, 16 Ekim gece]: sicilin başladığı an. Denetçi sadece bu andan **sonraki** dolumları tarar. Sabahki testler ve geliştirme sırasında aynı demo hesapta atılan emirler sicile girmez. Ajanın canlıya geçtiği ana (planda 12:30) denk getirilir; deploy'da verilir ya da sahip tarafından **bir kez** ayarlanır (sonra değişmez).
+Kod: `contracts/src/SicilKasasi.sol` (K-13). Birimler: tutar **USDT cent** (1 USDT = 100), fiyat/miktar 1e8.
+- İzinli pariteler: **sadece `BTC-USDT`, `ETH-USDT`** (BTC-TRY yok). Constructor'da `keccak256(bytes(pair))` olarak kaydedilir, `pariteler()` ile düz metin okunur
+- İşlem başı maksimum tutar: `maxTutarCent = 2000` (20 USDT)
+- Bekleme süresi: `beklemeSn = 300`
+- Günlük maksimum zarar: `maxGunlukZararCent = 5000` (50 USDT). "Gün" = `sicilBaslangic`'ten beri
+- Açıklama penceresi: `aciklamaPenceresiSn = 10800` (3 saat; tez süresi en fazla 120 dk) [K-13]
+- Rol adresleri: sahip, trader, denetçi, fren. Constructor denetçinin trader veya sahip olmasını reddeder
+- **`sicilBaslangic`** (zaman damgası) [karar, 16 Ekim gece]: sicilin başladığı an. Denetçi sadece bu andan **sonraki** dolumları tarar. Sabahki testler ve geliştirme sırasında aynı demo hesapta atılan emirler sicile girmez. Ajanın canlıya geçtiği ana denk getirilir. **[K-13] `setSicilBaslangic()` parametre almaz, `block.timestamp` yazar** (geriye tarih atılamaz); sadece sahip, sadece bir kez. Ayarlanmadan `attest` çalışmaz.
 
 **Fonksiyonlar [karar]:**
 
 | Fonksiyon | Çağıran | Kontrol | Olay |
 |---|---|---|---|
-| `seal(commitHash, pair, notionalUsdt)` | Trader | Parite izinli mi, tutar limitin altında mı, bekleme süresi doldu mu, kontrat durdurulmuş mu | `Sealed(id, commitHash, pair, notional, ts)` |
-| `reveal(id, side, priceE8, sizeE8, thesis, confidence, salt, okxOrdId)` | Trader | `keccak256(abi.encode(pair, side, priceE8, sizeE8, thesis, confidence, salt))` mühürdekiyle aynı mı | `Revealed(id, side, priceE8, okxOrdId)` |
-| `attest(upToTs, matched, unmatched, dayPnlBps, reportHash)` | Denetçi | `unmatched > 0` ise sicil bozuk; günlük zarar limiti aşıldıysa otomatik fren | `Attested`, `SicilBozuldu`, `Paused` |
+| `setSicilBaslangic()` | Sahip, bir kez | `block.timestamp` | `SicilBaslangicAyarlandi(ts)` |
+| `seal(bytes32 commitHash, string pair, uint256 notionalCent) → id` | Trader | Durdurulmuş mu, parite izinli mi (kontrat içinde hash'lenir), `0 < tutar ≤ maxTutarCent`, bekleme süresi | `Sealed(id, commitHash, pair` **düz metin**`, notionalCent, ts)`; ret: `PariteIzinsiz`, `TutarAsildi`, `BeklemeDolmadi`, `Durduruldu` |
+| `reveal(id, uint8 side, priceE8, sizeE8, string thesis, uint8 confidence, bytes32 salt, string okxOrdId)` | Trader | Hash eşleşmesi; tek sefer; pencere içinde; `side ≤ 1`, `confidence ≤ 100`; **[K-13] `priceE8 × sizeE8 ≤ (notionalCent + 1) × 1e14`** (1 cent yuvarlama payı). Durdurulmuş kontratta da yapılabilir | `Revealed(id, side, priceE8, sizeE8, thesis, confidence, salt, okxOrdId)` (herkes hash'i yeniden hesaplayabilsin diye salt da yayınlanır) |
+| `attest(uint64 upToTs, matched, unmatched, unrevealedExpired, int256 dayPnlCent, bytes32 reportHash)` | Denetçi | `sicilBaslangic` ayarlı; `sonDenetimTs < upToTs ≤ now`, `upToTs ≥ sicilBaslangic`; `unmatched > 0` → sicil kalıcı bozuk; `dayPnlCent ≤ −maxGunlukZararCent` → otomatik fren. `dayPnlCent` işaretli, `sicilBaslangic`'ten beri, ücretler dahil | `Attested`, `SicilBozuldu`, `Paused` |
 | `pause()` | Fren veya sahip | — | `Paused(by)` |
 | `unpause()` | Sahip | — | `Unpaused` |
 | `report(hub, name, agentId)` | Sahip | WorkshopHub'a `checkIn`; hub sadece kontrattan gelen çağrıyı kabul ediyor | — |
 
 **Neden parite ve tutar açık, yön gizli [karar]:** Limitlerin emir gitmeden uygulanabilmesi için parite ve tutar mühürde açık. Yön, fiyat ve yapay zekânın tezi hash'in içinde; işlem dolduktan sonra açıklanır. Amaç: sinyal işlemden önce kopyalanamasın.
 
-**Önerilen tipler [öneri]:** `pair: string`, `side: uint8` (0 = al, 1 = sat), `priceE8, sizeE8: uint256` (1e8 ölçekli), `thesis: string` (kısa JSON veya düz metin), `confidence: uint8` (0–100), `salt: bytes32` (her mühür için rastgele), `okxOrdId: string`. Hash'i hem zincir dışında (viem `encodeAbiParameters` + `keccak256`) hem kontratta **aynı sırayla** üret; Foundry testinde eşleştiğini kanıtla.
+**Tipler [karar K-13, kodda]:** `pair: string`, `side: uint8` (0 = al, 1 = sat), `priceE8, sizeE8: uint256` (1e8 ölçekli), `thesis: string` (kısa JSON veya düz metin), `confidence: uint8` (0–100), `salt: bytes32` (her mühür için rastgele), `okxOrdId: string`. Hash'i hem zincir dışında (viem `encodeAbiParameters` + `keccak256`) hem kontratta **aynı sırayla** üret. **Kanıtlandı:** `test_CommitHash_ViemIleAyni`, `agents/shared/commit.mjs`'i `ffi` ile çalıştırıp `commitHashHesapla` ile karşılaştırıyor ve aynı hash'le seal+reveal yapıyor.
 
-**Açıklanmamış mühür kuralı [karar, 16 Ekim gece]:** Süresi dolduğu halde `reveal` edilmemiş her mühür **"tutmadı"** sayılır ve denetçi raporunda ayrı bir kalem olarak gösterilir. Böylece ajan kaybettiren tezleri hiç açıklamayarak kalibrasyonunu güzelleştiremez ("seçerek gösterme yok" kuralının mühür tarafı). Emir hiç gönderilemediyse bile `reveal` yapılır (`okxOrdId` boş).
+**Açıklanmamış mühür kuralı [karar, 16 Ekim gece; K-13 ile pencere]:** `aciklamaPenceresiSn` (3 saat) içinde `reveal` edilmemiş her mühür **"tutmadı"** sayılır ve denetçi raporunda ayrı bir kalem olarak gösterilir. Böylece ajan kaybettiren tezleri hiç açıklamayarak kalibrasyonunu güzelleştiremez ("seçerek gösterme yok" kuralının mühür tarafı). Emir hiç gönderilemediyse bile `reveal` yapılır (`okxOrdId` boş).
 
 **`SicilBozuldu` kalıcıdır [karar]:** Bir kez yazılınca geri alınamaz. Sunumdaki cümle: "Bu kırmızı artık silinemez. Benim tarafımdan bile."
 
-**Foundry testleri [karar]:** limit aşımı reddi, hash eşleşmesi (doğru/yanlış), fren (pause/unpause yetkileri), sicil bozulması, `sicilBaslangic`'in sadece bir kez ayarlanabilmesi.
+**Foundry testleri [karar; 17 Ekim: 28/28 geçiyor]:** limit aşımı reddi (parite, tutar, sıfır tutar, bekleme, yetki), hash eşleşmesi (viem ile ffi, yanlış hash, iki kez, pencere), **tutar tutarlılığı** (tam eşit, tolerans içi, aşım, küçük mühürle büyük emir), fren (pause/unpause yetkileri, durdurulmuşken reveal), sicil bozulması (kalıcı), otomatik fren, `attest` zaman kuralları, `sicilBaslangic`'in `block.timestamp` ile bir kez ayarlanması, kurulum, `report` → hub.
 
 **Ret kaydının zincirde görünmesi [öneri, önemli]:** Sunumda "kontrat 34 USDT'yi reddetti" anı gösterilecek. viem gibi kütüphaneler işlemi göndermeden önce simüle eder; revert edecek işlemi **hiç göndermez**, ret zincirde iz bırakmaz. Ret anının Snowtrace'te görünmesi için limit aşan `seal` çağrısı **simülasyonsuz ve sabit gas limitiyle** gönderilmeli (reverted tx zincirde kalır). Yerel log'a da yazılır.
 
@@ -120,6 +123,8 @@ her tur (normalde 60 sn; sunum sırasında 15 sn):
        clOrdId "sicilNNNNNN" → mühür id   (yedek: reveal içindeki okxOrdId)
        mühür zamanı < emir oluşturma zamanı olmalı
      eşleşmeyen dolum = mühürsüz işlem
+       [K-13] emrin OKX'teki gerçek dolum tutarı (Σ fillPx × fillSz) mühürdeki notionalCent'i
+       (+1 cent payla) aşıyorsa o emir de eşleşmemiş sayılır → unmatched
   4. Net getiri: account_get_balance + market_get_ticker (gün başı özsermayeye göre, ücret dahil)
   5. Süresi dolan tezleri puanla (bkz. §7); süresi dolup açıklanmamış mühürleri "tutmadı" say ve raporda ayrıca listele
   6. reports/<zaman>.json yaz → keccak256 → attest(upToTs, matched, unmatched, dayPnlBps, reportHash)
