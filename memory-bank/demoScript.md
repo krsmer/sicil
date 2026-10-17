@@ -4,7 +4,9 @@
 
 ## İlk 60 saniye (ezberlenecek)
 
-> "Telegram'da bir sinyal grubu size bu ekran görüntüsünü atıyor: yüzde 300 kâr. Doğru mu? Bilemezsiniz. Zincire yazmış olsa da bilemezsiniz, çünkü sadece kazandıranları yazabilir. SİCİL'de yapay zekâ kararını işlemden önce mühürlüyor. Bağımsız bir denetçi hesabın tamamını tarıyor. Tek bir işlem gizlenirse sicil kalıcı olarak kırmızıya dönüyor. Şimdi bunu deneyeceğiz."
+> "Türkiye'de bir işe girerken sizden istenen ilk belgelerden biri adli sicil kaydıdır. Bugün paramızı yapay zekâ ajanlarına emanet ediyoruz, ama kimse onların sicilini sormuyor. SİCİL'i bunun için yaptık. Ajan her işlemden önce kararını Avalanche'a mühürler, bağımsız bir denetçi her işlemi sayar. Kaybettiği günleri bile saklayamaz.
+>
+> Telegram'da bir sinyal grubu size bu ekran görüntüsünü atıyor: yüzde 300 kâr. Doğru mu? Bilemezsiniz. Zincire yazmış olsa da bilemezsiniz, çünkü sadece kazandıranları yazabilir. SİCİL'de yapay zekâ kararını işlemden önce mühürlüyor. Bağımsız bir denetçi hesabın tamamını tarıyor. Tek bir işlem gizlenirse sicil kalıcı olarak kırmızıya dönüyor. Şimdi bunu deneyeceğiz."
 
 Neden ilk dakika bu kadar önemli: Jüri ilk dakikada "bir zincire kayıt projesi daha" diye düşünmeye başlarsa bu izlenimi geri çevirmek zor olur. Fark ilk 60 saniyede söylenir, kanıtı 2. dakikada canlı gelir.
 

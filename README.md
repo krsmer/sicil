@@ -1,5 +1,9 @@
 # SİCİL
 
+> **Türkiye'de bir işe girerken sizden istenen ilk belgelerden biri adli sicil kaydıdır. Bugün paramızı yapay zekâ ajanlarına emanet ediyoruz, ama kimse onların sicilini sormuyor. SİCİL'i bunun için yaptık.**
+>
+> Ajan her işlemden önce kararını Avalanche'a mühürler, bağımsız bir denetçi her işlemi sayar. Kaybettiği günleri bile saklayamaz.
+
 **Kaybettiği günleri bile saklayamayan bir yapay zekâ trader'ı.**
 
 Telegram'daki sinyal gruplarının kâr ekran görüntüleri düzenlenebilir, kaybettiren işlemler gizlenebilir; işlemleri sonradan zincire yazmak da yalnızca seçilenleri kanıtlar. SİCİL'de yapay zekâ ajanı OKX TR spotta her emirden **önce** kararını ve yanlışlanabilir tezini Avalanche'a mühürler. LLM kullanmayan bağımsız bir denetçi ajan hesabın **bütün** dolumlarını mühürlerle eşler, tezleri puanlar ve notu ERC-8004'e yazar. Mühürsüz tek bir işlem sicili zincirde kalıcı olarak "bozuk" yapar.
@@ -37,7 +41,7 @@ Her bağlantı Snowtrace'te (Avalanche Fuji) açılır; hiçbiri bize güvenmeni
 3. **Emir.** `Sealed` olayı onaylanmadan emir yok. OKX TR spotta `post_only` alış, `clOrdId = sicil<mühür no>`; dolunca `reveal()` ve OCO çıkışı (`algoClOrdId = sicil<no>x`). Tez süresi dolan OCO, ayrı satış emri olmadan fiyata yakın çekilir.
 4. **Denetçi.** LLM yok, sadece-okuma anahtarı. Sicil başladıktan sonraki **bütün** dolumları emir kayıtları üzerinden mühürlerle eşler (etiket + `algoId` + `ordIdList` + zaman + tutar), net getiriyi **sadece mühürlü işlemlerden** hesaplar, tezleri 1 dakikalık mumlarla puanlar (Brier), raporu `reports/` altına yazıp hash'ini `attest()` ile zincire koyar. Mühürsüz tek emir → kalıcı `SicilBozuldu`. Saatte bir ERC-8004 Reputation notu verir.
 
-Panel (`agents/panel`) aynı zincir verisini ve denetçi raporunu Türkçe gösterir; "Freni çek" butonu MetaMask'teki fren hesabıyla `pause()` gönderir.
+Panel (`agents/panel`, http://127.0.0.1:8787) bir tanıtım sayfası: sorun, nasıl çalışır (her adımda kanıt linki), 5 sn'de bir güncellenen **canlı sicil**, **kendin dene** (bir mührü kendin doğrula: açılış verisinden hash'i yeniden hesaplar ve zincirdeki mühürle karşılaştırır; kontratı kandırmayı dene: limit üstü / izinsiz parite / yetkisiz fren denemeleri `eth_call` ile reddedilir; Türkçe kuralını yaz gösterimi), mimari, teknoloji ve jüri freni (MetaMask'teki fren hesabıyla `pause()`).
 
 ---
 
