@@ -14,10 +14,13 @@
 //   6. reports/<upToTs>.json → keccak256 → attest(upToTs, matched, unmatched, unrevealedExpired, dayPnlCent, reportHash)
 //
 // Çalıştırma: node denetci/denetci.mjs [--tek-tur] [--aralik 60] [--kuru]   (--kuru: rapor üretir, zincire yazmaz)
+import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { keccak256 } from "viem";
+import { publicClient as _pc } from "../shared/chain.mjs";
 import { KASA_DEPLOY_BLOGU, SICIL_KASASI, kasaOlaylari, publicClient, readKasa, snowtrace, walletFor, writeKasa } from "../shared/chain.mjs";
 import { log, logDosyasi } from "../shared/log.mjs";
 import { connectOkx } from "../shared/okx.mjs";
@@ -35,6 +38,14 @@ const { values: opt } = parseArgs({
 const DURUM_DOSYASI = new URL("../logs/denetci-durum.json", import.meta.url);
 const RAPOR_DIR = opt.kuru ? new URL("../logs/kuru-raporlar/", import.meta.url) : new URL("../../reports/", import.meta.url);
 const KALP_ATISI_MS = 10 * 60_000; // değişiklik yoksa bile en geç 10 dk'da bir attest
+
+// ERC-8004 Reputation (K-07, K-12): denetçi → trader agentId 258, saatte bir iki not
+const REPUTATION = "0x8004B663056A597Dffe9eCcC1965A193B7388713";
+const REPUTATION_ABI = JSON.parse(readFileSync(new URL("../shared/abi/erc8004-reputation.json", import.meta.url), "utf8"));
+const TRADER_AGENT_ID = 258n;
+const NOT_ARALIGI_MS = 60 * 60_000;
+const REPO_KOK = fileURLToPath(new URL("../../", import.meta.url));
+const RAPOR_URL = (ts) => `https://raw.githubusercontent.com/krsmer/sicil/main/reports/${ts}.json`;
 const RE_GIRIS = /^sicil(\d{6})$/;
 const RE_CIKIS = /^sicil(\d{6})x$/;
 const sayi = (x) => Number(x ?? 0) || 0;
@@ -264,6 +275,7 @@ async function tur(ctx) {
   const muhurSayisi = Object.values(d.muhurler).filter((m) => m.ts >= baslangic).length;
 
   const ozet = {
+    islemHacmiUsdt: +Object.values(islemler).reduce((t, x) => t + x.giris.usdt, 0).toFixed(4),
     muhur: muhurSayisi, aciklanan: tezler.filter((x) => x.sonuc !== "aciklama-bekleniyor" && !x.acilmamis).length,
     emir: Object.keys(gruplar).length, dolum: dolumlar.length, eslesen: eslesen.length, eslesmeyen: eslesmeyenler.length,
     unrevealedExpired, netPnlUsdt: +netPnl.toFixed(4), dayPnlCent,
@@ -300,8 +312,53 @@ async function tur(ctx) {
     const bozuldu = r.events.some((e) => e.eventName === "SicilBozuldu");
     const fren = r.events.some((e) => e.eventName === "Paused");
     log("attest", { upToTs, rapor: `reports/${upToTs}.json`, reportHash, tx: r.hash, url: snowtrace(r.hash), sicilBozuldu: bozuldu, otomatikFren: fren });
-    d.sonAttest = { ms: anlik, upToTs, ozet, tx: r.hash };
+    d.sonAttest = { ms: anlik, upToTs, ozet, tx: r.hash, reportHash };
   }
+  durumKaydet(d);
+}
+
+/// reports/ klasörünü commit + push (sadece bu klasör). feedbackURI'nin çözülebilmesi için not vermeden önce çağrılır.
+function raporlariYayinla() {
+  const git = (...a) => execFileSync("git", ["-C", REPO_KOK, ...a], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  git("add", "reports");
+  const bekleyen = git("diff", "--cached", "--name-only", "--", "reports").trim();
+  if (!bekleyen) return { yeni: 0 };
+  git("commit", "-m", `denetçi: ${bekleyen.split("\n").length} rapor`, "--", "reports");
+  git("push", "-q");
+  return { yeni: bekleyen.split("\n").length, commit: git("rev-parse", "--short", "HEAD").trim() };
+}
+
+/// Saatte bir ERC-8004 Reputation: (1) net getiri, işlem hacmine oranla, yüzde (valueDecimals 2 → değer = baz puan)
+/// (2) kalibrasyon: Brier skoru (valueDecimals 4). feedbackURI = repodaki rapor, feedbackHash = attest'teki rapor hash'i.
+async function itibarNotu(ctx) {
+  const { d, denetci } = ctx;
+  const a = d.sonAttest;
+  if (opt.kuru || !a?.reportHash) return;
+  if (d.sonNot && Date.now() - d.sonNot.ms < NOT_ARALIGI_MS) return;
+  let yayin;
+  try { yayin = raporlariYayinla(); } catch (e) { log("rapor-yayin-hata", { hata: e.message.slice(0, 300) }); }
+  const uri = RAPOR_URL(a.upToTs);
+  const endpoint = `eip155:43113:${SICIL_KASASI}`;
+  const notlar = [];
+  if (a.ozet.islemHacmiUsdt > 0) {
+    const bps = Math.round((a.ozet.netPnlUsdt / a.ozet.islemHacmiUsdt) * 10_000);
+    notlar.push({ ad: "net-getiri", value: BigInt(bps), decimals: 2, tag1: "net-getiri", tag2: "sicil" });
+  }
+  if (a.ozet.brier !== null && a.ozet.brier !== undefined) {
+    notlar.push({ ad: "kalibrasyon", value: BigInt(Math.round(a.ozet.brier * 10_000)), decimals: 4, tag1: "kalibrasyon-brier", tag2: "sicil" });
+  }
+  const txler = {};
+  for (const n of notlar) {
+    const hash = await denetci.writeContract({
+      address: REPUTATION, abi: REPUTATION_ABI, functionName: "giveFeedback",
+      args: [TRADER_AGENT_ID, n.value, n.decimals, n.tag1, n.tag2, endpoint, uri, a.reportHash],
+    });
+    const rc = await _pc.waitForTransactionReceipt({ hash });
+    if (rc.status !== "success") throw new Error(`giveFeedback ${n.ad} başarısız: ${snowtrace(hash)}`);
+    txler[n.ad] = hash;
+    log("itibar-notu", { not: n.ad, agentId: Number(TRADER_AGENT_ID), value: Number(n.value), valueDecimals: n.decimals, feedbackURI: uri, feedbackHash: a.reportHash, tx: hash, url: snowtrace(hash) });
+  }
+  d.sonNot = { ms: Date.now(), upToTs: a.upToTs, txler, yayin, notSayisi: notlar.length };
   durumKaydet(d);
 }
 
@@ -314,6 +371,7 @@ async function main() {
   try {
     for (;;) {
       try { await tur(ctx); } catch (e) { log("denetim-hata", { hata: e.message, oneri: e.okx?.suggestion }); }
+      try { await itibarNotu(ctx); } catch (e) { log("itibar-hata", { hata: e.message.slice(0, 300) }); }
       if (opt["tek-tur"] || dur) break;
       await new Promise((r) => setTimeout(r, Number(opt.aralik) * 1000));
       if (dur) break;
