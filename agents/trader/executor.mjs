@@ -2,9 +2,10 @@
 // Kurallar: mühür zincirde onaylanmadan emir yok; spotta pozisyon sadece ALIŞ ile açılır, satış sadece OCO çıkışıdır;
 // post_only fiyatı demo piyasa verisinden; emir aracını sadece bu kod çağırır.
 //
-// Kullanım (elle tetiklenen aday):
+// Ajan döngüsü (trader/ajan.mjs) islemYap()'ı çağırır. Elle tetiklenen aday için CLI:
 //   node trader/executor.mjs --pair BTC-USDT --usdt 15 --tp-pct 0.5 --sl-pct 0.03 [--fill-timeout 600] [--izle-cikis 1800]
 import { randomBytes } from "node:crypto";
+import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { toHex } from "viem";
 import { walletFor, writeKasa, readKasa, snowtrace } from "../shared/chain.mjs";
@@ -12,7 +13,10 @@ import { commitHash } from "../shared/commit.mjs";
 import { log } from "../shared/log.mjs";
 import { connectOkx } from "../shared/okx.mjs";
 
+const CLI = import.meta.url === pathToFileURL(process.argv[1] ?? "").href;
 const { values: opt } = parseArgs({
+  strict: false,
+  args: CLI ? process.argv.slice(2) : [],
   options: {
     pair: { type: "string", default: "BTC-USDT" },
     usdt: { type: "string", default: "15" },
@@ -47,19 +51,15 @@ function fromE8(x) {
 }
 const floorTo = (x, stepE8) => (x / stepE8) * stepE8;
 
-async function main() {
-  const pair = opt.pair;
-  const notionalCent = BigInt(Math.round(Number(opt.usdt) * 100));
-  const tpPct = Number(opt["tp-pct"]);
-  const slPct = Number(opt["sl-pct"]);
-  const tez = { kaynak: "elle-test", hedefPct: tpPct, gecersizlikPct: slPct, sureDk: Number(opt["sure-dk"]), guven: Number(opt.guven) };
+/// Tek aday için mühür → emir → açıklama → OCO. okx: yürütücü süreci (demo, emir yetkili); trader: viem cüzdanı.
+/// tez: mühürlenecek tez nesnesi (hedefPct, gecersizlikPct, sureDk, guven ...). Dönüş: { id, clOrdId, ordId, dolum, algoId }
+export async function islemYap(okx, trader, { pair, notionalCent, tez, fillTimeoutSn = 600, izleCikisSn = 0 }) {
+  const tpPct = Number(tez.hedefPct);
+  const slPct = Number(tez.gecersizlikPct);
   const thesis = JSON.stringify(tez);
-  const confidence = tez.guven;
-
-  const okx = await connectOkx({ profile: process.env.OKX_PROFILE ?? "demo", modules: "spot,account,market", name: "sicil-yurutucu" });
-  const trader = walletFor("sicil-trader");
-
-  try {
+  const confidence = Math.round(Number(tez.guven));
+  const sonuc = {};
+  {
     if (await readKasa("durduruldu")) throw new Error("kasa durdurulmuş: yeni mühür yok");
 
     // 1. Fiyat ve boyut: demo piyasa verisinden, kural limitlerine göre
@@ -80,6 +80,7 @@ async function main() {
     const id = seal.events.find((e) => e.eventName === "Sealed").args.id;
     const clOrdId = `sicil${String(id).padStart(6, "0")}`;
     log("muhur", { id: Number(id), clOrdId, tx: seal.hash, url: snowtrace(seal.hash) });
+    Object.assign(sonuc, { id: Number(id), clOrdId, sealTx: seal.hash });
 
     // 3. Emir: post_only alış, clOrdId = mühür no
     let ordId = "";
@@ -97,7 +98,7 @@ async function main() {
     // 4. Dolum bekle; süre dolarsa iptal
     let ord = null;
     if (ordId) {
-      const bitis = Date.now() + Number(opt["fill-timeout"]) * 1000;
+      const bitis = Date.now() + Number(fillTimeoutSn) * 1000;
       for (;;) {
         [ord] = await okx.call("spot_get_order", { instId: pair, ordId });
         if (ord.state === "filled" || ord.state === "canceled") break;
@@ -116,6 +117,7 @@ async function main() {
     // 5. Açıklama: emir gitmese/dolmasa da yapılır
     const rev = await writeKasa(trader, "reveal", [id, SIDE_AL, priceE8, sizeE8, thesis, confidence, salt, ordId]);
     log("aciklama", { id: Number(id), tx: rev.hash, url: snowtrace(rev.hash) });
+    Object.assign(sonuc, { ordId, revealTx: rev.hash, state: ord?.state ?? "gonderilemedi", accFillSz: ord?.accFillSz ?? "0", avgPx: ord?.avgPx ?? "" });
 
     // 6. OCO çıkış (sadece satış = çıkış). Alış ücreti taban birimde kesildiyse satılabilir miktar azalır.
     const fillE8 = ord ? toE8(ord.accFillSz || "0") : 0n;
@@ -133,9 +135,10 @@ async function main() {
         tpTriggerPx: fromE8(tpE8), tpOrdPx: "-1", slTriggerPx: fromE8(slE8), slOrdPx: "-1", algoClOrdId,
       });
       log("oco", { id: Number(id), algoId: a.algoId, algoClOrdId: a.algoClOrdId, sz: fromE8(exitE8), tp: fromE8(tpE8), sl: fromE8(slE8), sCode: a.sCode });
+      Object.assign(sonuc, { algoId: a.algoId, algoClOrdId: a.algoClOrdId });
 
       // 7. (test) OCO tetiklenene kadar izle; çıkış emrinde algoClOrdId/algoId görünüyor mu?
-      const izle = Number(opt["izle-cikis"]);
+      const izle = Number(izleCikisSn);
       if (izle > 0) {
         const bitis = Date.now() + izle * 1000;
         while (Date.now() < bitis) {
@@ -158,12 +161,24 @@ async function main() {
         }
       }
     }
+  }
+  return sonuc;
+}
+
+async function main() {
+  const okx = await connectOkx({ profile: process.env.OKX_PROFILE ?? "demo", modules: "spot,account,market", name: "sicil-yurutucu" });
+  try {
+    const tez = { kaynak: "elle-test", hedefPct: Number(opt["tp-pct"]), gecersizlikPct: Number(opt["sl-pct"]), sureDk: Number(opt["sure-dk"]), guven: Number(opt.guven) };
+    await islemYap(okx, walletFor("sicil-trader"), {
+      pair: opt.pair, notionalCent: BigInt(Math.round(Number(opt.usdt) * 100)), tez,
+      fillTimeoutSn: Number(opt["fill-timeout"]), izleCikisSn: Number(opt["izle-cikis"]),
+    });
   } finally {
     await okx.close();
   }
 }
 
-main().catch((e) => {
+if (CLI) main().catch((e) => {
   log("hata", { hata: e.message, oneri: e.okx?.suggestion });
   process.exitCode = 1;
 });

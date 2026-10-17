@@ -68,4 +68,11 @@ SİCİL-specific hard rules (in addition to the ones above):
 - Wallet keystores live in `~/.foundry/keystores/` (accounts `sicil-sahip`, `sicil-trader`, `sicil-denetci`, `sicil-fren`), passwords in `~/.foundry/keystores/.sifreler/`. Never copy them into the repo, never print them.
 - Known wrong names in older docs: there is **no** `account_get_audit_log` (use `trade_get_history`, a local tool-call log) and **no** `account_get_fee_rates` (use `account_get_trade_fee`). Full list: `memory-bank/techContext.md` §4.
 
-Stack, run commands and demo script: `memory-bank/techContext.md`, `memory-bank/demoScript.md`. Fill in the exact run command here once the code exists.
+Stack, run commands and demo script: `memory-bank/techContext.md`, `memory-bank/demoScript.md`.
+
+**Run commands** (from `agents/`, Node ESM; `npm install` once; LLM key in repo-root `.env` as `ANTHROPIC_API_KEY`):
+- `node trader/ajan.mjs` — autonomous trader loop (every 15m candle close). `--tek-tur` runs one tour and exits.
+- `node trader/sicil-baslat.mjs` — checks no open orders / pending algo orders; `--onayla` then calls `setSicilBaslangic()` (once, irreversible).
+- `node trader/executor.mjs --pair BTC-USDT --usdt 15 --tp-pct 0.5 --sl-pct 0.3` — one manual seal → order → reveal → OCO cycle (testing only; before `sicilBaslangic`).
+- Contracts: `cd contracts && forge test` (29 tests; `ffi` runs `agents/shared/commit.mjs`).
+- Logs: `agents/logs/*.jsonl` (gitignored).

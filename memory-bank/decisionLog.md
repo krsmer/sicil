@@ -97,6 +97,15 @@ Limitler: 20 USDT/işlem, 50 USDT/gün, 300 sn bekleme.
 **Uygulandı (17 Ekim ~13:25):** `SicilKasasi` bu fren adresiyle deploy edildi: `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8`. Builder Hub `exact_match` + Snowtrace verified.
 **Gereken:** Core'da Fuji testnet açık; panelde EIP-1193 `pause()` butonu.
 
+## K-15 · LLM karar katmanı: Claude Sonnet 5.5, 1H rejim + 15m giriş (17 Ekim, ~13:00)
+
+**Karar:**
+- Model **`claude-sonnet-5-5`** (Anthropic SDK `@anthropic-ai/sdk`), adaptive thinking, effort `medium`. Anahtar `.env` içinde `ANTHROPIC_API_KEY` (gitignore'da).
+- Kural motoru: **rejim 1 saatlikten** (EMA20/50 + eğim), **aday tetikleyicisi 15 dakikalıktan**; stop/hedef 1H ATR'den.
+- LLM en fazla **4 araç çağrısı**, toplam en fazla **45 sn**; aşılırsa, şemaya uymayan cevap, ret (refusal) veya hata → **BEKLE**.
+- Tez süresi **60–120 dk** (LLM bu aralıkta seçer; dışındaysa kod sınırlar).
+**Uygulama (Claude):** elle yazılmış araç döngüsü (bütçe ve süre kontrolü için); bütçe dolunca son istek `tool_choice: none`; her istek kalan süreyle `timeout`, `maxRetries: 0`; final cevap `output_config.format` JSON şeması; sunucu tarafı yedek model `fallbacks: "default"` (beta `server-side-fallback-2026-07-01`, Claude API) açık.
+
 ---
 
 ## Araştırma özeti (kararların arka planı)

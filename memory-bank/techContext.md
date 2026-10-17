@@ -12,6 +12,8 @@
 | Foundry (forge, cast, anvil, chisel) | 1.8.5 | `~/.foundry/bin` (PATH: `~/.zshenv`) | `forge --version` |
 | Solidity derleyici | 0.8.24 (`foundry.toml` şablonu) | Foundry indirir | `forge build` |
 | viem | 2.57.7 (`agents/package.json`, ESM) | `agents/node_modules` | `node agents/shared/commit.mjs …` |
+| @modelcontextprotocol/sdk | 1.32.1 | `agents/node_modules` | ATK MCP istemcisi (`agents/shared/okx.mjs`) |
+| @anthropic-ai/sdk | 0.135.0 | `agents/node_modules` | LLM karar katmanı (`agents/trader/karar.mjs`, `claude-sonnet-5-5`) |
 | Foundry ayarları | `contracts/foundry.toml`: şablon + `via_ir = true` (stack too deep) + `ffi = true` (viem hash testi); forge-std v1.17.0 submodule | | `cd contracts && forge test` |
 
 Kurulum (diğer ekip üyeleri için):
@@ -168,7 +170,7 @@ Alternatif: `spot_place_order` doğrudan `tpTriggerPx`/`slTriggerPx` alarak giri
 | Earn | Demo modda **desteklenmiyor**; kapsam dışı |
 | Grid bot "demo'da yok" | Başlangıç dokümanının iddiası; resmi skill bunun tersini yazıyor. SİCİL için önemsiz |
 | Demo piyasa verisi | Demo hesabın fiyatları canlı piyasadan farklı olabilir. Demo'da limit/post_only fiyatını **demo piyasa verisinden** (`demo: true`) hesapla; yoksa emir dolmaz veya reddedilir [doğrula] |
-| OCO çıkış dolumları | **Doğrulandı (17 Ekim):** tetiklenen emrin `clOrdId`'si borsa üretimi (`O<sayı>`), `algoClOrdId` sadece **emir** kaydında var, **dolum** kaydında yok. Denetçi: dolum → `ordId` → `spot_get_order`/`spot_get_orders` → `algoClOrdId` (`sicilNNNNNNx`) → mühür. Alternatif: algo geçmişindeki `ordIdList`. Bir emir birden çok dolum olarak gelir; `ordId`'ye göre grupla |
+| OCO çıkış dolumları | **İki kez doğrulandı (17 Ekim; ikincisi yürütücünün kendi döngüsünde, mühür #1):** OCO `sicil000001x` SL tarafından tetiklendi → çıkış emri ordId `4017395256996507649`: `clOrdId = "O4017395256906630144"` (borsa üretimi), **`algoId = 4017373798534590465` ve `algoClOrdId = sicil000001x` emir kaydında VAR**; dolum kaydında (`tradeId 1415987055`) `algoClOrdId`/`algoId` **YOK** (null). İlk test (manuel, `sicil000002x`) aynı sonucu vermişti. tetiklenen emrin `clOrdId`'si borsa üretimi (`O<sayı>`), `algoClOrdId` sadece **emir** kaydında var, **dolum** kaydında yok. Denetçi: dolum → `ordId` → `spot_get_order`/`spot_get_orders` → `algoClOrdId` (`sicilNNNNNNx`) → mühür. Alternatif: algo geçmişindeki `ordIdList`. Bir emir birden çok dolum olarak gelir; `ordId`'ye göre grupla |
 | Profilsiz MCP süreci | `--profile` verilmezse `default_profile` (demo) anahtarı kullanılır. Anahtarsız süreç için anahtarı olmayan ayrı profil (`piyasa`) gerekir |
 | Fiyat kaynağı ayrımı | LLM'in gördüğü global veri **sadece bağlam** içindir. Emir fiyatı (`px`), stop ve tavan **her zaman TR demo verisinden** (`demo` profili, `demo: true`) hesaplanır |
 | Smart registration | Dokümana göre Trade izni olmayan anahtarda emir araçları gizlenir; **TR demo'da gizlenmedi** (17 Ekim). Yazma araçlarını kapatmanın güvenilir yolu `--read-only` |

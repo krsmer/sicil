@@ -149,3 +149,4 @@ Mühür → emir → açıklama döngüsü · denetçi ajan ve `SicilBozuldu` ·
 | 17 Ekim 12:30 | Uçtan uca döngü (mühür #1 → post_only `sicil000001` → reveal → OCO `sicil000001x`) | ✅ Mühür ~5 sn, dolum ~29 sn, reveal ~5 sn; demo maker ücreti %0,08 (BTC olarak kesildi) |
 | 17 Ekim 12:45 | `sealRetGoster` (simülasyonsuz, gas 200k): 34 USDT mühür | ✅ Zincirde `reverted`, `TutarAsildi(3400, 2000)`: tx `0xe2206eb4…48bd1` (sicilBaslangic öncesi test) |
 | 17 Ekim 12:45 | Kural motoru (1H demo mumları, EMA20/50, ATR14) | ✅ Çalışıyor; o an BTC ve ETH yatay → aday yok. BTC ATR ~%0,41 → ham tutar ~49 USDT > 20 (ret anı doğal olarak oluşur) |
+| 17 Ekim 12:42 | OCO tetiklenmesi (yürütücü döngüsü, mühür #1) | ✅ SL tetiklendi, çıkış @ 81.650,4. Çıkış **emrinde** `algoId` + `algoClOrdId=sicil000001x` var, **dolumda** yok → denetçi dolum→ordId→emir zinciriyle eşler. İşlem sonucu ≈ −0,005 USDT fiyat + ≈ −0,027 USDT ücret |

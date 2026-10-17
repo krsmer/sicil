@@ -4,6 +4,7 @@
   "type": "module",
   "description": "SİCİL trader ve denetçi ajanları (zincir dışı)",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
     "@modelcontextprotocol/sdk": "^1.32.1",
     "viem": "^2.57.7"
   }

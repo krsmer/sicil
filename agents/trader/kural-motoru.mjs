@@ -1,17 +1,18 @@
 // Kural motoru: BTC-USDT / ETH-USDT için rejim + ATR'den ADAY üretir. Sayıları (giriş, stop, hedef, tavan tutar) sadece
 // burası belirler; LLM bunları değiştiremez, yalnızca boyutu küçültebilir ve AL / BEKLE / PAS der.
 // Spotta pozisyon SADECE ALIŞ ile açılır: aşağı trendde aday yoktur (açığa satış tasarlanmaz).
-// Veri: TR demo piyasası (demo: true) 1 saatlik mumlar; fiyatlar emrin gideceği piyasadan.
+// Veri: TR demo piyasası (demo: true). Rejim 1 saatlikten, aday tetikleyicisi 15 dakikalıktan (K-15); stop/hedef 1H ATR.
 
 export const AYAR = {
   bar: "1H",
+  girisBar: "15m",
   mumSayisi: 100,
   emaKisa: 20,
   emaUzun: 50,
   atrDonem: 14,
   egimBar: 3, // EMA20 eğimi: son 3 mum
   egimEsik: 0.0005, // |eğim| bundan küçükse yatay
-  donusAtr: 0.5, // yatayda: kapanış EMA20 − 0.5×ATR altındaysa ortalamaya dönüş adayı
+  donusAtr: 0.5, // yatayda: 15m kapanış, 15m EMA20 − 0.5×ATR15 altındaysa ortalamaya dönüş adayı
   stopAtr: 1.5,
   hedefAtr: 2.0,
   riskButceUsdt: 0.3, // işlem başı kabul edilen zarar (stopa gelirse)
@@ -35,15 +36,24 @@ function atr(mumlar, donem) {
   return a;
 }
 
-/// Tek parite için piyasa durumu ve (varsa) aday.
-export async function adayUret(okx, pair, { maxTutarUsdt, ayar = AYAR } = {}) {
-  // ATK mumları yeniden eskiye döner: [ts, o, h, l, c, vol, ...]; kapanmamış son mumu (confirm = "0") at
-  const ham = await okx.call("market_get_candles", { instId: pair, bar: ayar.bar, limit: ayar.mumSayisi, demo: true });
-  const mumlar = ham
+// ATK mumları yeniden eskiye döner: [ts, o, h, l, c, vol, volCcy, volCcyQuote, confirm]; kapanmamış mumu (confirm = "0") at
+async function mumlariAl(okx, pair, bar, limit) {
+  const ham = await okx.call("market_get_candles", { instId: pair, bar, limit, demo: true });
+  return ham
     .filter((r) => r[8] === undefined || r[8] === "1")
     .map((r) => ({ ts: Number(r[0]), o: +r[1], h: +r[2], l: +r[3], c: +r[4] }))
     .reverse();
+}
+
+/// Tek parite için piyasa durumu ve (varsa) aday.
+export async function adayUret(okx, pair, { maxTutarUsdt, ayar = AYAR } = {}) {
+  const mumlar = await mumlariAl(okx, pair, ayar.bar, ayar.mumSayisi);
   if (mumlar.length < ayar.emaUzun + ayar.egimBar) throw new Error(`${pair}: yetersiz mum (${mumlar.length})`);
+  const mum15 = await mumlariAl(okx, pair, ayar.girisBar, ayar.mumSayisi);
+  if (mum15.length < ayar.emaKisa + 1) throw new Error(`${pair}: yetersiz 15m mum (${mum15.length})`);
+  const ema15 = ema(mum15.map((m) => m.c), ayar.emaKisa).at(-1);
+  const atr15 = atr(mum15, ayar.atrDonem);
+  const son15 = mum15.at(-1);
 
   const kapanis = mumlar.map((m) => m.c);
   const e20 = ema(kapanis, ayar.emaKisa);
@@ -64,12 +74,19 @@ export async function adayUret(okx, pair, { maxTutarUsdt, ayar = AYAR } = {}) {
     pair, rejim, kapanis: son.c, mumTs: new Date(son.ts).toISOString(),
     ema20: +ema20.toFixed(2), ema50: +ema50.toFixed(2), egim: +egim.toFixed(5),
     atr: +atr14.toFixed(2), atrPct: +((atr14 / son.c) * 100).toFixed(3), giris,
+    m15: { kapanis: son15.c, mumTs: new Date(son15.ts).toISOString(), ema20: +ema15.toFixed(2), atr: +atr15.toFixed(2) },
   };
 
+  // Tetikleyici 15 dakikalıktan: trendde momentum (15m kapanış 15m EMA20 üstünde), yatayda aşırı satış
   let tur = null;
-  if (rejim === "yukari-trend") tur = "trend-takip";
-  else if (rejim === "yatay" && son.c < ema20 - ayar.donusAtr * atr14) tur = "ortalamaya-donus";
-  if (!tur) return { durum, aday: null, neden: rejim === "asagi-trend" ? "aşağı trend: spotta açığa satış yok" : "yatay, dönüş seviyesi yok" };
+  let neden = "";
+  if (rejim === "asagi-trend") neden = "aşağı trend: spotta açığa satış yok";
+  else if (rejim === "yukari-trend") {
+    if (son15.c > ema15) tur = "trend-takip";
+    else neden = "yukarı trend ama 15m kapanış EMA20 altında";
+  } else if (son15.c < ema15 - ayar.donusAtr * atr15) tur = "ortalamaya-donus";
+  else neden = "yatay, 15m'de dönüş seviyesi yok";
+  if (!tur) return { durum, aday: null, neden };
 
   const stop = giris - ayar.stopAtr * atr14;
   const hedef = giris + ayar.hedefAtr * atr14;
