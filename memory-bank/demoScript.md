@@ -21,6 +21,33 @@
 - "Kuralını yaz" (4. bölüm, istenirse): jüriden bir kural al; yapay zekâ sayılara çevirir, kabul/ret kararını kod verir; kartta GÖSTERİM yazar, gerçek kasa kurulmaz. Vizyon: onaylanan her kurala kullanıcının **kendi kasası** kurulur ("kuralı kullanıcı koyar, ama bir kez koyar").
 - Sayılar canlı: "X sn", "Y mühür" gibi değerleri sunum anında ekrandan oku, ezberden söyleme.
 
+## Sunum metni (söylenecek, ~3,5 dk)
+
+Köşeli parantezler sahne yönergesi, söylenmez. **[ekrandan]** yazan sayıları sunum anında ekrandan oku.
+
+**1 · Giriş (0:00–0:20)** [Sayfa açık, **S** ile sunum modu]
+> Türkiye'de bir işe girerken sizden istenen ilk belgelerden biri adli sicil kaydıdır. Bugün paramızı yapay zekâ ajanlarına emanet ediyoruz, ama kimse onların sicilini sormuyor. **SİCİL'i bunun için yaptık.** Sağdaki damga canlı: sicil temiz. Ajanımız bugün 13:01'den beri insansız çalışıyor.
+
+**2 · Sorun ve kullanıcı (0:20–0:45)** [→]
+> Telegram'daki sinyal grupları yüzde 300 kâr ekranı paylaşıyor. O ekran düzenlenebilir, kaybettiren işlemler gizlenebilir. İşlemleri sonradan zincire yazmak da çözmüyor, çünkü sadece seçilenler yazılır. Biz kaydı işlemden **önce** yapıyoruz ve bağımsız bir denetçi **bütün** işlemleri sayıyor. [Tablonun son satırı] Kanıtladığımız şey yazılanın değişmediği değil, **hiçbir işlemin gizlenmediği**.
+
+**3 · Canlı sicil (0:45–1:40)** [→]
+> Şu ana kadar **[ekrandan]** mühür, **[ekrandan]** işlem, mühürsüz işlem sıfır. Son kayda bakalım. [En yeni kart] Kural motoru ETH'de bir aday buldu. Sonra yapay zekâ kendi seçtiği dört OKX aracını sırayla çağırdı: fonlama oranı, açık pozisyon, 15 dakikalık RSI ve saatlik MACD. [Araç listesi] AL dedi ve yanlışlanabilir bir tez yazdı. [Tez cümlesini oku] Bu karar emirden **[ekrandan] saniye önce** Avalanche'a mühürlendi. Emir OKX'e gitti, doldu, denetçi mühürle eşleştirdi. [4 adımlı şerit] Süre dolunca tezi denetçi puanlıyor. Bir önceki tez tutmadı ve bunu saklayamıyoruz. Net getirimiz de şu an eksi. İddiamız kâr değil, **yalan söyleyemeyen bir sicil**.
+
+**4 · Canlı deney (1:40–2:10)** [→ · Önce "Dört denemeyi çalıştır", fren **sonra**: kasa durunca mühür denemeleri limit hatası yerine "Durduruldu" gösterir]
+> Kontratı kandırmayı deneyelim. [Dört denemeyi çalıştır] 30 USDT'lik mühür, izinsiz bir parite, yabancı adresten fren: dördünü de kontrat reddetti. Şimdi söz sizde. [Jüri üyesine] Freni çeker misiniz? [MetaMask onayı → AJAN DURDURULDU] Kasa durdu, ajan yeni mühür atamıyor. Freni çekmek kolay, yeniden başlatmak sadece sahibin yetkisinde.
+
+**5 · Mimari ve entegrasyonlar (2:10–2:40)** [→]
+> İki ajan birbirine doğrudan mesaj göndermiyor, sadece zincire güveniyor: trader işlem yapıyor, denetçi kanıtlıyor. Denetçide yapay zekâ yok, sonucu herkes tekrarlayabilir. Neden Avalanche? Mührün emirden önce kesinleşmesi gerekiyor. Blok **[ekrandan]** saniyede kesinleşiyor, bir mühürün maliyeti pratikte sıfır. Bu yüzden her emirden önce mühür atabiliyoruz. OKX tarafında üç ayrı Agent Trade Kit süreci çalışıyor. Yapay zekânın bağlandığı süreç sadece okuyabiliyor, emir aracı hiç yok. Arkasında 29 kontrat, 33 ajan testi var.
+
+**6 · İş modeli ve OKX.AI (2:40–3:30)** [→]
+> Kimin için? OKX TR'de bir ajanı takip etmeden önce gerçek geçmişini görmek isteyen yatırımcı için. Ve başarısını ekran görüntüsüyle değil, sicille kanıtlamak isteyen geliştirici için. SPK nedeniyle OKX TR kaldıraçlı copy-trading sunamıyor. Ama **sicili doğrulanmış spot ajanlar** sunabilir. SİCİL bir servis olarak çalışıyor: bir ajanın numarasını verin, sicili dönsün. [JSON] Bu yanıt şu an canlı: sicil temiz, mühürsüz sıfır, net getiri, kalibrasyon ve son denetimin zincir kaydı. Vizyonumuz şu: geliştiricilere doğrulanmış sicil aboneliği, sicil sorgusu başına x402 ile mikroödeme ve OKX.AI'da listelenen bir servis. Bugün hazır olan kısım şu: kurallar kontrata bir kez yazılıyor, değiştirilemiyor, ve her ajana tek kurulumla kendi kasası açılıyor.
+
+**7 · Kapanış (3:30–4:00)** [→]
+> Yapay zekâyı muhakeme gereken yere, kuralı güven gereken yere koyduk. **Kaybettiği günleri bile saklayamayan bir yapay zekâ trader'ı.** Bu tablodaki her satır tıklanabilir bir kanıt; hiçbiri bize güvenmenizi gerektirmiyor. Teşekkürler.
+
+**Sahne notları:** Fren çekildikten sonra ajan, sahip kasayı açana kadar durur; sunumdan sonra terminalden `unpause`. Süre sıkışırsa 5. bölümü tek cümleye indir: "İki ajan sadece zincire güveniyor, mühür bir-iki saniyede kesinleşiyor, yapay zekânın emir aracı yok."
+
 ## Soru-cevap (5 olası soru)
 
 | Soru | Kısa cevap |
