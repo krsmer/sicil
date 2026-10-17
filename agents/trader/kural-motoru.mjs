@@ -12,8 +12,8 @@ export const AYAR = {
   emaUzun: 50,
   atrDonem: 14,
   egimBar: 3, // EMA20 eğimi: son 3 mum
-  egimEsik: 0.0005, // |eğim| bundan küçükse yatay
-  donusAtr: 0.5, // yatayda: 15m kapanış, 15m EMA20 − 0.5×ATR15 altındaysa ortalamaya dönüş adayı
+  egimEsik: 0.0002, // |eğim| bundan küçükse yatay (K-17: 0,0005 → 0,0002; hafif yükselişler de trend sayılsın)
+  donusAtr: 0.25, // yatayda: 15m kapanış, 15m EMA20 − 0,25×ATR15 altındaysa ortalamaya dönüş adayı (K-17: 0,5 → 0,25)
   stopAtr: 2.0, // × 15m ATR
   hedefAtr: 3.0, // × 15m ATR (gidiş-dönüş demo ücreti ~%0,18; hedef bunun belirgin üstünde kalsın)
   riskButceUsdt: 0.3, // işlem başı kabul edilen zarar (stopa gelirse)

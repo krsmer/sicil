@@ -83,3 +83,29 @@ test("net getiri sadece mühürlü dolumlardan; alış ücreti BTC'den düşül�
   const beklenen = 82211.7 * 0.00017148 + Math.max(0, 0.00017162 - 0.000000137296 - 0.00017148) * 82000 - 81572.2 * 0.00017162 - 0.0141;
   assert.ok(Math.abs(pnl - beklenen) < 1e-6, `${pnl} ≠ ${beklenen}`);
 });
+
+// ---- Amend edilmiş OCO (süre doldu çıkışı: spot_amend_algo_order ile TP/SL fiyata yakın çekilir) ----
+test("amend: algoId ve algoClOrdId aynı, cTime değişmemiş → çıkış hâlâ mühüre bağlanır", () => {
+  const r = eslestir(d, BAS, temelGruplar(), { G2: giris, C2: cikis }, oco);
+  assert.equal(r.eslesmeyenler.length, 0);
+});
+
+test("amend: cTime amend anına güncellenmiş (daha geç) → hâlâ eşleşir", () => {
+  const amendli = { A2: { ...oco.A2, cTime: ms(BAS + 7200) } };
+  const r = eslestir(d, BAS, temelGruplar(), { G2: giris, C2: { ...cikis, cTime: ms(BAS + 7300) } }, amendli);
+  assert.equal(r.eslesmeyenler.length, 0);
+  assert.deepEqual(r.eslesen.map((x) => x.tur), ["giris", "cikis"]);
+});
+
+test("amend: borsa yeni algoId üretse bile (aynı algoClOrdId, ordIdList) → eşleşir", () => {
+  const yeni = { A9: { algoId: "A9", algoClOrdId: "sicil000002x", cTime: ms(BAS + 7200), ordIdList: ["C2"] } };
+  const r = eslestir(d, BAS, temelGruplar(), { G2: giris, C2: { ...cikis, algoId: "A9" } }, yeni);
+  assert.equal(r.eslesmeyenler.length, 0);
+});
+
+test("amend ile miktar artırılıp girişten fazla satılırsa → eşleşmez", () => {
+  const g = temelGruplar();
+  g.C2 = [dolum("C2", "sell", 81600, 0.0002, -0.016, "USDT")];
+  const r = eslestir(d, BAS, g, { G2: giris, C2: cikis }, oco);
+  assert.match(r.eslesmeyenler[0].neden, /çıkış miktarı/);
+});

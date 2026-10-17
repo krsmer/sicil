@@ -114,6 +114,15 @@ Limitler: 20 USDT/işlem, 50 USDT/gün, 300 sn bekleme.
 **Uygulama (Claude):** araçlar `functionDeclarations` + `parametersJsonSchema` (MCP şemasından), modelin turu değiştirilmeden geri gönderilir (thought signature'lar), bütçe dolunca `FunctionCallingConfigMode.NONE` + `responseJsonSchema`, `httpOptions.timeout` = kalan süre. `gemini-flash-latest` takma adı da 3.8-flash'a çıkıyor; tekrarlanabilirlik için sürüm sabitlendi. Sistem talimatı LLM'den karar öncesi **en az bir** araçla bağımsız işaret aramasını ister (ilk sürümde hiç araç çağırmıyordu).
 **Doğrulama (17 Ekim, sahte aday, emir yok):** 3 araç (funding, OI, RSI), 20 sn, geçerli JSON, AL 0,7 çarpan / güven 64; araçsız sürüm 8–11 sn; NONE + JSON şeması birlikte çalışıyor (5,5 sn).
 
+## K-17 · Süre doldu çıkışı (amend) ve gevşetilmiş aday eşikleri (17 Ekim, ~15:00)
+
+**Sorun:** Sicil başlayalı 2 saat, 1 mühür. BTC, mühür #2'nin OCO'su (eski 1H ATR seviyeleri, TP 82.211,7 / SL 81.092,5) açık kaldığı için 13:03'ten beri her turda atlandı; tez süresi 14:33'te dolmuştu. ETH yatayda hiç aday üretmedi.
+**Karar (Arif):**
+1. **Elle satış yok** (mühürsüz satış sicili kalıcı bozar). Süresi dolan pozisyonun OCO'su `spot_amend_algo_order` ile güncel fiyatın ±%0,05'ine çekilir; çıkış yine OCO üzerinden olur. **Doğrulandı (14:56):** amend sonrası `algoId`, `algoClOrdId` ve `cTime` aynı, sadece `uTime` değişiyor. Denetçiye 4 amend testi eklendi (aynı algoId; cTime güncellenmiş; yeni algoId + aynı algoClOrdId; amend ile fazla satış → ret). #2 elle değil kodla amend edildi ve log'a yazıldı.
+2. **Kalıcı "süre doldu" çıkışı:** ajan her turun başında (kasa durdurulmuş olsa da) süresi dolan sicil OCO'larını aynı yöntemle fiyata yakın çeker (`agents/trader/sure-cikis.mjs`, 5 test). Denetçide değişiklik gerekmedi.
+3. **Eşikler:** yatay dönüş `donusAtr` 0,5 → **0,25**; trend eğimi `egimEsik` 0,0005 → **0,0002**.
+**Ölçüm (son 6 saatin 15m mumları, dürüst not):** eşik gevşetmesi tek başına aday sayısını **artırmadı** (BTC 4 → 4: düşük eğim eşiği bazı mumları "aşağı trend" yaptı; ETH 0 → 0: fiyat 15m EMA20'nin üstünde, 1H EMA20 < EMA50). Asıl kayıp BTC'nin kilitli olmasıydı. Karşılaştırma: yatayda eşik 0 (15m EMA20 altı) BTC 7 / ETH 1; 15m EMA20 üstüne kesiş BTC 1 / ETH 1. Hedef 8–10 sonuçlanmış tez bu piyasada zor; açık karar olarak Arif'e sunuldu.
+
 ---
 
 ## Araştırma özeti (kararların arka planı)

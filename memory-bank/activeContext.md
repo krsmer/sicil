@@ -31,7 +31,8 @@ Panel: http://127.0.0.1:8787 · Kasa `0x60735035CC6f4d810f4878f9A4a1993F534fe6a8
 
 | Karar | Seçenekler | Not |
 |---|---|---|
-| Zaman çıkışı (tez süresi dolunca satış) | Ekle · Ekleme | Şimdilik yok. Eklenirse **önce** denetçiye o satış için eşleştirme kuralı ve testi eklenmeli; yoksa ajanın kendi zaman çıkışı mühürsüz sayılıp sicili bozar |
+| ~~Zaman çıkışı~~ | **K-17: amend ile süre doldu çıkışı** | OCO'nun kendisi fiyata yakın çekilir; ayrı satış emri yok, denetçi değişmedi |
+| Daha fazla aday (8–10 tez hedefi) | (a) yatayda eşik 0 · (b) tez süresi 30–60 dk · (c) olduğu gibi kal | Ölçüm K-17'de. Karar Arif'te |
 | PAS kararları ve adaylar zincire yazılsın mı | Hayır (plan) · Ucuz bir olayla evet | Şu an sadece yerel log + panel; jüri "sonradan seçtiniz" diyebilir. Zaman kalırsa |
 | Canlı hesap (Bonus 1) | Sadece demo · Küçük canlı alt hesap | Organizatöre "demo sayılıyor mu" sorulacak |
 | Canlı yakalama nerede | Ana hesap (plan: kalıcı kırmızı) · İkinci hesap | Plan ana hesap. TR demo arayüzünden elle işlem; olmazsa mühürsüz emir gönderen küçük script |
@@ -49,6 +50,7 @@ Kapanan kararlar `decisionLog.md`'de: K-11 (news yok, global piyasa verisi), K-1
 
 ## Son değişiklikler
 
+- **14:56–15:00 · K-17:** BTC kilidi açıldı: #2'nin OCO'su `spot_amend_algo_order` ile fiyata yakın çekildi (algoId/algoClOrdId/cTime aynı kaldı). Ajan artık her turda süresi dolan OCO'ları kendisi amend ediyor (yeniden başlatmada #2'yi tekrar çekti). Eşikler gevşetildi (0,25 ATR, eğim 0,0002) ama ölçüm aday sayısının artmadığını gösterdi; 8–10 tez hedefi için seçenekler Arif'te. 33/33 test.
 - **14:45:** "Kuralını yaz" GÖSTERİM ekranı (panel): Türkçe kural → Gemini (sadece panel sunucusunda, `agents/panel/kural-gosterim.mjs`; anahtar tarayıcıya gitmez, yanıtlarda anahtar olmadığı test edildi) → **kod** aralık kontrolü (Arif onayladı: BTC/ETH; işlem başı 5–50; günlük zarar 10–200 ve ≥ işlem başı; bekleme/pencere sistem kuralı) → onay kartı veya ret nedenleri. Gerçek deploy yok. 8 birim testi + 4 canlı deneme (2 kabul, 2 ret). demoScript'e gösterim + "her kullanıcıya kendi kasası" vizyonu eklendi. İlk tez sonucu: mühür #2 **tutmadı** (süre doldu).
 - **14:30:** Panele "Kurallar (zincirde, değiştirilemez)" kartı: kullanıcının Türkçe kuralı + kontrattan canlı okunan 5 değer (kullanıcıdan gelen 3'ü / sistem kuralı 2'si ayrı etiketli), deploy tx ve Snowtrace Read Contract linki (tarayıcıda açılıp doğrulandı; Snowtrace'te kaynak kod da görünüyor). Sadece `agents/panel/index.html` değişti. demoScript'e kuralın deploy'da kontrata nasıl yazıldığı eklendi. "Kuralını yaz" ekranı: sadece her şey bitip vakit kalırsa, gerçek deploy yapmayan gösterim olarak.
 - **13:49–14:03:** Fren provası başarılı: panel → MetaMask `pause()` (13:49) → ajan 14:00 turunu atladı → sahip `unpause()` (14:03). Ajan 14:15 turundan itibaren normal.

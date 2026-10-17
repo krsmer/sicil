@@ -17,6 +17,7 @@ import { log } from "../shared/log.mjs";
 import { connectOkx } from "../shared/okx.mjs";
 import { islemYap, ocoKoy } from "./executor.mjs";
 import { bekleyenleriTamamla } from "./kurtarma.mjs";
+import { sureDolanlariKapat } from "./sure-cikis.mjs";
 import { araclariHazirla, kararVer } from "./karar.mjs";
 import { adayUret } from "./kural-motoru.mjs";
 
@@ -80,6 +81,13 @@ async function trBaglam(okx, pair) {
 
 async function tur(ctx) {
   const { okx, piyasa, araclar, trader, maxTutarCent, beklemeSn } = ctx;
+  // Süresi dolan tezlerin OCO'larını fiyata yakın çek (amend; elle satış yok). Kasa durdurulmuş olsa da çalışır.
+  try {
+    const satirlar = existsSync(LOG_DOSYASI) ? readFileSync(LOG_DOSYASI, "utf8").trim().split("\n").map((l) => { try { return JSON.parse(l); } catch { return null; } }) : [];
+    await sureDolanlariKapat({ okx, satirlar, log, muhurTsOku: async (id) => (await readKasa("muhur", [BigInt(id)]))[3] });
+  } catch (e) {
+    log("sure-doldu-hata", { hata: e.message });
+  }
   if (await readKasa("durduruldu")) {
     log("tur-atlandi", { neden: "kasa durdurulmuş (fren)" });
     return;
